@@ -1,0 +1,62 @@
+#------------------------------------
+# Project
+#------------------------------------
+
+#...project custom ignores go here
+
+
+
+
+
+#------------------------------------
+# Tools
+#------------------------------------
+
+auth.json
+.env
+.idea
+*.esproj
+*.komodoproject
+*.sublime-*
+*.vagrant
+.bundle
+.komodotools
+.project
+.settings
+.tern-project
+.tmproj
+node_modules
+out
+vendor
+
+
+
+
+
+#------------------------------------
+# Platforms
+#------------------------------------
+
+*.diff
+*.err
+*.log
+*.orig
+*.rej
+*.swo
+*.swp
+*.vi
+.cache
+.DS_Store
+.tmp
+error_log
+Thumbs.db
+
+
+
+
+
+#------------------------------------
+# Gitkeep
+#------------------------------------
+
+!.gitkeep
