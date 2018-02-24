@@ -2,7 +2,10 @@
 
 namespace buzzingpixel\ansel;
 
+use yii\base\Event;
 use craft\base\Plugin;
+use craft\web\UrlManager;
+use craft\events\RegisterUrlRulesEvent;
 
 /**
  * Class Ansel
@@ -22,5 +25,13 @@ class Ansel extends Plugin
 
         // Save an instance of this plugin for easy reference throughout app
         self::$plugin = $this;
+
+        Event::on(
+            UrlManager::class,
+            UrlManager::EVENT_REGISTER_CP_URL_RULES,
+            function (RegisterUrlRulesEvent $event) {
+                $event->rules['ansel'] = 'ansel/cp-settings/index';
+            }
+        );
     }
 }
