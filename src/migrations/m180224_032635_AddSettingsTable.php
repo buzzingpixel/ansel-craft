@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * @author TJ Draper <tj@buzzingpixel.com>
+ * @copyright 2018 BuzzingPixel, LLC
+ * @license proprietary
+ * @link https://buzzingpixel.com/software/ansel-craft
+ */
+
 namespace buzzingpixel\ansel\migrations;
 
 use craft\db\Migration;
