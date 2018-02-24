@@ -1,5 +1,7 @@
 <?php
 
+namespace buzzingpixel\ansel\models;
+
 use felicity\datamodel\Model;
 use felicity\datamodel\services\datahandlers\IntHandler;
 use felicity\datamodel\services\datahandlers\BoolHandler;

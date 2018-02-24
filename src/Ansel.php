@@ -3,11 +3,13 @@
 namespace buzzingpixel\ansel;
 
 use Craft;
+use craft\db\Query;
 use yii\base\Event;
 use craft\base\Plugin;
 use craft\web\UrlManager;
 use \craft\helpers\UrlHelper;
 use craft\events\RegisterUrlRulesEvent;
+use buzzingpixel\ansel\services\AnselSettingsService;
 
 /**
  * Class Ansel
@@ -43,5 +45,14 @@ class Ansel extends Plugin
     public function getSettingsResponse()
     {
         return Craft::$app->controller->redirect(UrlHelper::cpUrl('ansel'));
+    }
+
+    /**
+     * Gets dependency injected AnselSettingsService
+     * @return AnselSettingsService
+     */
+    public function getAnselSettingsService() : AnselSettingsService
+    {
+        return new AnselSettingsService(new Query());
     }
 }
