@@ -2,9 +2,11 @@
 
 namespace buzzingpixel\ansel;
 
+use Craft;
 use yii\base\Event;
 use craft\base\Plugin;
 use craft\web\UrlManager;
+use \craft\helpers\UrlHelper;
 use craft\events\RegisterUrlRulesEvent;
 
 /**
@@ -33,5 +35,13 @@ class Ansel extends Plugin
                 $event->rules['ansel'] = 'ansel/cp-settings/index';
             }
         );
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getSettingsResponse()
+    {
+        return Craft::$app->controller->redirect(UrlHelper::cpUrl('ansel'));
     }
 }
