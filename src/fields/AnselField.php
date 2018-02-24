@@ -9,6 +9,7 @@
 
 namespace buzzingpixel\ansel\fields;
 
+use buzzingpixel\ansel\Ansel;
 use Craft;
 use craft\base\Field;
 
@@ -23,5 +24,21 @@ class AnselField extends Field
     public static function displayName(): string
     {
         return Craft::t('ansel', 'Ansel');
+    }
+
+    /**
+     * Gets the Ansel field type settings HTML
+     * @return string
+     * @throws \Exception
+     */
+    public function getSettingsHtml() : string
+    {
+        var_dump(Craft::$app->getVolumes()->getAllVolumes());
+        return Craft::$app->getView()->renderTemplate(
+            'ansel/_core/FieldSettings.twig',
+            [
+                'settings' => Ansel::$plugin->getAnselSettingsService()->getSettings(),
+            ]
+        );
     }
 }
