@@ -1,6 +1,36 @@
+{# @var settings \buzzingpixel\ansel\models\AnselSettingsModel #}
+
 {% extends "_layouts/cp" %}
+{% import "_includes/forms" as forms %}
+{% set fullPageForm = true %}
+
 {% set title = "Ansel Settings"|t('app') %}
 
 {% block content %}
-    <p>Hello World</p>
+    <input type="hidden" name="action" value="ansel/cp-settings/save-settings">
+    <div id="fields">
+        {% for setting,value in settings.asArray(true) if setting != 'defaultHost' %}
+            {% switch settings.getPropertyType(setting) %}
+                {% case 'bool' %}
+                    {{ forms.lightswitchField({
+                        label: settings.getLabel(setting)|t('ansel'),
+                        instructions: settings.getInstructions(setting)|t('ansel'),
+                        id: setting,
+                        name: setting,
+                        on: value
+                    }) }}
+                {% default %}
+                    {{ forms.textField({
+                        label: settings.getLabel(setting)|t('ansel'),
+                        instructions: settings.getInstructions(setting)|t('ansel'),
+                        id: setting,
+                        name: setting,
+                        value: value,
+                        first: true,
+                        autofocus: true,
+                        maxlength: 255
+                    }) }}
+            {% endswitch %}
+        {% endfor %}
+    </div>
 {% endblock %}

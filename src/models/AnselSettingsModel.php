@@ -58,6 +58,90 @@ class AnselSettingsModel extends Model
     public $hideSourceSaveInstructions;
 
     /**
+     * Gets property type
+     * @param string $prop
+     * @return string
+     */
+    public function getPropertyType(string $prop) : string
+    {
+        $types = [
+            'defaultHost' => 'string',
+            'defaultMaxQty' => 'int',
+            'defaultImageQuality' => 'int',
+            'defaultJpg' => 'bool',
+            'defaultRetina' => 'bool',
+            'defaultShowTitle' => 'bool',
+            'defaultRequireTitle' => 'bool',
+            'defaultTitleLabel' => 'string',
+            'defaultShowCaption' => 'bool',
+            'defaultRequireCaption' => 'bool',
+            'defaultCaptionLabel' => 'string',
+            'defaultShowCover' => 'bool',
+            'defaultRequireCover' => 'bool',
+            'defaultCoverLabel' => 'string',
+            'hideSourceSaveInstructions' => 'bool',
+        ];
+
+        return $types[$prop] ?? '';
+    }
+
+    /**
+     * Gets property type
+     * @param string $prop
+     * @return string
+     */
+    public function getInstructions(string $prop) : string
+    {
+        $types = [
+            'defaultHost' => '',
+            'defaultMaxQty' => 'Default value when creating new Ansel fields (does not affect existing fields or prevent setting higher or lower max quantity)',
+            'defaultImageQuality' => 'Default value when creating new Ansel fields (does not affect existing fields or prevent setting higher or lower max quantity)',
+            'defaultJpg' => 'Default value when creating new Ansel fields (does not affect existing fields or prevent setting higher or lower max quantity)',
+            'defaultRetina' => 'Default value when creating new Ansel fields (does not affect existing fields or prevent setting higher or lower max quantity)',
+            'defaultShowTitle' => 'Default value when creating new Ansel fields (does not affect existing fields or prevent setting higher or lower max quantity)',
+            'defaultRequireTitle' => 'Default value when creating new Ansel fields (does not affect existing fields or prevent setting higher or lower max quantity)',
+            'defaultTitleLabel' => 'Default value when creating new Ansel fields (does not affect existing fields or prevent setting higher or lower max quantity)',
+            'defaultShowCaption' => 'Default value when creating new Ansel fields (does not affect existing fields or prevent setting higher or lower max quantity)',
+            'defaultRequireCaption' => 'Default value when creating new Ansel fields (does not affect existing fields or prevent setting higher or lower max quantity)',
+            'defaultCaptionLabel' => 'Default value when creating new Ansel fields (does not affect existing fields or prevent setting higher or lower max quantity)',
+            'defaultShowCover' => 'Default value when creating new Ansel fields (does not affect existing fields or prevent setting higher or lower max quantity)',
+            'defaultRequireCover' => 'Default value when creating new Ansel fields (does not affect existing fields or prevent setting higher or lower max quantity)',
+            'defaultCoverLabel' => 'Default value when creating new Ansel fields (does not affect existing fields or prevent setting higher or lower max quantity)',
+            'hideSourceSaveInstructions' => 'When set to no, a brief explanation of how to make best use of the Upload/Save location paradigm will appear above those options when creating a new field. If you already know how this works it can be annoying and you may wish to hide it.',
+        ];
+
+        return $types[$prop] ?? '';
+    }
+
+    /**
+     * Gets a property's label
+     * @param string $prop
+     * @return string
+     */
+    public function getLabel(string $prop) : string
+    {
+        $types = [
+            'defaultHost' => 'Default host',
+            'defaultMaxQty' => 'Default maximum quantity',
+            'defaultImageQuality' => 'Default image quality',
+            'defaultJpg' => 'Default force JPG setting',
+            'defaultRetina' => 'Default retina mode',
+            'defaultShowTitle' => 'Default display title field',
+            'defaultRequireTitle' => 'Default require title field',
+            'defaultTitleLabel' => 'Default customize title label',
+            'defaultShowCaption' => 'Default display caption field',
+            'defaultRequireCaption' => 'Default require caption field',
+            'defaultCaptionLabel' => 'Default customize caption label',
+            'defaultShowCover' => 'Default display cover field',
+            'defaultRequireCover' => 'Default require cover field',
+            'defaultCoverLabel' => 'Default customize cover label',
+            'hideSourceSaveInstructions' => 'Hide the Upload/Save location instructions when setting up a new field?',
+        ];
+
+        return $types[$prop] ?? '';
+    }
+
+    /**
      * @inheritdoc
      */
     protected function defineHandlers(): array
