@@ -7,8 +7,11 @@ use craft\db\Query;
 use yii\base\Event;
 use craft\base\Plugin;
 use craft\web\UrlManager;
+use craft\services\Fields;
 use \craft\helpers\UrlHelper;
 use craft\events\RegisterUrlRulesEvent;
+use buzzingpixel\ansel\fields\AnselField;
+use craft\events\RegisterComponentTypesEvent;
 use buzzingpixel\ansel\services\AnselSettingsService;
 
 /**
@@ -24,10 +27,8 @@ class Ansel extends Plugin
      */
     public function init()
     {
-        // Make sure parent init functionality runs
         parent::init();
 
-        // Save an instance of this plugin for easy reference throughout app
         self::$plugin = $this;
 
         Event::on(
@@ -35,6 +36,14 @@ class Ansel extends Plugin
             UrlManager::EVENT_REGISTER_CP_URL_RULES,
             function (RegisterUrlRulesEvent $event) {
                 $event->rules['ansel'] = 'ansel/cp-settings/index';
+            }
+        );
+
+        Event::on(
+            Fields::class,
+            Fields::EVENT_REGISTER_FIELD_TYPES,
+            function (RegisterComponentTypesEvent $event) {
+                $event->types[] = AnselField::class;
             }
         );
     }
