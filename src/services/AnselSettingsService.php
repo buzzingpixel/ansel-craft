@@ -18,15 +18,22 @@ class AnselSettingsService
     /** @var Connection $dbConnection */
     private $dbConnection;
 
+    /** @var array $fileConfigArray */
+    private $fileConfigArray = [];
+
     /**
      * AnselSettingsService constructor
      * @param Query $query
      * @param Connection $dbConnection
      */
-    public function __construct(Query $query, Connection $dbConnection)
-    {
+    public function __construct(
+        Query $query,
+        Connection $dbConnection,
+        array $fileConfigArray
+    ) {
         $this->query = $query;
         $this->dbConnection = $dbConnection;
+        $this->fileConfigArray = $fileConfigArray;
     }
 
     /**
@@ -44,7 +51,17 @@ class AnselSettingsService
             $properties[$setting['settingsKey']] = $setting['settingsValue'];
         }
 
-        return new AnselSettingsModel($properties);
+        $model = new AnselSettingsModel($properties);
+
+        foreach (array_keys($model->asArray(true)) as $key) {
+            if (! isset($this->fileConfigArray[$key])) {
+                continue;
+            }
+
+            $model->setProperty($key, $this->fileConfigArray[$key]);
+        }
+
+        return $model;
     }
 
     /**

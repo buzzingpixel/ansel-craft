@@ -48,11 +48,23 @@ class Ansel extends Plugin
     }
 
     /**
+     * We have to have this here because reasons (Craft has its faults)
+     */
+    public function createSettingsModel()
+    {
+        return new Noop();
+    }
+
+    /**
      * Gets dependency injected AnselSettingsService
      * @return AnselSettingsService
      */
     public function getAnselSettingsService() : AnselSettingsService
     {
-        return new AnselSettingsService(new Query(), Craft::$app->getDb());
+        return new AnselSettingsService(
+            new Query(),
+            Craft::$app->getDb(),
+            Craft::$app->getConfig()->getConfigFromFile('ansel')
+        );
     }
 }
