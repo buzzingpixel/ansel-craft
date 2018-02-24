@@ -53,6 +53,6 @@ class Ansel extends Plugin
      */
     public function getAnselSettingsService() : AnselSettingsService
     {
-        return new AnselSettingsService(new Query());
+        return new AnselSettingsService(new Query(), Craft::$app->getDb());
     }
 }

@@ -2,8 +2,10 @@
 
 namespace buzzingpixel\ansel\services;
 
-use buzzingpixel\ansel\models\AnselSettingsModel;
 use craft\db\Query;
+use craft\db\Connection;
+use yii\web\ServerErrorHttpException;
+use buzzingpixel\ansel\models\AnselSettingsModel;
 
 /**
  * Class AnselSettingsService
@@ -13,13 +15,18 @@ class AnselSettingsService
     /** @var Query $query */
     private $query;
 
+    /** @var Connection $dbConnection */
+    private $dbConnection;
+
     /**
      * AnselSettingsService constructor
      * @param Query $query
+     * @param Connection $dbConnection
      */
-    public function __construct(Query $query)
+    public function __construct(Query $query, Connection $dbConnection)
     {
         $this->query = $query;
+        $this->dbConnection = $dbConnection;
     }
 
     /**
@@ -38,5 +45,27 @@ class AnselSettingsService
         }
 
         return new AnselSettingsModel($properties);
+    }
+
+    /**
+     * Saves Ansel's settings
+     * @param AnselSettingsModel $settings
+     * @throws \Exception
+     */
+    public function saveSettings(AnselSettingsModel $settings)
+    {
+        if (! $settings->validate()) {
+            throw new ServerErrorHttpException('Settings do not validate');
+        }
+
+        foreach ($settings->asArray(true) as $key => $val) {
+            $this->dbConnection->createCommand()
+                ->update(
+                    '{{%anselSettings}}',
+                    ['settingsValue' => $val],
+                    "settingsKey = '{$key}'"
+                )
+                ->execute();
+        }
     }
 }

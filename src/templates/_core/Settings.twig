@@ -6,6 +6,8 @@
 
 {% set title = "Ansel Settings"|t('app') %}
 
+{% set errors = settings.getErrors() %}
+
 {% block content %}
     <input type="hidden" name="action" value="ansel/cp-settings/save-settings">
     <div id="fields">
@@ -17,7 +19,8 @@
                         instructions: settings.getInstructions(setting)|t('ansel'),
                         id: setting,
                         name: setting,
-                        on: value
+                        on: value,
+                        errors: errors[setting] ?? []
                     }) }}
                 {% default %}
                     {{ forms.textField({
@@ -28,7 +31,8 @@
                         value: value,
                         first: true,
                         autofocus: true,
-                        maxlength: 255
+                        maxlength: 255,
+                        errors: errors[setting] ?? []
                     }) }}
             {% endswitch %}
         {% endfor %}
