@@ -154,53 +154,25 @@ class AnselSettingsModel extends Model
     protected function defineHandlers(): array
     {
         return [
-            'defaultHost' => [
-                'class' => StringHandler::class,
-            ],
-            'defaultMaxQty' => [
-                'class' => IntHandler::class,
-            ],
+            'defaultHost' => ['class' => StringHandler::class],
+            'defaultMaxQty' => ['class' => IntHandler::class],
             'defaultImageQuality' => [
                 'class' => IntHandler::class,
                 'min' => 1,
                 'max' => 100,
             ],
-            'defaultJpg' => [
-                'class' => BoolHandler::class,
-            ],
-            'defaultRetina' => [
-                'class' => BoolHandler::class,
-            ],
-            'defaultShowTitle' => [
-                'class' => BoolHandler::class,
-            ],
-            'defaultRequireTitle' => [
-                'class' => BoolHandler::class,
-            ],
-            'defaultTitleLabel' => [
-                'class' => StringHandler::class,
-            ],
-            'defaultShowCaption' => [
-                'class' => BoolHandler::class,
-            ],
-            'defaultRequireCaption' => [
-                'class' => BoolHandler::class,
-            ],
-            'defaultCaptionLabel' => [
-                'class' => StringHandler::class,
-            ],
-            'defaultShowCover' => [
-                'class' => BoolHandler::class,
-            ],
-            'defaultRequireCover' => [
-                'class' => BoolHandler::class,
-            ],
-            'defaultCoverLabel' => [
-                'class' => StringHandler::class,
-            ],
-            'hideSourceSaveInstructions' => [
-                'class' => BoolHandler::class,
-            ],
+            'defaultJpg' => ['class' => BoolHandler::class],
+            'defaultRetina' => ['class' => BoolHandler::class],
+            'defaultShowTitle' => ['class' => BoolHandler::class],
+            'defaultRequireTitle' => ['class' => BoolHandler::class],
+            'defaultTitleLabel' => ['class' => StringHandler::class],
+            'defaultShowCaption' => ['class' => BoolHandler::class ],
+            'defaultRequireCaption' => ['class' => BoolHandler::class],
+            'defaultCaptionLabel' => ['class' => StringHandler::class],
+            'defaultShowCover' => ['class' => BoolHandler::class],
+            'defaultRequireCover' => ['class' => BoolHandler::class],
+            'defaultCoverLabel' => ['class' => StringHandler::class],
+            'hideSourceSaveInstructions' => ['class' => BoolHandler::class],
         ];
     }
 }
