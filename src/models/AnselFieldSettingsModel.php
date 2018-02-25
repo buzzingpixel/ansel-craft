@@ -180,6 +180,26 @@ class AnselFieldSettingsModel extends Model
     }
 
     /**
+     * Validates the ratio field
+     * @param $val
+     * @return array An array of errors or an empty array if no errors
+     */
+    public function validateRatio($val) : array
+    {
+        if (! $val) {
+            return [];
+        }
+
+        preg_match('/^\d+(.\d+)?:\d+(.\d+)?$/', $val, $matches);
+
+        if (\count($matches) === 1) {
+            return [];
+        }
+
+        return ['Please specify crop ratio in "width:height" format using only numbers'];
+    }
+
+    /**
      * Get's the save keys
      * @return array
      */
