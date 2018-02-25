@@ -8,23 +8,60 @@
 #}
 
 {# @var settings \buzzingpixel\ansel\models\AnselSettingsModel #}
+{# @var volumeSelectOptions array #}
+{# @var \buzzingpixel\ansel\models\AnselFieldSettingsModel fieldSettingsModel #}
 
 {% import '_includes/forms' as forms %}
 
-{% if not settings.hideSourceSaveInstructions %}
-    <div class="field">
-        <div class="heading">
-            <label>{{ 'Upload/Save location explanation'|t('ansel')|raw }}</label>
-            <div class="instructions">
-                <p>{{ 'This message can be hidden in the Ansel settings'|t('ansel')|raw }}</p>
+<div style="max-width: 400px;">
+    {% if not settings.hideSourceSaveInstructions %}
+        <div class="field">
+            <div class="heading">
+                <label>{{ 'Upload/Save location explanation'|t('ansel')|raw }}</label>
+                <div class="instructions">
+                    <p>{{ 'This message can be hidden in the Ansel settings'|t('ansel')|raw }}</p>
+                </div>
+            </div>
+            <div class="input">
+                <p>{{ 'The upload location is where raw source images (un-cropped and unmodified) are uploaded and stored. Images in this location or uploaded to this location will always be visible when selecting/uploading images to the field.'|t('ansel')|raw }}</p>
+                <p>{{ 'The save location is where Ansel will save and store the captured images. Images are named with the Ansel image ID and timestamp. Images in this location are transient &mdash; they can come and go as the fields are updated and images are added and removed. The save location is not meant to be a user-serviceable location and is not seen by the user when adding/uploading images to the Ansel field.'|t('Ansel')|raw }}</p>
+                <p>{{ 'It is strongly recommended that you not use the same location for both Upload and Save. Best practice is to create a separate location for Ansel to save images to.'|t('ansel')|raw }}</p>
             </div>
         </div>
-        <div class="input">
-            <p>{{ 'The upload location is where raw source images (un-cropped and unmodified) are uploaded and stored. Images in this location or uploaded to this location will always be visible when selecting/uploading images to the field.'|t('ansel')|raw }}</p>
-            <p>{{ 'The save location is where Ansel will save and store the captured images. Images are named with the Ansel image ID and timestamp. Images in this location are transient &mdash; they can come and go as the fields are updated and images are added and removed. The save location is not meant to be a user-serviceable location and is not seen by the user when adding/uploading images to the Ansel field.'|t('Ansel')|raw }}</p>
-            <p>{{ 'It is strongly recommended that you not use the same location for both Upload and Save. Best practice is to create a separate location for Ansel to save images to.'|t('ansel')|raw }}</p>
-        </div>
-    </div>
-{% endif %}
+    {% endif %}
 
-
+    {% for key,val in fieldSettingsModel.getDisplaySettings() %}
+        {% switch val.type %}
+            {% case 'volume' %}
+                {{ forms.selectField({
+                    label: val.name|t('app'),
+                    instructions: val.instructions ? val.instructions|t('app') : null,
+                    name: key,
+                    id: key,
+                    value: fieldSettingsModel.getProperty(key),
+                    required: val.required,
+                    class: null,
+                    options: volumeSelectOptions,
+                }) }}
+            {% case 'lightSwitch' %}
+                {{ forms.lightswitchField({
+                    label: val.name|t('app'),
+                    instructions: val.instructions ? val.instructions|t('app') : null,
+                    name: key,
+                    id: key,
+                    on: fieldSettingsModel.getProperty(key),
+                    required: val.required,
+                }) }}
+            {% default %}
+                {{ forms.textField({
+                    label: val.name|t('app'),
+                    instructions: val.instructions ? val.instructions|t('app') : null,
+                    name: key,
+                    id: key,
+                    value: fieldSettingsModel.getProperty(key),
+                    required: val.required,
+                    size: 20
+                }) }}
+        {% endswitch %}
+    {% endfor %}
+</div>

@@ -24,8 +24,8 @@
             {% switch settings.getPropertyType(setting) %}
                 {% case 'bool' %}
                     {{ forms.lightswitchField({
-                        label: settings.getLabel(setting)|t('ansel'),
-                        instructions: settings.getInstructions(setting)|t('ansel'),
+                        label: settings.getLabel(setting)|t('app'),
+                        instructions: settings.getInstructions(setting)|t('app'),
                         id: setting,
                         name: setting,
                         on: value,
@@ -33,8 +33,8 @@
                     }) }}
                 {% default %}
                     {{ forms.textField({
-                        label: settings.getLabel(setting)|t('ansel'),
-                        instructions: settings.getInstructions(setting)|t('ansel'),
+                        label: settings.getLabel(setting)|t('app'),
+                        instructions: settings.getInstructions(setting)|t('app'),
                         id: setting,
                         name: setting,
                         value: value,
