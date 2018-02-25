@@ -13,6 +13,8 @@
 
 {% import '_includes/forms' as forms %}
 
+{% set errors = fieldSettingsModel.getErrors() %}
+
 <div style="max-width: 400px;">
     {% if not settings.hideSourceSaveInstructions %}
         <div class="field">
@@ -42,6 +44,7 @@
                     required: val.required,
                     class: null,
                     options: volumeSelectOptions,
+                    errors: errors[key] ?? [],
                 }) }}
             {% case 'lightSwitch' %}
                 {{ forms.lightswitchField({
@@ -51,6 +54,7 @@
                     id: key,
                     on: fieldSettingsModel.getProperty(key),
                     required: val.required,
+                    errors: errors[key] ?? [],
                 }) }}
             {% default %}
                 {{ forms.textField({
@@ -60,7 +64,8 @@
                     id: key,
                     value: fieldSettingsModel.getProperty(key),
                     required: val.required,
-                    size: 20
+                    size: 20,
+                    errors: errors[key] ?? [],
                 }) }}
         {% endswitch %}
     {% endfor %}

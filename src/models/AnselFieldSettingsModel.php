@@ -64,6 +64,9 @@ class AnselFieldSettingsModel extends Model
     /** @var int $minHeight */
     public $minHeight;
 
+    /** @var int $maxWidth */
+    public $maxWidth;
+
     /** @var int $maxHeight */
     public $maxHeight;
 
@@ -112,46 +115,57 @@ class AnselFieldSettingsModel extends Model
             'elementId' => ['class' => IntHandler::class],
             'fieldId' => ['class' => IntHandler::class],
             'fieldName' => ['class' => StringHandler::class],
-            'uploadLocation' => ['class' => IntHandler::class],
+            'uploadLocation' => [
+                'class' => IntHandler::class,
+                'required' => true,
+            ],
             'uploadFolderId' => ['class' => IntHandler::class],
-            'saveLocation' => ['class' => IntHandler::class],
+            'saveLocation' => [
+                'class' => IntHandler::class,
+                'required' => true,
+            ],
             'saveFolderId' => ['class' => IntHandler::class],
             'minQty' => [
                 'class' => IntHandler::class,
-                'min' => 1,
+                'min' => 0,
             ],
             'maxQty' => [
                 'class' => IntHandler::class,
-                'min' => 1,
+                'min' => 0,
             ],
             'preventUploadOverMax' => ['class' => BoolHandler::class],
             'quality' => [
                 'class' => IntHandler::class,
                 'min' => 1,
                 'max' => 100,
+                'required' => true,
             ],
             'forceJpg' => ['class' => BoolHandler::class],
             'retinaMode' => ['class' => BoolHandler::class],
             'minWidth' => [
                 'class' => IntHandler::class,
-                'min' => 1,
+                'min' => 0,
             ],
             'minHeight' => [
                 'class' => IntHandler::class,
-                'min' => 1,
+                'min' => 0,
+            ],
+            'maxWidth' => [
+                'class' => IntHandler::class,
+                'min' => 0,
             ],
             'maxHeight' => [
                 'class' => IntHandler::class,
-                'min' => 1,
+                'min' => 0,
             ],
             'ratio' => ['class' => StringHandler::class],
             'ratioWidth' => [
                 'class' => IntHandler::class,
-                'min' => 1,
+                'min' => 0,
             ],
             'ratioHeight' => [
                 'class' => IntHandler::class,
-                'min' => 1,
+                'min' => 0,
             ],
             'showTitle' => ['class' => BoolHandler::class],
             'requireTitle' => ['class' => BoolHandler::class],
@@ -182,6 +196,7 @@ class AnselFieldSettingsModel extends Model
             'retinaMode',
             'minWidth',
             'minHeight',
+            'maxWidth',
             'maxHeight',
             'ratio',
             'showTitle',
