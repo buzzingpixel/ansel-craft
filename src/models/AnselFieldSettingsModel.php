@@ -200,6 +200,35 @@ class AnselFieldSettingsModel extends Model
     }
 
     /**
+     * Sets ratio width and height
+     * @param $val
+     * @return string
+     * @throws \ReflectionException
+     */
+    public function castRatio($val) : string
+    {
+        if (! $val) {
+            return (string) $val;
+        }
+
+        $parts = explode(':', $val);
+
+        if (! isset($parts[0])) {
+            return $val;
+        }
+
+        $this->setProperty('ratioWidth', $parts[0]);
+
+        if (! isset($parts[1])) {
+            return (string) $val;
+        }
+
+        $this->setProperty('ratioHeight', $parts[1]);
+
+        return (string) $val;
+    }
+
+    /**
      * Get's the save keys
      * @return array
      */
