@@ -115,6 +115,7 @@ class AnselField extends Field
     {
         if (! $this->fieldSettingsModel) {
             $this->fieldSettingsModel = new AnselFieldSettingsModel();
+            $this->fieldSettingsModel->setProperty('fieldId', $this->id);
 
             foreach ($this->getSettings() as $key => $val) {
                 if (! $val) {
