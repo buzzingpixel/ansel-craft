@@ -1,0 +1,6 @@
+{
+    "assets": "src/resources",
+    "libSync": [
+        "assetsSource/img"
+    ]
+}
