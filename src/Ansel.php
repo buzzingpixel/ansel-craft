@@ -31,10 +31,13 @@ class Ansel extends Plugin
 
     /**
      * Initialize plugin
+     * @throws \Exception
      */
     public function init()
     {
         parent::init();
+
+        Craft::setAlias('@ansel', __DIR__);
 
         self::$plugin = $this;
 

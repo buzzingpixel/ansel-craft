@@ -9,6 +9,7 @@
 
 namespace buzzingpixel\ansel\fields;
 
+use buzzingpixel\ansel\AnselAssetBundle;
 use buzzingpixel\ansel\models\AnselSettingsModel;
 use Craft;
 use craft\base\ElementInterface;
@@ -178,9 +179,11 @@ class AnselField extends Field
      * @param mixed $value
      * @param ElementInterface|null $element
      * @return string
+     * @throws \Exception
      */
     public function getInputHtml($value, ElementInterface $element = null): string
     {
+        Craft::$app->getView()->registerAssetBundle(AnselAssetBundle::class);
         return 'asdf';
     }
 }
