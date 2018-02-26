@@ -108,6 +108,18 @@ class AnselField extends Field
     }
 
     /**
+     * Gets settings
+     * @param bool $isNew
+     * @return bool
+     * @throws \Exception
+     */
+    public function beforeSave(bool $isNew): bool
+    {
+        parent::beforeSave($isNew);
+        return $this->getSettingsModel()->validate();
+    }
+
+    /**
      * Get's the settings model
      * @throws \Exception
      */
