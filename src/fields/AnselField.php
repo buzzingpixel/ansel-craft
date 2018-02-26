@@ -11,6 +11,7 @@ namespace buzzingpixel\ansel\fields;
 
 use buzzingpixel\ansel\models\AnselSettingsModel;
 use Craft;
+use craft\base\ElementInterface;
 use yii\db\Schema;
 use craft\base\Field;
 use buzzingpixel\ansel\Ansel;
@@ -173,14 +174,13 @@ class AnselField extends Field
     }
 
     /**
-     * Gets settings
-     * @param bool $isNew
-     * @return bool
-     * @throws \Exception
+     * Gets the input HTML for displaying the Ansel field
+     * @param mixed $value
+     * @param ElementInterface|null $element
+     * @return string
      */
-    public function beforeSave(bool $isNew): bool
+    public function getInputHtml($value, ElementInterface $element = null): string
     {
-        parent::beforeSave($isNew);
-        return $this->getSettingsModel()->validate();
+        return 'asdf';
     }
 }
