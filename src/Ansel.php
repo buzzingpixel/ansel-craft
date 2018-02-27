@@ -19,6 +19,7 @@ use \craft\helpers\UrlHelper;
 use craft\events\RegisterUrlRulesEvent;
 use buzzingpixel\ansel\fields\AnselField;
 use craft\events\RegisterComponentTypesEvent;
+use buzzingpixel\ansel\services\UploadKeysService;
 use buzzingpixel\ansel\services\AnselSettingsService;
 use buzzingpixel\ansel\twigextensions\AnselTwigExtension;
 use buzzingpixel\ansel\controllers\FieldDisplayController;
@@ -94,7 +95,7 @@ class Ansel extends Plugin
     }
 
     /**
-     * Gets the FieldDisplayController
+     * Gets dependency injected FieldDisplayController
      * @return FieldDisplayController
      */
     public function getFieldDisplayController() : FieldDisplayController
@@ -102,6 +103,19 @@ class Ansel extends Plugin
         return new FieldDisplayController(
             uniqid('', false),
             $this
+        );
+    }
+
+    /**
+     * Gets dependency injected UploadKeysService
+     * @return UploadKeysService
+     * @throws \Exception
+     */
+    public function getUploadKeysService() : UploadKeysService
+    {
+        return new UploadKeysService(
+            new Query(),
+            Craft::$app->getDb()
         );
     }
 }

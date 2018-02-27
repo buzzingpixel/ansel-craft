@@ -26,12 +26,13 @@ class AnselSettingsService
     private $dbConnection;
 
     /** @var array $fileConfigArray */
-    private $fileConfigArray = [];
+    private $fileConfigArray;
 
     /**
      * AnselSettingsService constructor
      * @param Query $query
      * @param Connection $dbConnection
+     * @param array $fileConfigArray
      */
     public function __construct(
         Query $query,
