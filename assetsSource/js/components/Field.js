@@ -11,9 +11,12 @@ function runField(F) {
     }
 
     F.controller.make('Field', {
+        uploadKey: '',
         init: function() {
             var self = this;
             var $el = self.$el;
+
+            self.uploadKey = self.$el.data('uploadKey');
 
             $el.on(
                 'drag dragstart dragend dragover dragenter dragleave drop',
@@ -28,14 +31,13 @@ function runField(F) {
                     $el.removeClass('AnselField--DragInProgress');
                 })
                 .on('drop', function(e) {
-                    console.log(e.originalEvent.dataTransfer.files);
                     $el.addClass('AnselField--IsUploading');
+                    self.processFiles(e.originalEvent.dataTransfer.files);
                 });
         },
 
-        processFile: function(e) {
-            e.preventDefault();
-            console.log(e);
+        processFiles: function(filesArray) {
+            console.log(filesArray);
         }
     });
 }
