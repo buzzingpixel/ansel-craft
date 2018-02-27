@@ -1,9 +1,29 @@
 .AnselField {
     border: 1px solid rgba(0, 0, 20, 0.1);
+    position: relative;
+}
+
+.AnselField .AnselField--DragInProgress * {
+    pointer-events: none;
+}
+
+.AnselField--DragInProgress:before {
+    background-color: rgba(168, 168, 168, 0.8);
+    content: ' ';
+    display: block;
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 2;
 }
 
 .AnselField__Inner {
     padding: 10px;
+    pointer-events: none;
+    position: relative;
+    z-index: 1;
 }
 
 .AnselField__DropImagesToUpload {

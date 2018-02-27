@@ -1,5 +1,6 @@
 {
     "assets": "src/resources",
+    "jsNamespace": "ANSEL",
     "libSync": [
         "assetsSource/img"
     ]
