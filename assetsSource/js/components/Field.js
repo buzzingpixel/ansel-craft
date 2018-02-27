@@ -13,30 +13,29 @@ function runField(F) {
     F.controller.make('Field', {
         init: function() {
             var self = this;
+            var $el = self.$el;
 
-            console.log('init');
+            $el.on(
+                'drag dragstart dragend dragover dragenter dragleave drop',
+                function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                })
+                .on('dragover dragenter', function() {
+                    $el.addClass('AnselField--DragInProgress');
+                })
+                .on('dragleave dragend drop', function() {
+                    $el.removeClass('AnselField--DragInProgress');
+                })
+                .on('drop', function(e) {
+                    console.log(e.originalEvent.dataTransfer.files);
+                    $el.addClass('AnselField--IsUploading');
+                });
+        },
 
-            self.$el.on('dragover', function(e) {
-                e.preventDefault();
-            });
-
-            self.$el.on('dragenter', function(e) {
-                e.preventDefault();
-                $(this).addClass('AnselField--DragInProgress');
-                console.log('dragenter');
-            });
-
-            self.$el.on('dragleave', function(e) {
-                e.preventDefault();
-                $(this).removeClass('AnselField--DragInProgress');
-                console.log('dragleave');
-            });
-
-            self.$el.on('drop', function(e) {
-                e.preventDefault();
-                $(this).removeClass('AnselField--DragInProgress');
-                console.log('drop');
-            });
+        processFile: function(e) {
+            e.preventDefault();
+            console.log(e);
         }
     });
 }

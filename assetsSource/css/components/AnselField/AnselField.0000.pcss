@@ -7,8 +7,9 @@
     pointer-events: none;
 }
 
+.AnselField--IsUploading:before,
 .AnselField--DragInProgress:before {
-    background-color: rgba(168, 168, 168, 0.8);
+    background-color: rgba(239, 239, 239, 0.8);
     content: ' ';
     display: block;
     height: 100%;
@@ -17,6 +18,19 @@
     top: 0;
     width: 100%;
     z-index: 2;
+}
+
+.AnselField__Spinner {
+    display: none;
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+}
+
+.AnselField--IsUploading .AnselField__Spinner {
+    display: inline-block;
 }
 
 .AnselField__Inner {
