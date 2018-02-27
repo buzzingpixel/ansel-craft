@@ -9,7 +9,6 @@
 
 namespace buzzingpixel\ansel;
 
-use buzzingpixel\ansel\controllers\FieldDisplayController;
 use Craft;
 use craft\db\Query;
 use yii\base\Event;
@@ -21,6 +20,8 @@ use craft\events\RegisterUrlRulesEvent;
 use buzzingpixel\ansel\fields\AnselField;
 use craft\events\RegisterComponentTypesEvent;
 use buzzingpixel\ansel\services\AnselSettingsService;
+use buzzingpixel\ansel\twigextensions\AnselTwigExtension;
+use buzzingpixel\ansel\controllers\FieldDisplayController;
 
 /**
  * Class Ansel
@@ -41,6 +42,10 @@ class Ansel extends Plugin
         Craft::setAlias('@ansel', __DIR__);
 
         self::$plugin = $this;
+
+        Craft::$app->view->registerTwigExtension(
+            new AnselTwigExtension()
+        );
 
         Event::on(
             UrlManager::class,
