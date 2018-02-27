@@ -20,15 +20,23 @@
     z-index: 2;
 }
 
+.AnselField__UploadIcon,
 .AnselField__Spinner {
     display: none;
     left: 50%;
+    pointer-events: none;
     position: absolute;
     top: 50%;
     transform: translate(-50%, -50%);
     z-index: 3;
 }
 
+.AnselField__UploadIcon {
+    color: #aeaeae;
+    width: 50px;
+}
+
+.AnselField--DragInProgress .AnselField__UploadIcon,
 .AnselField--IsUploading .AnselField__Spinner {
     display: inline-block;
 }
