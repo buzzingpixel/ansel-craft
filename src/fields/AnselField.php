@@ -181,9 +181,9 @@ class AnselField extends Field
      * @return string
      * @throws \Exception
      */
-    public function getInputHtml($value, ElementInterface $element = null): string
+    public function getInputHtml($value, ElementInterface $element = null) : string
     {
         Craft::$app->getView()->registerAssetBundle(AnselAssetBundle::class);
-        return 'asdf';
+        return Ansel::$plugin->getFieldDisplayController()->display();
     }
 }

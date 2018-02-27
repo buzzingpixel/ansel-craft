@@ -9,6 +9,7 @@
 
 namespace buzzingpixel\ansel;
 
+use buzzingpixel\ansel\controllers\FieldDisplayController;
 use Craft;
 use craft\db\Query;
 use yii\base\Event;
@@ -84,6 +85,18 @@ class Ansel extends Plugin
             new Query(),
             Craft::$app->getDb(),
             Craft::$app->getConfig()->getConfigFromFile('ansel')
+        );
+    }
+
+    /**
+     * Gets the FieldDisplayController
+     * @return FieldDisplayController
+     */
+    public function getFieldDisplayController() : FieldDisplayController
+    {
+        return new FieldDisplayController(
+            uniqid('', false),
+            $this
         );
     }
 }
