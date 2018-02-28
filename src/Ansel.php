@@ -12,17 +12,21 @@ namespace buzzingpixel\ansel;
 use Craft;
 use craft\db\Query;
 use yii\base\Event;
+use Ramsey\Uuid\Uuid;
 use craft\base\Plugin;
 use craft\web\UrlManager;
 use craft\services\Fields;
 use \craft\helpers\UrlHelper;
+use League\Flysystem\Filesystem;
 use craft\events\RegisterUrlRulesEvent;
 use buzzingpixel\ansel\fields\AnselField;
 use craft\events\RegisterComponentTypesEvent;
+use buzzingpixel\ansel\services\FileCacheService;
 use buzzingpixel\ansel\services\UploadKeysService;
 use buzzingpixel\ansel\services\AnselSettingsService;
 use buzzingpixel\ansel\twigextensions\AnselTwigExtension;
 use buzzingpixel\ansel\controllers\FieldDisplayController;
+use League\Flysystem\Adapter\Local as LocalFilesystemAdapter;
 
 /**
  * Class Ansel
@@ -117,5 +121,39 @@ class Ansel extends Plugin
             new Query(),
             Craft::$app->getDb()
         );
+    }
+
+    /** @var FileCacheService $fileCacheService */
+    private $fileCacheService;
+
+    /**
+     * Gets dependency injected FileCacheService
+     * @return FileCacheService
+     * @throws \Exception
+     */
+    public function getFileCacheService() : FileCacheService
+    {
+        if (! $this->fileCacheService) {
+            $this->fileCacheService = new FileCacheService(
+                Uuid::getFactory(),
+                new Filesystem(new LocalFilesystemAdapter(
+                    Craft::getAlias('@storage'),
+                    LOCK_EX,
+                    LocalFilesystemAdapter::DISALLOW_LINKS,
+                    [
+                        'file' => [
+                            'public' => 0777,
+                            'private' => 0777,
+                        ],
+                        'dir' => [
+                            'public' => 0777,
+                            'private' => 0777,
+                        ]
+                    ]
+                ))
+            );
+        }
+
+        return $this->fileCacheService;
     }
 }
