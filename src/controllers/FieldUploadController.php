@@ -62,6 +62,7 @@ class FieldUploadController extends Controller
         $file->setDimension(999999999, 999999999);
         $file->setMime(['gif', 'jpeg', 'png']);
         $file->setLocation($cachePath, 0777);
+        $file->setSize(0, 999999999999999999999);
 
         $minWidth = (int) $requestService->post('minWidth');
         $minHeight = (int) $requestService->post('minHeight');
