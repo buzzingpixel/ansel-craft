@@ -61,6 +61,10 @@ function runField(F) {
         sharedModel: null,
         eventTriggers: null,
 
+        commonStorage: {
+            sorter: null
+        },
+
         init: function() {
             var self = this;
             var commonObjSend;
@@ -74,6 +78,8 @@ function runField(F) {
             };
 
             commonObjSend.commonObjSend = commonObjSend;
+
+            self.initSorting();
 
             F.controller.construct('Notifications', commonObjSend);
             F.controller.construct('FieldDropUploader', commonObjSend);
@@ -99,6 +105,42 @@ function runField(F) {
             self.sharedModel = new SharedModelConstructor(settingsObj);
 
             return self.sharedModel;
+        },
+
+        initSorting: function() {
+            var self = this;
+
+            self.commonStorage.sorter = new window.Garnish.DragSort({
+                container: self.$el.find('.JSAnselField__ImagesHolder'),
+                axis: null,
+                collapseDraggees: true,
+                magnetStrength: 4,
+                helperLagBase: 1.5,
+                helperOpacity: 0.6,
+                onSortChange: function() {
+                    // TODO: make this work
+                    console.log('onSortChange');
+                    // Trigger a generic field change event
+                    // self.sharedModel.set(
+                    //     'fieldChangeEvent',
+                    //     self.sharedModel.get('fieldChangeEvent') + 1
+                    // );
+                },
+                onDragStop: function() {
+                    // TODO: make this work
+                    console.log('onDragStop');
+                    // Trigger a generic field change event
+                    // self.sharedModel.set(
+                    //     'fieldChangeEvent',
+                    //     self.sharedModel.get('fieldChangeEvent') + 1
+                    // );
+                }
+            });
+
+            // TODO: remove this and handle this from each row's controller
+            self.$el.find('.JSAnselField__ImagesHolder').find('.JSAnselField__Image').each(function() {
+                self.commonStorage.sorter.addItems($(this));
+            });
         }
     });
 }
