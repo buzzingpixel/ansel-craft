@@ -19,6 +19,9 @@ use felicity\datamodel\services\datahandlers\StringHandler;
  */
 class AnselFieldSettingsModel extends Model
 {
+    /** @var bool $isRetinized */
+    private $isRetinized = false;
+
     /** @var int $elementId */
     public $elementId;
 
@@ -423,5 +426,41 @@ class AnselFieldSettingsModel extends Model
         }
 
         return $returnVal;
+    }
+
+    /**
+     * Retinize values if applicable
+     * @throws \Exception
+     */
+    public function retinizeValues()
+    {
+        if ($this->isRetinized || ! $this->getProperty('retinaMode')) {
+            return;
+        }
+
+        $this->setProperty('minWidth', $this->getProperty('minWidth') * 2);
+        $this->setProperty('minHeight', $this->getProperty('minHeight') * 2);
+        $this->setProperty('maxWidth', $this->getProperty('maxWidth') * 2);
+        $this->setProperty('maxHeight', $this->getProperty('maxHeight') * 2);
+
+        $this->isRetinized = true;
+    }
+
+    /**
+     * Deretinize values
+     * @throws \ReflectionException
+     */
+    public function deRetinizeValues()
+    {
+        if (! $this->isRetinized || ! $this->getProperty('retinaMode')) {
+            return;
+        }
+
+        $this->setProperty('minWidth', $this->getProperty('minWidth') / 2);
+        $this->setProperty('minHeight', $this->getProperty('minHeight') / 2);
+        $this->setProperty('maxWidth', $this->getProperty('maxWidth') / 2);
+        $this->setProperty('maxHeight', $this->getProperty('maxHeight') / 2);
+
+        $this->isRetinized = false;
     }
 }
