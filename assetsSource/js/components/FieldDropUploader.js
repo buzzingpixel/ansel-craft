@@ -11,16 +11,13 @@ function runFieldDropUploader(F) {
     }
 
     F.controller.make('FieldDropUploader', {
-        sharedModel: null,
-        eventTriggers: null,
-        commonObjSend: null,
-
+        commonStorage: {},
         uploadFiles: {},
         uploadInProgress: false,
 
         init: function() {
             var self = this;
-            var $el = self.$el;
+            var $el = self.commonStorage.$el;
 
             $el.on(
                 'drag dragstart dragend dragover dragenter dragleave drop',
@@ -30,24 +27,24 @@ function runFieldDropUploader(F) {
                 })
                 .on('dragover dragenter', function() {
                     $el.addClass('AnselField--DragInProgress');
-                    self.eventTriggers.set(
+                    self.commonStorage.eventTriggers.set(
                         'dragStart',
-                        self.eventTriggers.get('dragStart') + 1
+                        self.commonStorage.eventTriggers.get('dragStart') + 1
                     );
                 })
                 .on('dragleave dragend drop', function() {
                     $el.removeClass('AnselField--DragInProgress');
-                    self.eventTriggers.set(
+                    self.commonStorage.eventTriggers.set(
                         'dragEnd',
-                        self.eventTriggers.get('dragEnd') + 1
+                        self.commonStorage.eventTriggers.get('dragEnd') + 1
                     );
                 })
                 .on('drop', function(e) {
                     var files = e.originalEvent.dataTransfer.files;
                     $el.addClass('AnselField--IsUploading');
-                    self.eventTriggers.set(
+                    self.commonStorage.eventTriggers.set(
                         'drop',
-                        self.eventTriggers.get('drop') + 1
+                        self.commonStorage.eventTriggers.get('drop') + 1
                     );
                     $.each(files, function(i, file) {
                         self.uploadFiles[F.uuid.make()] = file;
@@ -60,13 +57,13 @@ function runFieldDropUploader(F) {
         processUploadFilesWatcher: function() {
             var self = this;
 
-            if (self.$el.hasClass('AnselField--IsUploading') &&
+            if (self.commonStorage.$el.hasClass('AnselField--IsUploading') &&
                 ! Object.keys(self.uploadFiles).length
             ) {
-                self.$el.removeClass('AnselField--IsUploading');
-                self.eventTriggers.set(
+                self.commonStorage.$el.removeClass('AnselField--IsUploading');
+                self.commonStorage.eventTriggers.set(
                     'uploadComplete',
-                    self.eventTriggers.get('uploadComplete') + 1
+                    self.commonStorage.eventTriggers.get('uploadComplete') + 1
                 );
             }
 
@@ -79,9 +76,9 @@ function runFieldDropUploader(F) {
                 return;
             }
 
-            self.eventTriggers.set(
+            self.commonStorage.eventTriggers.set(
                 'uploadStart',
-                self.eventTriggers.get('uploadStart') + 1
+                self.commonStorage.eventTriggers.get('uploadStart') + 1
             );
 
             self.uploadInProgress = true;
@@ -98,14 +95,30 @@ function runFieldDropUploader(F) {
             var file = self.uploadFiles[key];
             var ajaxData = new FormData();
 
-            ajaxData.append('CRAFT_CSRF_TOKEN', self.sharedModel.get('csrfToken'));
-            ajaxData.append('uploadKey', self.sharedModel.get('uploadKey'));
+            ajaxData.append(
+                'CRAFT_CSRF_TOKEN',
+                self.commonStorage.sharedModel.get('csrfToken')
+            );
+
+            ajaxData.append(
+                'uploadKey',
+                self.commonStorage.sharedModel.get('uploadKey')
+            );
+
             ajaxData.append('file', file, file.name);
-            ajaxData.append('minWidth', self.sharedModel.get('minWidth'));
-            ajaxData.append('minHeight', self.sharedModel.get('minHeight'));
+
+            ajaxData.append(
+                'minWidth',
+                self.commonStorage.sharedModel.get('minWidth')
+            );
+
+            ajaxData.append(
+                'minHeight',
+                self.commonStorage.sharedModel.get('minHeight')
+            );
 
             $.ajax({
-                url: self.sharedModel.get('uploadActionUrl'),
+                url: self.commonStorage.sharedModel.get('uploadActionUrl'),
                 type: 'post',
                 data: ajaxData,
                 dataType: 'json',
@@ -119,8 +132,7 @@ function runFieldDropUploader(F) {
                 success: function(data) {
                     if (! data.success) {
                         F.controller.construct('Notification', {
-                            el: self.$el,
-                            eventTriggers: self.eventTriggers,
+                            commonStorage: self.commonStorage,
                             error: true,
                             heading: file.name,
                             message: data.message,
@@ -130,12 +142,16 @@ function runFieldDropUploader(F) {
                         return;
                     }
 
-                    console.log('success');
+                    F.controller.construct('Image', {
+                        commonStorage: self.commonStorage,
+                        base64Image: data.file.base64,
+                        cacheFile: data.file.cacheFile,
+                        fileName: file.name
+                    });
                 },
                 error: function() {
                     F.controller.construct('Notification', {
-                        el: self.$el,
-                        eventTriggers: self.eventTriggers,
+                        commonStorage: self.commonStorage,
                         error: true,
                         heading: file.name,
                         message: 'An unknown error occurred while uploading this file',

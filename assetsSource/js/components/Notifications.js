@@ -11,34 +11,36 @@ function runNotifications(F) {
     }
 
     F.controller.make('Notifications', {
-        eventTriggers: null,
+        commonStorage: {},
         $notifications: null,
 
         init: function() {
             var self = this;
 
-            self.$notifications = self.$el.find('.JSAnselField__Notifications');
-
-            self.eventTriggers.onChange('notificationChange', function() {
-                setTimeout(function() {
-                    self.triggerChange();
-                }, 500);
-            });
+            self.commonStorage.eventTriggers.onChange(
+                'notificationChange',
+                function() {
+                    setTimeout(function() {
+                        self.triggerChange();
+                    }, 500);
+                }
+            );
         },
 
         triggerChange: function() {
             var self = this;
-            var $items = self.$notifications.find('.JSAnselField__Notification');
+            var $notifications = self.commonStorage.$notificationList;
+            var $items = $notifications.find('.JSAnselField__Notification');
             var count = $items.length;
 
             if (! count) {
-                self.$notifications.removeClass(
+                $notifications.removeClass(
                     'AnselField__Notifications--HasNotifications'
                 );
                 return;
             }
 
-            self.$notifications.addClass(
+            $notifications.addClass(
                 'AnselField__Notifications--HasNotifications'
             );
         }

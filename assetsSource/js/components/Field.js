@@ -58,31 +58,46 @@ function runField(F) {
     });
 
     F.controller.make('Field', {
-        sharedModel: null,
-        eventTriggers: null,
-
         commonStorage: {
-            sorter: null
+            el: null,
+            $el: null,
+            sharedModel: null,
+            eventTriggers: null,
+            sorter: null,
+            imageTemplate: null,
+            $imagesHolder: null,
+            $notificationList: null
         },
 
         init: function() {
             var self = this;
-            var commonObjSend;
+            var sendObj;
 
-            self.eventTriggers = new EventTriggers();
+            self.setUp();
 
-            commonObjSend = {
-                el: self.$el,
-                sharedModel: self.populateSharedModel(),
-                eventTriggers: self.eventTriggers
+            sendObj = {
+                commonStorage: self.commonStorage
             };
 
-            commonObjSend.commonObjSend = commonObjSend;
+            F.controller.construct('Notifications', sendObj);
+            F.controller.construct('FieldDropUploader', sendObj);
+        },
 
-            self.initSorting();
+        setUp: function() {
+            var self = this;
+            var tmpl = self.$el.find('.JSAnselField__ImageTemplate').html();
+            var $imageHolder = self.$el.find('.JSAnselField__ImagesHolder');
 
-            F.controller.construct('Notifications', commonObjSend);
-            F.controller.construct('FieldDropUploader', commonObjSend);
+            self.commonStorage = {
+                el: self.el,
+                $el: self.$el,
+                sharedModel: self.populateSharedModel(),
+                eventTriggers: new EventTriggers(),
+                sorter: self.setUpSorting($imageHolder),
+                imageTemplate: tmpl,
+                $imagesHolder: $imageHolder,
+                $notificationList: self.$el.find('.JSAnselField__Notifications')
+            };
         },
 
         populateSharedModel: function() {
@@ -102,16 +117,13 @@ function runField(F) {
                 settingsObj[i] = rawSettings[i];
             }
 
-            self.sharedModel = new SharedModelConstructor(settingsObj);
-
-            return self.sharedModel;
+            return new SharedModelConstructor(settingsObj);
         },
 
-        initSorting: function() {
-            var self = this;
-
-            self.commonStorage.sorter = new window.Garnish.DragSort({
-                container: self.$el.find('.JSAnselField__ImagesHolder'),
+        setUpSorting: function($imageHolder) {
+            // var self = this;
+            return new window.Garnish.DragSort({
+                container: $imageHolder,
                 axis: null,
                 collapseDraggees: true,
                 magnetStrength: 4,
@@ -135,11 +147,6 @@ function runField(F) {
                     //     self.sharedModel.get('fieldChangeEvent') + 1
                     // );
                 }
-            });
-
-            // TODO: remove this and handle this from each row's controller
-            self.$el.find('.JSAnselField__ImagesHolder').find('.JSAnselField__Image').each(function() {
-                self.commonStorage.sorter.addItems($(this));
             });
         }
     });
