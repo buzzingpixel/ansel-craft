@@ -48,6 +48,16 @@ class FieldUploadController extends Controller
 
         $file = $_FILES['file'] ?? [];
         $file = \is_array($file) ? $file : [];
+
+        $tmpFile = $file['tmp_name'] ?? null;
+
+        if (! file_exists($tmpFile)) {
+            return $this->asJson([
+                'success' => false,
+                'message' => 'The uploaded file could not be found. The most common reason for this is you tried to upload a file that is larger than your server allows.',
+            ]);
+        }
+
         $file = new Image($file);
         $file->setDimension(999999999, 999999999);
         $file->setMime(['gif', 'jpeg', 'png']);
