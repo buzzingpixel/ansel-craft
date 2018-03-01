@@ -24,41 +24,102 @@ class FieldUploadController extends Controller
      */
     public function actionUpload() : Response
     {
-        ini_set('xdebug.overload_var_dump', 'off');
-
         $this->requirePostRequest();
 
+        $requestService = Craft::$app->getRequest();
+
         $validKey = Ansel::$plugin->getUploadKeysService()->isValidKey(
-            Craft::$app->getRequest()->post('uploadKey')
+            $requestService->post('uploadKey')
         );
 
         if (! $validKey) {
             return $this->asJson([
                 'success' => false,
                 'message' => 'Invalid upload key',
+                'file' => [],
             ]);
         }
 
+        $cacheService = Ansel::$plugin->getFileCacheService();
+
         $uuid = Uuid::uuid4()->toString();
+        $cachePath = $cacheService->getCachePath() .
+            "/{$uuid}";
 
         $file = $_FILES['file'] ?? [];
         $file = \is_array($file) ? $file : [];
         $file = new Image($file);
         $file->setDimension(999999999, 999999999);
         $file->setMime(['gif', 'jpeg', 'png']);
-        $file->setLocation(
-            Ansel::$plugin->getFileCacheService()->getCachePath() . "/{$uuid}",
-            0777
-        );
+        $file->setLocation($cachePath, 0777);
 
-        // TODO: validate constraints
-        // $file->getWidth();
-        // $file->getHeight();
+        $minWidth = (int) $requestService->post('minWidth');
+        $minHeight = (int) $requestService->post('minHeight');
 
-        var_dump('here', $file->upload());
-        die;
+        try {
+            $meetsMin = true;
 
-        var_dump($file);
-        die;
+            if ($minWidth && $file->getWidth() < $minWidth) {
+                $meetsMin = false;
+            }
+
+            if ($minHeight && $file->getHeight() < $minHeight) {
+                $meetsMin = false;
+            }
+
+            if (! $meetsMin) {
+                return $this->asJson([
+                    'success' => false,
+                    'message' => 'Minimum dimensions not met.',
+                    'file' => [],
+                ]);
+            }
+        } catch (\Exception $e) {
+            if ($e->getMessage() === 'getimagesize(): Filename cannot be empty') {
+                return $this->asJson([
+                    'success' => false,
+                    'message' => 'The uploaded file could not be found. The most common reason for this is you tried to upload a file that is larger than your server allows.',
+                ]);
+            }
+
+            return $this->asJson([
+                'success' => false,
+                'message' => 'An unknown error occurred.',
+                'file' => [],
+            ]);
+        }
+
+        try {
+            $success = $file->upload();
+        } catch (\Exception $e) {
+            return $this->asJson([
+                'success' => false,
+                'message' => 'An unknown error occurred.',
+                'file' => [],
+            ]);
+        }
+
+        if (! $success) {
+            return $this->asJson([
+                'success' => false,
+                'message' => $file->getError(),
+                'file' => [],
+            ]);
+        }
+
+        $cacheFile = "{$uuid}/{$file->getName()}.{$file->getMime()}";
+        $base64 = "data:image/{$file->getMime()};base64,";
+        $base64 .= base64_encode($cacheService->getCacheFileContents(
+            $cacheFile
+        ));
+
+        return $this->asJson([
+            'success' => true,
+            'message' => null,
+            'file' => [
+                'cacheFile' => $cacheFile,
+                'base64' => $base64,
+            ],
+        ]);
     }
 }
