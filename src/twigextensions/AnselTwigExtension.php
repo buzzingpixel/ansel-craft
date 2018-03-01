@@ -17,6 +17,7 @@ class AnselTwigExtension extends \Twig_Extension
     {
         return [
             new \Twig_Filter('anselWidont', [$this, 'widontFilter']),
+            new \Twig_Filter('anselMinify', [$this, 'minify']),
         ];
     }
 
@@ -31,5 +32,15 @@ class AnselTwigExtension extends \Twig_Extension
         $widontTest = "/([^\s])\s+(((<(a|span|i|b|em|strong|acronym|caps|sub|sup|abbr|big|small|code|cite|tt)[^>]*>)*\s*[^\s<>]+)(<\/(a|span|i|b|em|strong|acronym|caps|sub|sup|abbr|big|small|code|cite|tt)>)*[^\s<>]*\s*(<\/(p|h[1-6]|li)>|$))/i";
 
         return Template::raw(preg_replace($widontTest, '$1&nbsp;$2', $str));
+    }
+
+    /**
+     * Minify filter
+     * @param string $str
+     * @return \Twig_Markup
+     */
+    public function minify(string $str) : \Twig_Markup
+    {
+        return Template::raw(\Minify_HTML::minify($str));
     }
 }
