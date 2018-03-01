@@ -23,11 +23,13 @@ class FieldDisplayController extends Controller
     {
         $settings->retinizeValues();
 
-        return $this->getView()->renderTemplate('ansel/_field/Index.twig', [
-            'uploadKey' => Ansel::$plugin->getUploadKeysService()->createNew(),
-            'uploadActionUrl' => UrlHelper::actionUrl('ansel/field-upload/upload'),
-            'csrfToken' => Craft::$app->getRequest()->getCsrfToken(),
-            'settings' => $settings,
-        ]);
+        return \Minify_HTML::minify(
+            $this->getView()->renderTemplate('ansel/_field/Index.twig', [
+                'uploadKey' => Ansel::$plugin->getUploadKeysService()->createNew(),
+                'uploadActionUrl' => UrlHelper::actionUrl('ansel/field-upload/upload'),
+                'csrfToken' => Craft::$app->getRequest()->getCsrfToken(),
+                'settings' => $settings,
+            ])
+        );
     }
 }

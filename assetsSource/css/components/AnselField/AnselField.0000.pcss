@@ -1,4 +1,5 @@
 .AnselField {
+    background-color: #fbfbfb;
     position: relative;
 }
 
@@ -59,7 +60,7 @@
 }
 
 .AnselField__Inner {
-    padding: 10px;
+    padding: 10px 0;
     pointer-events: none;
     position: relative;
     z-index: 1;
@@ -69,8 +70,14 @@
     text-align: center;
 }
 
+.AnselField__DropImagesToUpload,
+.AnselField__SelectImage {
+    padding: 0 10px;
+}
+
 .AnselField__ImagesHolder {
     margin: 14px 0;
+    text-align: center;
 }
 
 .AnselField__SelectImage {
@@ -80,4 +87,51 @@
 .AnselField__SelectImageButton {
     margin: 0 auto !important;
     pointer-events: all;
+}
+
+.AnselField__Image {
+    display: inline-block;
+    margin: 10px;
+    overflow: hidden;
+    width: 168px;
+    vertical-align: top;
+}
+
+.AnselField__ImageIcons {
+    margin-bottom: 6px;
+    text-align: center;
+}
+
+.AnselField__ImageIconsInner {
+    display: inline-block;
+    user-select: none;
+}
+
+.AnselField__ImageIcon {
+    background-image: linear-gradient(#fff, #fafafa);
+    box-shadow: inset 0 0 0 1px transparent, 0 0 0 1px rgba(0, 0, 0, 0.025), 0 1px 1px rgba(0, 0, 0, 0.1);
+    color: #465a69;
+    cursor: pointer;
+    display: inline-block;
+    min-height: 21px;
+    padding: 8px 10px 4px;
+    pointer-events: all;
+    width: 16px;
+    vertical-align: middle;
+}
+
+.AnselField__ImageIcon:first-child {
+    border-radius: 2px 0 0 2px;
+}
+
+.AnselField__ImageIcon:last-child {
+    border-radius: 0 2px 2px 0;
+}
+
+.AnselField__ImageIcon:active {
+    background-image: linear-gradient(#e4e5e7, #eaebec);
+}
+
+.AnselField__Image img {
+    max-width: 100%;
 }
