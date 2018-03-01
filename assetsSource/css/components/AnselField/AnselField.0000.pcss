@@ -1,4 +1,21 @@
 .AnselField {
+    position: relative;
+}
+
+.AnselField__Notifications {
+    display: none;
+    margin-bottom: 10px;
+}
+
+.AnselField__Notifications--HasNotifications {
+    display: block;
+}
+
+.AnselField__Notification--IsError {
+    color: #da5a47;
+}
+
+.AnselField__MainWrap {
     border: 1px solid rgba(0, 0, 20, 0.1);
     position: relative;
 }
@@ -7,8 +24,8 @@
     pointer-events: none;
 }
 
-.AnselField--IsUploading:before,
-.AnselField--DragInProgress:before {
+.AnselField--IsUploading .AnselField__MainWrap:before,
+.AnselField--DragInProgress .AnselField__MainWrap:before {
     background-color: rgba(239, 239, 239, 0.8);
     content: ' ';
     display: block;

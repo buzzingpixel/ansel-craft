@@ -3,8 +3,17 @@ window.ANSEL = window.ANSEL || {};
 function runFieldDropUploader(F) {
     'use strict';
 
+    if (! window.jQuery || ! F.controller || ! F.model) {
+        setTimeout(function() {
+            runFieldDropUploader(F);
+        }, 10);
+        return;
+    }
+
     F.controller.make('FieldDropUploader', {
         sharedModel: null,
+        eventTriggers: null,
+        commonObjSend: null,
 
         uploadFiles: {},
         uploadInProgress: false,
@@ -21,13 +30,25 @@ function runFieldDropUploader(F) {
                 })
                 .on('dragover dragenter', function() {
                     $el.addClass('AnselField--DragInProgress');
+                    self.eventTriggers.set(
+                        'dragStart',
+                        self.eventTriggers.get('dragStart') + 1
+                    );
                 })
                 .on('dragleave dragend drop', function() {
                     $el.removeClass('AnselField--DragInProgress');
+                    self.eventTriggers.set(
+                        'dragEnd',
+                        self.eventTriggers.get('dragEnd') + 1
+                    );
                 })
                 .on('drop', function(e) {
                     var files = e.originalEvent.dataTransfer.files;
                     $el.addClass('AnselField--IsUploading');
+                    self.eventTriggers.set(
+                        'drop',
+                        self.eventTriggers.get('drop') + 1
+                    );
                     $.each(files, function(i, file) {
                         self.uploadFiles[F.uuid.make()] = file;
                     });
@@ -39,14 +60,29 @@ function runFieldDropUploader(F) {
         processUploadFilesWatcher: function() {
             var self = this;
 
+            if (self.$el.hasClass('AnselField--IsUploading') &&
+                ! Object.keys(self.uploadFiles).length
+            ) {
+                self.$el.removeClass('AnselField--IsUploading');
+                self.eventTriggers.set(
+                    'uploadComplete',
+                    self.eventTriggers.get('uploadComplete') + 1
+                );
+            }
+
             if (self.uploadInProgress ||
                 ! Object.keys(self.uploadFiles).length
             ) {
                 setTimeout(function() {
                     self.processUploadFilesWatcher();
-                }, 1000);
+                }, 500);
                 return;
             }
+
+            self.eventTriggers.set(
+                'uploadStart',
+                self.eventTriggers.get('uploadStart') + 1
+            );
 
             self.uploadInProgress = true;
 
@@ -54,7 +90,7 @@ function runFieldDropUploader(F) {
 
             setTimeout(function() {
                 self.processUploadFilesWatcher();
-            }, 1000);
+            }, 500);
         },
 
         processUploadFile: function(key) {
@@ -77,16 +113,34 @@ function runFieldDropUploader(F) {
                 contentType: false,
                 processData: false,
                 complete: function() {
-                    console.log('complete');
                     delete self.uploadFiles[key];
-                    self.$el.removeClass('AnselField--IsUploading');
                     self.uploadInProgress = false;
                 },
                 success: function(data) {
-                    console.log('success', data);
+                    if (! data.success) {
+                        F.controller.construct('Notification', {
+                            el: self.$el,
+                            eventTriggers: self.eventTriggers,
+                            error: true,
+                            heading: file.name,
+                            message: data.message,
+                            destroyEvents: ['dragStart']
+                        });
+
+                        return;
+                    }
+
+                    console.log('success');
                 },
-                error: function(e) {
-                    console.log('fail', e);
+                error: function() {
+                    F.controller.construct('Notification', {
+                        el: self.$el,
+                        eventTriggers: self.eventTriggers,
+                        error: true,
+                        heading: file.name,
+                        message: 'An unknown error occurred while uploading this file',
+                        destroyEvents: ['dragStart']
+                    });
                 }
             });
         }

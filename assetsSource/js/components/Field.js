@@ -3,6 +3,7 @@ window.ANSEL = window.ANSEL || {};
 function runField(F) {
     'use strict';
 
+    var EventTriggers;
     var SharedModelConstructor;
 
     if (! window.jQuery || ! F.controller || ! F.model) {
@@ -11,6 +12,15 @@ function runField(F) {
         }, 10);
         return;
     }
+
+    EventTriggers = F.model.make({
+        dragStart: 'int',
+        dragEnd: 'int',
+        drop: 'int',
+        uploadStart: 'int',
+        uploadComplete: 'int',
+        notificationChange: 'int'
+    });
 
     SharedModelConstructor = F.model.make({
         uploadKey: 'string',
@@ -49,14 +59,23 @@ function runField(F) {
 
     F.controller.make('Field', {
         sharedModel: null,
+        eventTriggers: null,
 
         init: function() {
             var self = this;
-            var commonObjSend = {
+            var commonObjSend;
+
+            self.eventTriggers = new EventTriggers();
+
+            commonObjSend = {
                 el: self.$el,
-                sharedModel: self.populateSharedModel()
+                sharedModel: self.populateSharedModel(),
+                eventTriggers: self.eventTriggers
             };
 
+            commonObjSend.commonObjSend = commonObjSend;
+
+            F.controller.construct('Notifications', commonObjSend);
             F.controller.construct('FieldDropUploader', commonObjSend);
         },
 
