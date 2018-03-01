@@ -10,7 +10,16 @@
     data-csrf-token="{{ csrfToken }}"
     data-settings='{{ settings.asArray(true)|json_encode }}'
 >
-    <script type="text/template" class="JSAnselField__ImageTemplate">{% filter anselMinify %}{% include 'ansel/_field/ImageInclude.twig' only %}{% endfilter %}</script>
+    <script type="text/template" class="JSAnselField__ModalTemplate">
+        {% filter anselMinify %}
+            {% include 'ansel/_field/FieldsModal.twig' only %}
+        {% endfilter %}
+    </script>
+    <script type="text/template" class="JSAnselField__ImageTemplate">
+        {% filter anselMinify %}
+            {% include 'ansel/_field/ImageInclude.twig' only %}
+        {% endfilter %}
+    </script>
     <ul class="AnselField__Notifications JSAnselField__Notifications"></ul>
     <div class="AnselField__MainWrap">
         <div class="AnselField__UploadIcon">

@@ -96,7 +96,9 @@ function runField(F) {
                 sorter: self.setUpSorting($imageHolder),
                 imageTemplate: tmpl,
                 $imagesHolder: $imageHolder,
-                $notificationList: self.$el.find('.JSAnselField__Notifications')
+                $notificationList: self.$el.find('.JSAnselField__Notifications'),
+                fieldsModalHtml: self.$el.find('.JSAnselField__ModalTemplate')
+                    .html()
             };
         },
 

@@ -1,0 +1,63 @@
+{% import "_includes/forms" as forms %}
+
+<div class="modal AnselField__FieldsModal JSAnselField__FieldsModal">
+    <div class="body AnselField__FieldsModalBody" style="height: calc(100% - 60px);">
+        <header class="header AnselField__FieldsModalBodyHeader">
+            <h2 class="AnselField__FieldsModalBodyHeading JSAnselField__FieldsModalBodyHeading"></h2>
+        </header>
+        <div class="AnselField__FieldsModalBodyContent">
+            <div class="AnselField__FieldsModalBodyContentLeft">
+                <div class="AnselField__FieldsModalPreviewImage">
+                    <div class="AnselField__FieldsModalPreviewImageInner">
+                        <img
+                            src=""
+                            alt=""
+                            class="AnselField__FieldsModalPreviewImageTag JSAnselField__FieldsModalPreviewImageTag"
+                        >
+                    </div>
+                </div>
+            </div>
+            <div class="AnselField__FieldsModalBodyContentRight">
+                {% set uniqueId = anselUniqueId() %}
+                {{ forms.textField({
+                    label: 'Title',
+                    id: uniqueId,
+                    name: uniqueId,
+                    value: '',
+                    first: true,
+                    autofocus: true,
+                    maxlength: 255
+                }) }}
+
+                {% set uniqueId = anselUniqueId() %}
+                {{ forms.textField({
+                    label: 'Caption',
+                    id: uniqueId,
+                    name: uniqueId,
+                    value: '',
+                    first: true,
+                    autofocus: true,
+                    maxlength: 255
+                }) }}
+
+                {% set uniqueId = anselUniqueId() %}
+                {{ forms.lightswitchField({
+                    label: 'Cover',
+                    id: uniqueId,
+                    name: uniqueId,
+                    on: false
+                }) }}
+            </div>
+        </div>
+    </div>
+    <div class="footer AnselField__FieldsModalFooter">
+        <div class="buttons right">
+            <div class="btn AnselField__FieldsModalCancel" tabindex="0" role="button">Cancel</div>
+            <div class="btn submit AnselField__FieldsModalSave" role="button">Save</div>
+        </div>
+        <div class="buttons left secondary-buttons AnselField__FieldsModalFooterSecondaryButtons">
+            <div class="btn submit AnselField__FieldsModalPrev" role="button">Previous Image</div>
+            <div class="btn submit AnselField__FieldsModalNext" role="button">Next Image</div>
+        </div>
+    </div>
+</div>

@@ -13,11 +13,22 @@ class AnselTwigExtension extends \Twig_Extension
      * Returns the twig filters
      * @return \Twig_Filter[]
      */
-    public function getFilters()
+    public function getFilters() : array
     {
         return [
             new \Twig_Filter('anselWidont', [$this, 'widontFilter']),
             new \Twig_Filter('anselMinify', [$this, 'minify']),
+        ];
+    }
+
+    /**
+     * Returns twig functions
+     * @return \Twig_Function[]
+     */
+    public function getFunctions() : array
+    {
+        return [
+            new \Twig_Function('anselUniqueId', [$this, 'uniqueId']),
         ];
     }
 
@@ -42,5 +53,14 @@ class AnselTwigExtension extends \Twig_Extension
     public function minify(string $str) : \Twig_Markup
     {
         return Template::raw(\Minify_HTML::minify($str));
+    }
+
+    /**
+     * UniqueID function
+     * @return \Twig_Markup
+     */
+    public function uniqueId() : \Twig_Markup
+    {
+        return Template::raw(uniqid('', false));
     }
 }
