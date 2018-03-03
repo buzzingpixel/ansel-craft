@@ -20,7 +20,8 @@ function runField(F) {
         uploadStart: 'int',
         uploadComplete: 'int',
         notificationChange: 'int',
-        activeCover: 'string'
+        activeCover: 'string',
+        openFieldEditor: 'string'
     });
 
     SharedModelConstructor = F.model.make({

@@ -33,6 +33,8 @@ function runImage(F) {
 
             self.$image = $(self.commonStorage.imageTemplate);
 
+            self.$image.data('jsUuid', self.uuid);
+
             self.$imageTag = self.$image.find('.JSAnselField__ImageTag');
 
             self.$imageTag.attr('src', self.base64Image);
@@ -42,6 +44,8 @@ function runImage(F) {
             self.commonStorage.sorter.addItems(self.$image);
 
             self.initFieldEditor();
+
+            self.watchOpenFieldEditor();
 
             self.watchForCoverChange();
         },
@@ -58,6 +62,12 @@ function runImage(F) {
 
         openFieldEditor: function() {
             var self = this;
+            self.$fieldsModal = $(self.commonStorage.fieldsModalHtml);
+            self._openFieldEditor();
+        },
+
+        _openFieldEditor: function() {
+            var self = this;
             var $cancel = self.$fieldsModal.find('.AnselField__FieldsModalCancel');
             var $save = self.$fieldsModal.find('.AnselField__FieldsModalSave');
             var $prev = self.$fieldsModal.find('.AnselField__FieldsModalPrev');
@@ -72,6 +82,8 @@ function runImage(F) {
             var $modalCoverSwitch = self.$fieldsModal.find('.JSAnselField__FieldsModalCover').find('.lightswitch');
             var $modalCover = $modalCoverSwitch.find(':input');
             var $imageCover = self.$image.find('.JSAnselField__Input--Cover');
+            var $previousImage = self.$image.prev('.JSAnselField__Image');
+            var $nextImage = self.$image.next('.JSAnselField__Image');
 
             function saveValues() {
                 // Set them to empty first in case they return falsy values and confuse jquery
@@ -125,14 +137,48 @@ function runImage(F) {
                 closeEditor();
             });
 
-            $prev.on('click', function() {
-                saveValues();
-                closeEditor();
-            });
+            if ($previousImage.length) {
+                $prev.on('click', function() {
+                    saveValues();
+                    modal.hide();
+                    setTimeout(function() {
+                        closeEditor();
+                        self.commonStorage.eventTriggers.set(
+                            'openFieldEditor',
+                            $previousImage.data('jsUuid')
+                        );
+                    }, 50);
+                });
+            } else {
+                $prev.addClass('disabled');
+            }
 
-            $next.on('click', function() {
-                saveValues();
-                closeEditor();
+            if ($nextImage.length) {
+                $next.on('click', function() {
+                    saveValues();
+                    modal.hide();
+                    setTimeout(function() {
+                        closeEditor();
+                        self.commonStorage.eventTriggers.set(
+                            'openFieldEditor',
+                            $nextImage.data('jsUuid')
+                        );
+                    }, 50);
+                });
+            } else {
+                $next.addClass('disabled');
+            }
+        },
+
+        watchOpenFieldEditor: function() {
+            var self = this;
+
+            self.commonStorage.eventTriggers.onChange('openFieldEditor', function(val) {
+                if (val !== self.uuid) {
+                    return;
+                }
+
+                self.openFieldEditor();
             });
         },
 
