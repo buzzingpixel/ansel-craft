@@ -23,6 +23,10 @@ function runImage(F) {
 
         uuid: null,
 
+        model: {
+            isOverAllowed: 'bool'
+        },
+
         init: function() {
             var self = this;
 
@@ -48,6 +52,8 @@ function runImage(F) {
             self.watchOpenFieldEditor();
 
             self.watchForCoverChange();
+
+            self.watchForOrderChange();
         },
 
         initFieldEditor: function() {
@@ -201,6 +207,35 @@ function runImage(F) {
 
                 self.$image.find('.JSAnselField__Input--Cover').val('');
             });
+        },
+
+        watchForOrderChange: function() {
+            var self = this;
+
+            self.model.onChange('isOverAllowed', function(val) {
+                if (val) {
+                    self.$image.addClass('AnselField__Image--IsOverMax');
+                    return;
+                }
+                self.$image.removeClass('AnselField__Image--IsOverMax');
+            });
+
+            self.commonStorage.eventTriggers.onChange('orderChange', function() {
+                var pos = self.$image.prevAll('.JSAnselField__Image').length + 1;
+                var maxQty = self.commonStorage.sharedModel.get('maxQty');
+
+                if (! maxQty || pos <= maxQty) {
+                    self.model.set('isOverAllowed', false);
+                    return;
+                }
+
+                self.model.set('isOverAllowed', true);
+            });
+
+            self.commonStorage.eventTriggers.set(
+                'orderChange',
+                self.commonStorage.eventTriggers.set('orderChange') + 1
+            );
         }
     });
 }

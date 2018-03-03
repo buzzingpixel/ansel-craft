@@ -90,9 +90,11 @@
 }
 
 .AnselField__Image {
+    border-radius: 4px;
     display: inline-block;
-    margin: 10px;
+    margin: 2px;
     overflow: hidden;
+    padding: 10px 8px 5px 8px;
     pointer-events: all;
     width: 168px;
     vertical-align: top;
@@ -143,4 +145,13 @@
 
 .AnselField__FieldsModalFooterSecondaryButtons {
     display: none;
+}
+
+.AnselField__Image--IsOverMax {
+    background-color: rgba(0, 0, 0, 0.35);
+}
+
+.AnselField__Image--IsOverMax .AnselField__ImageIcons,
+.AnselField__Image--IsOverMax .AnselField__ImageTag {
+    opacity: 0.4;
 }

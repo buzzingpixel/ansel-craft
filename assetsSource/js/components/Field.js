@@ -21,7 +21,8 @@ function runField(F) {
         uploadComplete: 'int',
         notificationChange: 'int',
         activeCover: 'string',
-        openFieldEditor: 'string'
+        openFieldEditor: 'string',
+        orderChange: 'int'
     });
 
     SharedModelConstructor = F.model.make({
@@ -125,32 +126,27 @@ function runField(F) {
         },
 
         setUpSorting: function($imageHolder) {
-            // var self = this;
+            var self = this;
+
             return new window.Garnish.DragSort({
                 container: $imageHolder,
                 axis: null,
                 collapseDraggees: true,
                 magnetStrength: 4,
                 helperLagBase: 1.5,
-                helperOpacity: 0.6
-                // onSortChange: function() {
-                //     // TODO: make this work
-                //     console.log('onSortChange');
-                //     // Trigger a generic field change event
-                //     // self.sharedModel.set(
-                //     //     'fieldChangeEvent',
-                //     //     self.sharedModel.get('fieldChangeEvent') + 1
-                //     // );
-                // },
-                // onDragStop: function() {
-                //     // TODO: make this work
-                //     console.log('onDragStop');
-                //     // Trigger a generic field change event
-                //     // self.sharedModel.set(
-                //     //     'fieldChangeEvent',
-                //     //     self.sharedModel.get('fieldChangeEvent') + 1
-                //     // );
-                // }
+                helperOpacity: 0.6,
+                onSortChange: function() {
+                    self.commonStorage.eventTriggers.set(
+                        'orderChange',
+                        self.commonStorage.eventTriggers.get('orderChange') + 1
+                    );
+                },
+                onDragStop: function() {
+                    self.commonStorage.eventTriggers.set(
+                        'orderChange',
+                        self.commonStorage.eventTriggers.get('orderChange') + 1
+                    );
+                }
             });
         }
     });
