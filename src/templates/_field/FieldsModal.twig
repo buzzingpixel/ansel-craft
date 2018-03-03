@@ -26,7 +26,7 @@
                 {% if settings.showTitle %}
                     {% set uniqueId = anselUniqueId() %}
                     {{ forms.textField({
-                        label: 'Title',
+                        label: settings.titleLabel|default('Title')|t('app'),
                         id: uniqueId,
                         class: 'JSAnselField__FieldsModalTitle',
                         name: uniqueId,
@@ -40,7 +40,7 @@
                 {% if settings.showCaption %}
                     {% set uniqueId = anselUniqueId() %}
                     {{ forms.textField({
-                        label: 'Caption',
+                        label: settings.captionLabel|default('Caption')|t('app'),
                         id: uniqueId,
                         class: 'JSAnselField__FieldsModalCaption',
                         name: uniqueId,
@@ -55,7 +55,7 @@
                 {% set uniqueId = anselUniqueId() %}
                     <div class="JSAnselField__FieldsModalCover">
                         {{ forms.lightswitchField({
-                            label: 'Cover',
+                            label: settings.coverLabel|default('Cover')|t('app'),
                             id: uniqueId,
                             name: uniqueId,
                             on: false
