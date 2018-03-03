@@ -19,7 +19,8 @@ function runField(F) {
         drop: 'int',
         uploadStart: 'int',
         uploadComplete: 'int',
-        notificationChange: 'int'
+        notificationChange: 'int',
+        activeCover: 'string'
     });
 
     SharedModelConstructor = F.model.make({

@@ -21,8 +21,12 @@ function runImage(F) {
         cacheFile: null,
         fileName: null,
 
+        uuid: null,
+
         init: function() {
             var self = this;
+
+            self.uuid = F.uuid.make();
 
             // TODO: detect what methods should be used to set up this image
             // TODO: base64? Existing src etc.
@@ -38,6 +42,8 @@ function runImage(F) {
             self.commonStorage.sorter.addItems(self.$image);
 
             self.initFieldEditor();
+
+            self.watchForCoverChange();
         },
 
         initFieldEditor: function() {
@@ -76,6 +82,13 @@ function runImage(F) {
                 $imageTitle.val($modalTitle.val());
                 $imageCaption.val($modalCaption.val());
                 $imageCover.val($modalCover.val());
+
+                if ($modalCover.val()) {
+                    self.commonStorage.eventTriggers.set(
+                        'activeCover',
+                        self.uuid
+                    );
+                }
             }
 
             function closeEditor() {
@@ -120,6 +133,18 @@ function runImage(F) {
             $next.on('click', function() {
                 saveValues();
                 closeEditor();
+            });
+        },
+
+        watchForCoverChange: function() {
+            var self = this;
+
+            self.commonStorage.eventTriggers.onChange('activeCover', function(val) {
+                if (val === self.uuid) {
+                    return;
+                }
+
+                self.$image.find('.JSAnselField__Input--Cover').val('');
             });
         }
     });
