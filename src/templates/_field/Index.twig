@@ -10,14 +10,20 @@
     data-csrf-token="{{ csrfToken }}"
     data-settings='{{ settings.asArray(true)|json_encode }}'
 >
+    <input
+        type="hidden"
+        name="{{ settings.fieldName }}[placeholder]"
+        value="placeholder"
+    >
+
     <script type="text/template" class="JSAnselField__ModalTemplate">
         {% filter anselMinify %}
-            {% include 'ansel/_field/FieldsModal.twig' only %}
+            {% include 'ansel/_field/FieldsModal.twig' %}
         {% endfilter %}
     </script>
     <script type="text/template" class="JSAnselField__ImageTemplate">
         {% filter anselMinify %}
-            {% include 'ansel/_field/ImageInclude.twig' only %}
+            {% include 'ansel/_field/ImageInclude.twig' %}
         {% endfilter %}
     </script>
     <ul class="AnselField__Notifications JSAnselField__Notifications"></ul>

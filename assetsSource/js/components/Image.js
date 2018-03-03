@@ -59,14 +59,24 @@ function runImage(F) {
             var $img = self.$fieldsModal.find('.JSAnselField__FieldsModalPreviewImageTag');
             var $heading = self.$fieldsModal.find('.JSAnselField__FieldsModalBodyHeading');
             var modal = new window.Garnish.Modal(self.$fieldsModal);
+            var $modalTitle = self.$fieldsModal.find('.JSAnselField__FieldsModalTitle');
+            var $imageTitle = self.$image.find('.JSAnselField__Input--Title');
+            var $modalCaption = self.$fieldsModal.find('.JSAnselField__FieldsModalCaption');
+            var $imageCaption = self.$image.find('.JSAnselField__Input--Caption');
+            var $modalCoverSwitch = self.$fieldsModal.find('.JSAnselField__FieldsModalCover').find('.lightswitch');
+            var $modalCover = $modalCoverSwitch.find(':input');
+            var $imageCover = self.$image.find('.JSAnselField__Input--Cover');
 
-            $img.attr('src', self.$imageTag.attr('src'));
+            function saveValues() {
+                // Set them to empty first in case they return falsy values and confuse jquery
+                $imageTitle.val('');
+                $imageCaption.val('');
+                $imageCover.val('');
 
-            $heading.text(self.fileName);
-
-            self.$fieldsModal.find('.lightswitch').lightswitch();
-
-            // TODO: hide prev/next image buttons as required
+                $imageTitle.val($modalTitle.val());
+                $imageCaption.val($modalCaption.val());
+                $imageCover.val($modalCover.val());
+            }
 
             function closeEditor() {
                 if (! modal) {
@@ -78,22 +88,37 @@ function runImage(F) {
                 modal = null;
             }
 
+            // TODO: hide prev/next image buttons as required
+
+            $img.attr('src', self.$imageTag.attr('src'));
+
+            $heading.text(self.fileName);
+
+            self.$fieldsModal.find('.lightswitch').lightswitch();
+
+            $modalTitle.val($imageTitle.val());
+            $modalCaption.val($imageCaption.val());
+
+            if ($imageCover.val()) {
+                $modalCoverSwitch.trigger('mousedown').trigger('mouseup');
+            }
+
             $cancel.on('click', function() {
                 closeEditor();
             });
 
             $save.on('click', function() {
-                // TODO: Do actual saving functionality
+                saveValues();
                 closeEditor();
             });
 
             $prev.on('click', function() {
-                // TODO: Do saving and then show the modal for the previous image
+                saveValues();
                 closeEditor();
             });
 
             $next.on('click', function() {
-                // TODO: Do saving and then show the modal for the next image
+                saveValues();
                 closeEditor();
             });
         }

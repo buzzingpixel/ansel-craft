@@ -1,3 +1,8 @@
+{# @var string uploadKey #}
+{# @var string uploadActionUrl #}
+{# @var string csrfToken #}
+{# @var \buzzingpixel\ansel\models\AnselFieldSettingsModel settings #}
+
 {% import "_includes/forms" as forms %}
 
 <div class="modal AnselField__FieldsModal JSAnselField__FieldsModal">
@@ -22,6 +27,7 @@
                 {{ forms.textField({
                     label: 'Title',
                     id: uniqueId,
+                    class: 'JSAnselField__FieldsModalTitle',
                     name: uniqueId,
                     value: '',
                     first: true,
@@ -33,6 +39,7 @@
                 {{ forms.textField({
                     label: 'Caption',
                     id: uniqueId,
+                    class: 'JSAnselField__FieldsModalCaption',
                     name: uniqueId,
                     value: '',
                     first: true,
@@ -41,12 +48,14 @@
                 }) }}
 
                 {% set uniqueId = anselUniqueId() %}
-                {{ forms.lightswitchField({
-                    label: 'Cover',
-                    id: uniqueId,
-                    name: uniqueId,
-                    on: false
-                }) }}
+                <div class="JSAnselField__FieldsModalCover">
+                    {{ forms.lightswitchField({
+                        label: 'Cover',
+                        id: uniqueId,
+                        name: uniqueId,
+                        on: false
+                    }) }}
+                </div>
             </div>
         </div>
     </div>
