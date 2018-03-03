@@ -18,6 +18,7 @@ function runFieldDropUploader(F) {
         init: function() {
             var self = this;
             var $el = self.commonStorage.$el;
+            var maxQty = self.commonStorage.sharedModel.get('maxQty');
 
             $el.on(
                 'drag dragstart dragend dragover dragenter dragleave drop',
@@ -56,6 +57,8 @@ function runFieldDropUploader(F) {
 
         processUploadFilesWatcher: function() {
             var self = this;
+            var maxQty = self.commonStorage.sharedModel.get('maxQty');
+            var pluralized = maxQty > 1 ? 'images' : 'image';
 
             if (self.commonStorage.$el.hasClass('AnselField--IsUploading') &&
                 ! Object.keys(self.uploadFiles).length
@@ -65,6 +68,19 @@ function runFieldDropUploader(F) {
                     'uploadComplete',
                     self.commonStorage.eventTriggers.get('uploadComplete') + 1
                 );
+            }
+
+            if (Object.keys(self.uploadFiles).length &&
+                self.commonStorage.sharedModel.get('preventUploadOverMax') &&
+                self.commonStorage.eventTriggers.get('imageCount') >= maxQty
+            ) {
+                F.controller.construct('Notification', {
+                    commonStorage: self.commonStorage,
+                    message: 'This field is limited to ' + maxQty + ' ' + pluralized + ' and does not allow image uploads beyond that quantity',
+                    destroyEvents: ['dragStart']
+                });
+
+                self.uploadFiles = {};
             }
 
             if (self.uploadInProgress ||

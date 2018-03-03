@@ -22,7 +22,8 @@ function runField(F) {
         notificationChange: 'int',
         activeCover: 'string',
         openFieldEditor: 'string',
-        orderChange: 'int'
+        orderChange: 'int',
+        imageCount: 'int'
     });
 
     SharedModelConstructor = F.model.make({
@@ -84,7 +85,7 @@ function runField(F) {
 
             F.controller.construct('Notifications', sendObj);
             F.controller.construct('FieldDropUploader', sendObj);
-            F.controller.construct('OverMaxNotify', sendObj);
+            F.controller.construct('MaxTracker', sendObj);
         },
 
         setUp: function() {
