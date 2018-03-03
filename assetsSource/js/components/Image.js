@@ -142,6 +142,7 @@ function runImage(F) {
                 $prev.on('click', function() {
                     saveValues();
                     modal.hide();
+                    self.commonStorage.eventTriggers.set('openFieldEditor', '');
                     setTimeout(function() {
                         closeEditor();
                         self.commonStorage.eventTriggers.set(
@@ -158,6 +159,7 @@ function runImage(F) {
                 $next.on('click', function() {
                     saveValues();
                     modal.hide();
+                    self.commonStorage.eventTriggers.set('openFieldEditor', '');
                     setTimeout(function() {
                         closeEditor();
                         self.commonStorage.eventTriggers.set(
@@ -183,7 +185,9 @@ function runImage(F) {
                     return;
                 }
 
-                self.openFieldEditor();
+                setTimeout(function() {
+                    self.openFieldEditor();
+                }, 50);
             });
         },
 
