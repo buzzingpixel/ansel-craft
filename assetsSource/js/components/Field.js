@@ -84,6 +84,7 @@ function runField(F) {
 
             F.controller.construct('Notifications', sendObj);
             F.controller.construct('FieldDropUploader', sendObj);
+            F.controller.construct('OverMaxNotify', sendObj);
         },
 
         setUp: function() {
