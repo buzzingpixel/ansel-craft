@@ -84,6 +84,7 @@ function runImage(F) {
             var $imageCover = self.$image.find('.JSAnselField__Input--Cover');
             var $previousImage = self.$image.prev('.JSAnselField__Image');
             var $nextImage = self.$image.next('.JSAnselField__Image');
+            var $prevNextContainer = self.$fieldsModal.find('.AnselField__FieldsModalFooterSecondaryButtons');
 
             function saveValues() {
                 // Set them to empty first in case they return falsy values and confuse jquery
@@ -167,6 +168,10 @@ function runImage(F) {
                 });
             } else {
                 $next.addClass('disabled');
+            }
+
+            if (! $previousImage.length && ! $nextImage.length) {
+                $prevNextContainer.hide();
             }
         },
 
