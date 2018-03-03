@@ -463,4 +463,13 @@ class AnselFieldSettingsModel extends Model
 
         $this->isRetinized = false;
     }
+
+    /**
+     * Checks if we need to show modal fileds
+     * @return bool
+     */
+    public function hasModalFields() : bool
+    {
+        return $this->showTitle || $this->showCaption || $this->showCover;
+    }
 }

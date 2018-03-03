@@ -23,39 +23,45 @@
                 </div>
             </div>
             <div class="AnselField__FieldsModalBodyContentRight">
-                {% set uniqueId = anselUniqueId() %}
-                {{ forms.textField({
-                    label: 'Title',
-                    id: uniqueId,
-                    class: 'JSAnselField__FieldsModalTitle',
-                    name: uniqueId,
-                    value: '',
-                    first: true,
-                    autofocus: true,
-                    maxlength: 255
-                }) }}
-
-                {% set uniqueId = anselUniqueId() %}
-                {{ forms.textField({
-                    label: 'Caption',
-                    id: uniqueId,
-                    class: 'JSAnselField__FieldsModalCaption',
-                    name: uniqueId,
-                    value: '',
-                    first: true,
-                    autofocus: true,
-                    maxlength: 255
-                }) }}
-
-                {% set uniqueId = anselUniqueId() %}
-                <div class="JSAnselField__FieldsModalCover">
-                    {{ forms.lightswitchField({
-                        label: 'Cover',
+                {% if settings.showTitle %}
+                    {% set uniqueId = anselUniqueId() %}
+                    {{ forms.textField({
+                        label: 'Title',
                         id: uniqueId,
+                        class: 'JSAnselField__FieldsModalTitle',
                         name: uniqueId,
-                        on: false
+                        value: '',
+                        first: true,
+                        autofocus: true,
+                        maxlength: 255
                     }) }}
-                </div>
+                {% endif %}
+
+                {% if settings.showCaption %}
+                    {% set uniqueId = anselUniqueId() %}
+                    {{ forms.textField({
+                        label: 'Caption',
+                        id: uniqueId,
+                        class: 'JSAnselField__FieldsModalCaption',
+                        name: uniqueId,
+                        value: '',
+                        first: true,
+                        autofocus: true,
+                        maxlength: 255
+                    }) }}
+                {% endif %}
+
+                {% if settings.showCover %}
+                {% set uniqueId = anselUniqueId() %}
+                    <div class="JSAnselField__FieldsModalCover">
+                        {{ forms.lightswitchField({
+                            label: 'Cover',
+                            id: uniqueId,
+                            name: uniqueId,
+                            on: false
+                        }) }}
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>
