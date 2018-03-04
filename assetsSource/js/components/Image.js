@@ -29,11 +29,20 @@ function runImage(F) {
 
         init: function() {
             var self = this;
+
+            self.setUp();
+            self.initFieldEditor();
+            self.watchOpenFieldEditor();
+            self.watchForCoverChange();
+            self.watchForOrderChange();
+            self.watchForRemove();
+        },
+
+        setUp: function() {
+            var self = this;
             var imageUuids = self.commonStorage.eventTriggers.get(
                 'imageControllerUuids'
-            ).slice(0);
-
-            self.uuid = F.uuid.make();
+            ).slice(0);self.uuid = F.uuid.make();
 
             imageUuids.push(self.uuid);
 
@@ -57,20 +66,14 @@ function runImage(F) {
 
             self.commonStorage.sorter.addItems(self.$image);
 
-            self.initFieldEditor();
-
-            self.watchOpenFieldEditor();
-
-            self.watchForCoverChange();
-
-            self.watchForOrderChange();
+            self.base64Image = null;
         },
 
         initFieldEditor: function() {
             var self = this;
             var $editIcon = self.$image.find('.JSAnselField__ImageIconEdit');
 
-            $editIcon.on('click', function() {
+            $editIcon.on('click.' + self.uuid, function() {
                 self.$fieldsModal = $(self.commonStorage.fieldsModalHtml);
                 self.openFieldEditor();
             });
@@ -196,27 +199,33 @@ function runImage(F) {
         watchOpenFieldEditor: function() {
             var self = this;
 
-            self.commonStorage.eventTriggers.onChange('openFieldEditor', function(val) {
-                if (val !== self.uuid) {
-                    return;
-                }
+            self.commonStorage.eventTriggers.onChange(
+                'openFieldEditor.' + self.uuid,
+                function(val) {
+                    if (val !== self.uuid) {
+                        return;
+                    }
 
-                setTimeout(function() {
-                    self.openFieldEditor();
-                }, 50);
-            });
+                    setTimeout(function() {
+                        self.openFieldEditor();
+                    }, 50);
+                }
+            );
         },
 
         watchForCoverChange: function() {
             var self = this;
 
-            self.commonStorage.eventTriggers.onChange('activeCover', function(val) {
-                if (val === self.uuid) {
-                    return;
-                }
+            self.commonStorage.eventTriggers.onChange(
+                'activeCover.' + self.uuid,
+                function(val) {
+                    if (val === self.uuid) {
+                        return;
+                    }
 
-                self.$image.find('.JSAnselField__Input--Cover').val('');
-            });
+                    self.$image.find('.JSAnselField__Input--Cover').val('');
+                }
+            );
         },
 
         watchForOrderChange: function() {
@@ -231,16 +240,80 @@ function runImage(F) {
                     self.model.set('isOverAllowed', true);
             }
 
-            self.model.onChange('isOverAllowed', function(val) {
+            self.model.onChange('isOverAllowed.' + self.uuid, function(val) {
                 val ? self.$image.addClass('AnselField__Image--IsOverMax') :
                     self.$image.removeClass('AnselField__Image--IsOverMax');
             });
 
-            self.commonStorage.eventTriggers.onChange('orderChange', function() {
-                orderChange();
-            });
+            self.commonStorage.eventTriggers.onChange(
+                'orderChange.' + self.uuid,
+                function() {
+                    orderChange();
+                }
+            );
 
             orderChange();
+        },
+
+        watchForRemove: function() {
+            var self = this;
+
+            self.$image.find('.JSAnselField__ImageIconRemove')
+                .on('click.' + self.uuid, function() {
+                    self.remove();
+                }
+            );
+        },
+
+        remove: function() {
+            var self = this;
+            var imageUuids = self.commonStorage.eventTriggers.get(
+                'imageControllerUuids'
+            ).slice(0);
+
+            // TODO: check if we need to set delete inputs
+
+            self.$image.find('.JSAnselField__ImageIconRemove').off(
+                'click.' + self.uuid
+            );
+
+            self.commonStorage.eventTriggers.offChange(
+                'orderChange.' + self.uuid
+            );
+
+            self.model.offChange('isOverAllowed.' + self.uuid);
+
+            self.commonStorage.eventTriggers.offChange(
+                'activeCover.' + self.uuid
+            );
+
+            self.commonStorage.eventTriggers.offChange(
+                'openFieldEditor.' + self.uuid
+            );
+
+            self.$image.find('.JSAnselField__ImageIconEdit').off(
+                'click.' + self.uuid
+            );
+
+            self.commonStorage.sorter.removeItems(self.$image);
+
+            self.$image.remove();
+
+            self.$imageTag = null;
+            self.$image = null;
+            self.$fieldsModal = null;
+            self.base64Image = null;
+            self.cacheFile = null;
+            self.fileName = null;
+            self.uuid = null;
+            self.model = null;
+
+            imageUuids.splice(imageUuids.indexOf(self.uuid), 1);
+
+            self.commonStorage.eventTriggers.set(
+                'imageControllerUuids',
+                imageUuids
+            );
         }
     });
 }

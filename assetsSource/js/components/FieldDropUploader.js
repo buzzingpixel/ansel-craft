@@ -77,7 +77,7 @@ function runFieldDropUploader(F) {
                 F.controller.construct('Notification', {
                     commonStorage: self.commonStorage,
                     message: 'This field is limited to ' + maxQty + ' ' + pluralized + ' and does not allow image uploads beyond that quantity',
-                    destroyEvents: ['dragStart']
+                    destroyEvents: ['dragStart', 'imageControllerUuids']
                 });
 
                 self.uploadFiles = {};
