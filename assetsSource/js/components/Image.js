@@ -24,7 +24,9 @@ function runImage(F) {
         uuid: null,
 
         model: {
-            isOverAllowed: 'bool'
+            isOverAllowed: 'bool',
+            'runCrop': 'int',
+            coords: 'object'
         },
 
         init: function() {
@@ -36,6 +38,7 @@ function runImage(F) {
             self.watchForCoverChange();
             self.watchForOrderChange();
             self.watchForRemove();
+            self.setUpCrop();
         },
 
         setUp: function() {
@@ -314,6 +317,20 @@ function runImage(F) {
                 'imageControllerUuids',
                 imageUuids
             );
+        },
+
+        setUpCrop: function() {
+            var self = this;
+
+            self.anselCropController = F.controller.construct('ImageCrop', {
+                model: self.model,
+                commonStorage: self.commonStorage,
+                $imageTag: self.$imageTag
+            });
+
+            self.$image.find('.JSAnselField__ImageIconCrop').on('click', function() {
+                self.model.set('runCrop', self.model.get('runCrop') + 1);
+            });
         }
     });
 }
