@@ -1,0 +1,74 @@
+.AnselToolBar {
+    text-align: center;
+    user-select: none;
+    width: 100%;
+}
+
+.AnselToolBar__List {
+    background-color: #ebedef;
+    border-radius: 3px;
+    display: inline-block;
+    list-style-type: none;
+    margin-top: 10px !important;
+    overflow: hidden;
+    padding: 0;
+    position: relative;
+    z-index: 600;
+}
+
+.AnselToolBar__List a {
+    cursor: pointer;
+}
+
+.AnselToolBar__Button {
+    display: inline;
+    float: left;
+}
+
+.AnselToolBar__Button:last-child {
+    border-right: 0;
+}
+
+.AnselToolBar__Button:hover {
+    background-color: #f7f7f7;
+}
+
+.AnselToolBar__Icon,
+.AnselToolBar__Icon:hover {
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    display: block;
+    font-weight: 600;
+    padding: 5px 10px;
+    text-align: center;
+    text-decoration: none;
+}
+
+.AnselToolBar__Icon--Cancel {
+    background-image: linear-gradient(#da5a47, #cc5643);
+    color: #fff;
+}
+
+.AnselToolBar__Icon--Cancel:hover {
+    color: #fff;
+}
+
+.AnselToolBar__Icon--Cancel:active {
+    background-image: linear-gradient(#8c3b2e, #994032);
+}
+
+.AnselToolBar__Icon--Approve {
+    background-image: linear-gradient(#fff, #fafafa);
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 20, 0.1);
+    color: #29323d;
+}
+
+.AnselToolBar__Icon--Approve:hover {
+    color: #29323d;
+}
+
+.AnselToolBar__Icon--Approve:active {
+    background-image: linear-gradient(#e4e5e7, #eaebec);
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+    color: #29323d;
+}
