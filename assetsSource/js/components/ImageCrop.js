@@ -30,6 +30,11 @@ function runImageCrop(F) {
 
         imgWidth: null,
         imgHeight: null,
+        scale: null,
+        prevCropValues: null,
+
+        limitedWidth: 0,
+        limitedHeight: 0,
 
         resizingInProgress: false,
         setupInProgress: false,
@@ -116,6 +121,17 @@ function runImageCrop(F) {
             $('body').append(self.$el);
 
             self.setUpCrop();
+
+            self.$approveCropBtn.on('click.approve', function() {
+                self.closeCrop();
+            });
+
+            self.$cancelCropBtn.on('click.cancel', function() {
+                self.closeCrop();
+                self.resetCropValues();
+            });
+
+            self.setUpKeyBindings();
         },
 
         setUpCrop: function() {
@@ -376,6 +392,69 @@ function runImageCrop(F) {
                     });
                 }
             }
+        },
+
+        setUpKeyBindings: function() {
+            var self = this;
+            var $window = $(window);
+            var lastKey = null;
+
+            // Save crop values on "enter" or "ctrl/cmd + s"
+            $window.on('keydown.ansel', function(e) {
+                // Save crop values if the keycode is enter key
+                if (e.keyCode === 13) {
+                    self.closeCrop();
+
+                // If key code is escape key
+                } else if (e.keyCode === 27) {
+                    self.closeCrop();
+                    self.resetCropValues();
+
+                // Otherwise if last key was ctrl/cmd and this key is s
+                } else if (lastKey && (lastKey === 91 && e.keyCode === 83)) {
+                    e.preventDefault();
+
+                    self.closeCrop();
+                }
+
+                // Check if the key is ctrl/cmd, otherwise we don't care about
+                // last key
+                lastKey = e.keyCode === 91 ? 91 : null;
+            });
+
+            // If ctrl/cmd is release, reset last key to null
+            $window.on('keyup.ansel', function(e) {
+                if (e.keyCode !== 91) {
+                    return;
+                }
+
+                lastKey = null;
+            });
+        },
+
+        closeCrop: function() {
+            var self = this;
+            var $window = $(window);
+
+            // Lock the values
+            self.locked = true;
+
+            // Detach the crop elements
+            self.$el.detach();
+
+            // Disable click and keyboard bindings
+            self.$approveCropBtn.off('click.approve');
+            self.$cancelCropBtn.off('click.cancel');
+            $window.off('keydown.ansel');
+            $window.off('keyup.ansel');
+        },
+
+        resetCropValues: function() {
+            var self = this;
+
+            setTimeout(function() {
+                self.model.set('coords', self.prevCropValues);
+            }, 200);
         }
     });
 }
