@@ -7,6 +7,7 @@
         "fab-build-next": "^1.0.1",
         "fab.controller": "^1.2.1",
         "fab.model": "^1.2.1",
+        "fab.uuid": "^1.0.0",
         "fabmixins": "^2.3.0",
         "jquery": "^3.3.1"
     }
