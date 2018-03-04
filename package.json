@@ -3,7 +3,7 @@
         "fab": "node fab.js"
     },
     "dependencies": {
-        "buzzingpixel.ansel.jcrop": "^1.0.1",
+        "buzzingpixel.ansel.jcrop": "^1.0.2",
         "fab-build-next": "^1.0.1",
         "fab.controller": "^1.2.1",
         "fab.model": "^1.2.1",
