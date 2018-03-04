@@ -1,0 +1,58 @@
+.AnselField__Image {
+    border-radius: 4px;
+    display: inline-block;
+    margin: 2px;
+    overflow: hidden;
+    padding: 10px 8px 5px 8px;
+    pointer-events: all;
+    width: 168px;
+    vertical-align: top;
+}
+
+.AnselField__ImageIcons {
+    margin-bottom: 6px;
+    text-align: center;
+}
+
+.AnselField__ImageIconsInner {
+    display: inline-block;
+    user-select: none;
+}
+
+.AnselField__ImageIcon {
+    background-image: linear-gradient(#fff, #fafafa);
+    box-shadow: inset 0 0 0 1px transparent, 0 0 0 1px rgba(0, 0, 0, 0.025), 0 1px 1px rgba(0, 0, 0, 0.1);
+    color: #465a69;
+    cursor: pointer;
+    display: inline-block;
+    min-height: 21px;
+    padding: 8px 10px 4px;
+    pointer-events: all;
+    width: 16px;
+    vertical-align: middle;
+}
+
+.AnselField__ImageIcon:first-child {
+    border-radius: 2px 0 0 2px;
+}
+
+.AnselField__ImageIcon:last-child {
+    border-radius: 0 2px 2px 0;
+}
+
+.AnselField__ImageIcon:active {
+    background-image: linear-gradient(#e4e5e7, #eaebec);
+}
+
+.AnselField__Image img {
+    max-width: 100%;
+}
+
+.AnselField__Image--IsOverMax {
+    background-color: rgba(0, 0, 0, 0.35);
+}
+
+.AnselField__Image--IsOverMax .AnselField__ImageIcons,
+.AnselField__Image--IsOverMax .AnselField__ImageTag {
+    opacity: 0.4;
+}
