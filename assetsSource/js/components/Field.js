@@ -23,7 +23,6 @@ function runField(F) {
         activeCover: 'string',
         openFieldEditor: 'string',
         orderChange: 'int',
-        imageCount: 'int',
         imageControllerUuids: 'array'
     });
 

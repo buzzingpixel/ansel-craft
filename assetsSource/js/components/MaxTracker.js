@@ -16,55 +16,37 @@ function runMaxTracker(F) {
         notification: null,
 
         model: {
-            isOverMax: 'bool'
+            isOverMax: 'bool',
+            isAtMax: 'bool'
         },
 
         init: function() {
             var self = this;
 
-            self.model.set('isOverMax', false);
-
-            self.checkImageCount();
-
-            self.commonStorage.eventTriggers.onChange('orderChange', function() {
-                self.checkImageCount();
+            self.model.onChange('isOverMax', function(val) {
+                val ? self.setOver() : self.removeOver();
             });
 
             if (self.commonStorage.sharedModel.get('preventUploadOverMax')) {
-                self.commonStorage.eventTriggers.onChange('imageCount', function(val) {
-                    if (val >= self.commonStorage.sharedModel.get('maxQty')) {
-                        self.preventUploads();
-                        return;
-                    }
-
-                    self.allowUploads();
+                self.model.onChange('isAtMax', function(val) {
+                    val ? self.preventUploads() : self.allowUploads();
                 });
             }
 
-            self.model.onChange('isOverMax', function(val) {
-                if (val) {
-                    self.setOver();
-                    return;
-                }
+            self.checkImageCount();
 
-                self.removeOver();
+            self.commonStorage.eventTriggers.onChange('imageControllerUuids', function() {
+                self.checkImageCount();
             });
         },
 
         checkImageCount: function() {
             var self = this;
-            var $images = self.commonStorage.$el.find('.JSAnselField__Image');
-            var imageCount = $images.length;
+            var imageCount = self.commonStorage.eventTriggers.get('imageControllerUuids').length;
             var maxQty = self.commonStorage.sharedModel.get('maxQty');
 
-            self.commonStorage.eventTriggers.set('imageCount', imageCount);
-
-            if (! maxQty || imageCount <= maxQty) {
-                self.model.set('isOverMax', false);
-                return;
-            }
-
-            self.model.set('isOverMax', true);
+            self.model.set('isAtMax', maxQty && imageCount >= maxQty);
+            self.model.set('isOverMax', maxQty && imageCount > maxQty);
         },
 
         setOver: function() {
@@ -90,7 +72,6 @@ function runMaxTracker(F) {
             }
 
             self.notification.destroy();
-
             self.notification = null;
         },
 

@@ -10,7 +10,7 @@ function runMinTracker(F) {
         return;
     }
 
-    F.controller.make('MaxTracker', {
+    F.controller.make('MinTracker', {
         commonStorage: {},
 
         notification: null,
@@ -23,12 +23,7 @@ function runMinTracker(F) {
             var self = this;
 
             self.model.onChange('isUnderMin', function(val) {
-                if (val) {
-                    self.setUnder();
-                    return;
-                }
-
-                self.removeUnder();
+                val ? self.setUnder() : self.removeUnder();
             });
 
             self.checkImageCount();
@@ -74,7 +69,6 @@ function runMinTracker(F) {
             }
 
             self.notification.destroy();
-
             self.notification = null;
         }
     });

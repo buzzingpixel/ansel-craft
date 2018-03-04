@@ -58,6 +58,7 @@ function runFieldDropUploader(F) {
             var self = this;
             var maxQty = self.commonStorage.sharedModel.get('maxQty');
             var pluralized = maxQty > 1 ? 'images' : 'image';
+            var imageCount = self.commonStorage.eventTriggers.get('imageControllerUuids').length;
 
             if (self.commonStorage.$el.hasClass('AnselField--IsUploading') &&
                 ! Object.keys(self.uploadFiles).length
@@ -71,7 +72,7 @@ function runFieldDropUploader(F) {
 
             if (Object.keys(self.uploadFiles).length &&
                 self.commonStorage.sharedModel.get('preventUploadOverMax') &&
-                self.commonStorage.eventTriggers.get('imageCount') >= maxQty
+                imageCount >= maxQty
             ) {
                 F.controller.construct('Notification', {
                     commonStorage: self.commonStorage,

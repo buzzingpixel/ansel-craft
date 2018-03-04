@@ -222,30 +222,25 @@ function runImage(F) {
         watchForOrderChange: function() {
             var self = this;
 
-            self.model.onChange('isOverAllowed', function(val) {
-                if (val) {
-                    self.$image.addClass('AnselField__Image--IsOverMax');
-                    return;
-                }
-                self.$image.removeClass('AnselField__Image--IsOverMax');
-            });
-
-            self.commonStorage.eventTriggers.onChange('orderChange', function() {
+            function orderChange() {
                 var pos = self.$image.prevAll('.JSAnselField__Image').length + 1;
                 var maxQty = self.commonStorage.sharedModel.get('maxQty');
 
-                if (! maxQty || pos <= maxQty) {
-                    self.model.set('isOverAllowed', false);
-                    return;
-                }
+                ! maxQty || pos <= maxQty ?
+                    self.model.set('isOverAllowed', false) :
+                    self.model.set('isOverAllowed', true);
+            }
 
-                self.model.set('isOverAllowed', true);
+            self.model.onChange('isOverAllowed', function(val) {
+                val ? self.$image.addClass('AnselField__Image--IsOverMax') :
+                    self.$image.removeClass('AnselField__Image--IsOverMax');
             });
 
-            self.commonStorage.eventTriggers.set(
-                'orderChange',
-                self.commonStorage.eventTriggers.set('orderChange') + 1
-            );
+            self.commonStorage.eventTriggers.onChange('orderChange', function() {
+                orderChange();
+            });
+
+            orderChange();
         }
     });
 }
