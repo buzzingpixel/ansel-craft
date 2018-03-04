@@ -23,7 +23,8 @@ function runField(F) {
         activeCover: 'string',
         openFieldEditor: 'string',
         orderChange: 'int',
-        imageCount: 'int'
+        imageCount: 'int',
+        imageControllerUuids: 'array'
     });
 
     SharedModelConstructor = F.model.make({
@@ -86,6 +87,7 @@ function runField(F) {
             F.controller.construct('Notifications', sendObj);
             F.controller.construct('FieldDropUploader', sendObj);
             F.controller.construct('MaxTracker', sendObj);
+            F.controller.construct('MinTracker', sendObj);
         },
 
         setUp: function() {

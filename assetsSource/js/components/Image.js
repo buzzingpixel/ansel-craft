@@ -29,8 +29,18 @@ function runImage(F) {
 
         init: function() {
             var self = this;
+            var imageUuids = self.commonStorage.eventTriggers.get(
+                'imageControllerUuids'
+            ).slice(0);
 
             self.uuid = F.uuid.make();
+
+            imageUuids.push(self.uuid);
+
+            self.commonStorage.eventTriggers.set(
+                'imageControllerUuids',
+                imageUuids
+            );
 
             // TODO: detect what methods should be used to set up this image
             // TODO: base64? Existing src etc.

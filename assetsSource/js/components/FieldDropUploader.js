@@ -18,7 +18,6 @@ function runFieldDropUploader(F) {
         init: function() {
             var self = this;
             var $el = self.commonStorage.$el;
-            var maxQty = self.commonStorage.sharedModel.get('maxQty');
 
             $el.on(
                 'drag dragstart dragend dragover dragenter dragleave drop',
