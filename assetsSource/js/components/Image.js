@@ -45,7 +45,9 @@ function runImage(F) {
             var self = this;
             var imageUuids = self.commonStorage.eventTriggers.get(
                 'imageControllerUuids'
-            ).slice(0);self.uuid = F.uuid.make();
+            ).slice(0);
+
+            self.uuid = F.uuid.make();
 
             imageUuids.push(self.uuid);
 
@@ -268,57 +270,6 @@ function runImage(F) {
             );
         },
 
-        remove: function() {
-            var self = this;
-            var imageUuids = self.commonStorage.eventTriggers.get(
-                'imageControllerUuids'
-            ).slice(0);
-
-            // TODO: check if we need to set delete inputs
-
-            self.$image.find('.JSAnselField__ImageIconRemove').off(
-                'click.' + self.uuid
-            );
-
-            self.commonStorage.eventTriggers.offChange(
-                'orderChange.' + self.uuid
-            );
-
-            self.model.offChange('isOverAllowed.' + self.uuid);
-
-            self.commonStorage.eventTriggers.offChange(
-                'activeCover.' + self.uuid
-            );
-
-            self.commonStorage.eventTriggers.offChange(
-                'openFieldEditor.' + self.uuid
-            );
-
-            self.$image.find('.JSAnselField__ImageIconEdit').off(
-                'click.' + self.uuid
-            );
-
-            self.commonStorage.sorter.removeItems(self.$image);
-
-            self.$image.remove();
-
-            self.$imageTag = null;
-            self.$image = null;
-            self.$fieldsModal = null;
-            self.base64Image = null;
-            self.cacheFile = null;
-            self.fileName = null;
-            self.uuid = null;
-            self.model = null;
-
-            imageUuids.splice(imageUuids.indexOf(self.uuid), 1);
-
-            self.commonStorage.eventTriggers.set(
-                'imageControllerUuids',
-                imageUuids
-            );
-        },
-
         setUpCrop: function() {
             var self = this;
 
@@ -389,6 +340,59 @@ function runImage(F) {
                 top: thumbY + 'px',
                 width: thumbWidth + 'px'
             });
+        },
+
+        remove: function() {
+            var self = this;
+            var imageUuids = self.commonStorage.eventTriggers.get(
+                'imageControllerUuids'
+            ).slice(0);
+
+            // TODO: check if we need to set delete inputs
+
+            self.anselCropController.destroy();
+
+            self.$image.find('.JSAnselField__ImageIconRemove').off(
+                'click.' + self.uuid
+            );
+
+            self.commonStorage.eventTriggers.offChange(
+                'orderChange.' + self.uuid
+            );
+
+            self.model.offChange('isOverAllowed.' + self.uuid);
+
+            self.commonStorage.eventTriggers.offChange(
+                'activeCover.' + self.uuid
+            );
+
+            self.commonStorage.eventTriggers.offChange(
+                'openFieldEditor.' + self.uuid
+            );
+
+            self.$image.find('.JSAnselField__ImageIconEdit').off(
+                'click.' + self.uuid
+            );
+
+            self.commonStorage.sorter.removeItems(self.$image);
+
+            self.$image.remove();
+
+            self.$imageTag = null;
+            self.$image = null;
+            self.$fieldsModal = null;
+            self.base64Image = null;
+            self.cacheFile = null;
+            self.fileName = null;
+            self.uuid = null;
+            self.model = null;
+
+            imageUuids.splice(imageUuids.indexOf(self.uuid), 1);
+
+            self.commonStorage.eventTriggers.set(
+                'imageControllerUuids',
+                imageUuids
+            );
         }
     });
 }

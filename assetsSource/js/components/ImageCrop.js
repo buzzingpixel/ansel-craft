@@ -20,6 +20,8 @@ function runImageCrop(F) {
         locked: false,
 
         commonStorage: {},
+
+        uuid: null,
         $imageTag: null,
         setInitialCoords: true,
         model: {},
@@ -44,6 +46,8 @@ function runImageCrop(F) {
 
         init: function() {
             var self = this;
+
+            self.uuid = F.uuid.make();
 
             /*var timer = setTimeout(function() {
                 // TODO: handle image loading fail
@@ -122,11 +126,11 @@ function runImageCrop(F) {
 
             self.setUpCrop();
 
-            self.$approveCropBtn.on('click.approve', function() {
+            self.$approveCropBtn.on('click.approve-' + self.uuid, function() {
                 self.closeCrop();
             });
 
-            self.$cancelCropBtn.on('click.cancel', function() {
+            self.$cancelCropBtn.on('click.cancel-' + self.uuid, function() {
                 self.closeCrop();
                 self.resetCropValues();
             });
@@ -398,7 +402,7 @@ function runImageCrop(F) {
             var lastKey = null;
 
             // Save crop values on "enter" or "ctrl/cmd + s"
-            $window.on('keydown.ansel', function(e) {
+            $window.on('keydown.ansel-' + self.uuid, function(e) {
                 // Save crop values if the keycode is enter key
                 if (e.keyCode === 13) {
                     self.closeCrop();
@@ -421,7 +425,7 @@ function runImageCrop(F) {
             });
 
             // If ctrl/cmd is release, reset last key to null
-            $window.on('keyup.ansel', function(e) {
+            $window.on('keyup.ansel-' + self.uuid, function(e) {
                 if (e.keyCode !== 91) {
                     return;
                 }
@@ -453,6 +457,28 @@ function runImageCrop(F) {
             setTimeout(function() {
                 self.model.set('coords', self.prevCropValues);
             }, 200);
+        },
+
+        destroy: function() {
+            var self = this;
+            var $window = $(window);
+
+            self.$approveCropBtn.off('click.approve-' + self.uuid);
+            self.$cancelCropBtn.off('click.cancel-' + self.uuid);
+
+            $window.off('keydown.ansel-' + self.uuid);
+            $window.off('keyup.ansel-' + self.uuid);
+
+            clearTimeout(self.JcropChangeTimeout);
+
+            self.$imageTag = null;
+            self.$cropImage = null;
+            self.$approveCropBtn = null;
+            self.$cancelCropBtn = null;
+            self.Jcrop = null;
+
+            self.$el = null;
+            self.el = null;
         }
     });
 }
