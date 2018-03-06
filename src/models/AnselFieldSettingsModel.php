@@ -334,6 +334,12 @@ class AnselFieldSettingsModel extends Model
                 'instructions' => 'Optional',
                 'required' => false,
             ],
+            'maxWidth' => [
+                'type' => 'text',
+                'name' => 'Max Width',
+                'instructions' => 'Optional',
+                'required' => false,
+            ],
             'maxHeight' => [
                 'type' => 'text',
                 'name' => 'Max Height',

@@ -147,10 +147,8 @@ function runImageCrop(F) {
                         return;
                     }
 
-                    // Run the callback
                     self.jCropOnChange(coords);
 
-                    // Set the model
                     self.model.set('coords', coords);
                 },
                 bgColor: 'black',
@@ -182,6 +180,8 @@ function runImageCrop(F) {
                     );
                 }
             }
+
+            console.log(minWidth);
 
             // Set min size
             if (minWidth || minHeight) {

@@ -341,8 +341,6 @@ function runImage(F) {
         updateCoordsInputs: function(coords) {
             var self = this;
 
-            console.log(Math.floor(coords.y));
-
             self.$image.find('.JSAnselField__Input--X').val(Math.floor(coords.x));
             self.$image.find('.JSAnselField__Input--Y').val(Math.floor(coords.y));
 
