@@ -72,6 +72,10 @@ function runImage(F) {
             self.commonStorage.sorter.addItems(self.$image);
 
             self.base64Image = null;
+
+            self.$image.find('.JSAnselField__Input--CacheFileLocation').val(
+                self.cacheFile
+            );
         },
 
         initFieldEditor: function() {
