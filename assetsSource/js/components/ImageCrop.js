@@ -181,8 +181,6 @@ function runImageCrop(F) {
                 }
             }
 
-            console.log(minWidth);
-
             // Set min size
             if (minWidth || minHeight) {
                 JcropOptions.minSize = [
