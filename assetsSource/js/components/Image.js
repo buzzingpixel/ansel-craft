@@ -331,6 +331,66 @@ function runImage(F) {
             self.$image.find('.JSAnselField__ImageIconCrop').on('click', function() {
                 self.model.set('runCrop', self.model.get('runCrop') + 1);
             });
+
+            self.model.onChange('coords', function(val) {
+                self.updateCoordsInputs(val);
+                self.updateThumbImgPosition(val);
+            });
+        },
+
+        updateCoordsInputs: function(coords) {
+            var self = this;
+
+            console.log(Math.floor(coords.y));
+
+            self.$image.find('.JSAnselField__Input--X').val(Math.floor(coords.x));
+            self.$image.find('.JSAnselField__Input--Y').val(Math.floor(coords.y));
+
+            self.$image.find('.JSAnselField__Input--Width').val(Math.min(
+                coords.w,
+                self.anselCropController.imgWidth
+            ));
+
+            self.$image.find('.JSAnselField__Input--Height').val(Math.min(
+                coords.h,
+                self.anselCropController.imgHeight
+            ));
+        },
+
+        updateThumbImgPosition: function(coords) {
+            var self = this;
+            var ratio = coords.w / coords.h;
+            var holderWidth = 168;
+            var holderHeight = Math.round(holderWidth / ratio);
+            var rx = holderWidth / coords.w;
+            var ry = holderHeight / coords.h;
+            var thumbWidth = Math.round(rx * self.anselCropController.imgWidth);
+            var thumbHeight = Math.round(ry * self.anselCropController.imgHeight);
+            var thumbX = Math.round(rx * coords.x) * -1;
+            var thumbY = Math.round(ry * coords.y) * -1;
+
+            // Check if the source file is missing
+            // if (self.sourceFileMissing) {
+            //     self.$anselImage.css('position', 'static');
+            //     self.$anselImage.show();
+            //     return;
+            // }
+
+            self.$image.find('.JSAnselField__ImageWrapperInner').css({
+                height: holderHeight + 'px',
+                overflow: 'hidden',
+                position: 'relative',
+                width: holderWidth + 'px'
+            });
+
+            self.$imageTag.css({
+                height: thumbHeight + 'px',
+                left: thumbX + 'px',
+                'max-width': 'none',
+                position: 'absolute',
+                top: thumbY + 'px',
+                width: thumbWidth + 'px'
+            });
         }
     });
 }
