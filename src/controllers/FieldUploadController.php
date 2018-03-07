@@ -29,7 +29,7 @@ class FieldUploadController extends Controller
         $requestService = Craft::$app->getRequest();
 
         $validKey = Ansel::$plugin->getUploadKeysService()->isValidKey(
-            $requestService->post('uploadKey')
+            $requestService->post('uploadKey', '')
         );
 
         if (! $validKey) {

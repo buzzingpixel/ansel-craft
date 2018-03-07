@@ -404,15 +404,21 @@ function runImage(F) {
             );
         },
 
+        processImageTimer: 0,
+
         processImage: function() {
             var self = this;
 
-            F.AnselGlobalImageQueue[F.uuid.make()] = {
-                coords: self.model.get('coords'),
-                fileLocation: self.cacheFile, // TODO: use the appropriate source here
-                fileLocationType: 'cacheFile',
-                controller: self
-            };
+            clearTimeout(self.processImageTimer);
+
+            self.processImageTimer = setTimeout(function() {
+                F.AnselGlobalImageQueue[self.uuid] = {
+                    coords: self.model.get('coords'),
+                    fileLocation: self.cacheFile, // TODO: use the appropriate source here
+                    fileLocationType: 'cacheFile',
+                    controller: self
+                };
+            }, 500);
         },
 
         processImageCallback: function(json) {

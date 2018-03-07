@@ -56,8 +56,30 @@ function runImageProcessor(F) {
             var obj = F.AnselGlobalImageQueue[key];
             var ajaxData = new FormData();
 
+            function fail() {
+                var tries = self.tries[key] || 0;
+
+                delete F.AnselGlobalImageQueue[key];
+
+                if (tries > 3) {
+                    return;
+                }
+
+                tries++;
+
+                self.tries[key] = tries;
+
+                F.AnselGlobalImageQueue[key] = obj;
+            }
+
             ajaxData.append('CRAFT_CSRF_TOKEN', self.csrfToken);
-            ajaxData.append('anselData', obj);
+            ajaxData.append('uploadKey', self.uploadKey);
+            ajaxData.append('h', obj.coords.h);
+            ajaxData.append('w', obj.coords.w);
+            ajaxData.append('x', obj.coords.x);
+            ajaxData.append('y', obj.coords.y);
+            ajaxData.append('fileLocation', obj.fileLocation);
+            ajaxData.append('fileLocationType', obj.fileLocationType);
 
             $.ajax({
                 url: self.processActionUrl,
@@ -71,23 +93,16 @@ function runImageProcessor(F) {
                     self.inProgress = false;
                 },
                 success: function(data) {
+                    if (! data.success) {
+                        fail();
+                        return;
+                    }
+
                     delete F.AnselGlobalImageQueue[key];
                     obj.controller.processImageCallback(data);
                 },
                 error: function() {
-                    var tries = self.tries[key] || 0;
-
-                    delete F.AnselGlobalImageQueue[key];
-
-                    if (tries > 3) {
-                        return;
-                    }
-
-                    tries++;
-
-                    self.tries[key] = tries;
-
-                    F.AnselGlobalImageQueue[key] = obj;
+                    fail();
                 }
             });
         }
