@@ -115,6 +115,10 @@ function runImageCrop(F) {
             }
 
             self.model.set('coords', coords);
+
+            setTimeout(function() {
+                self.triggerSave();
+            }, 200);
         },
 
         render: function() {
@@ -128,6 +132,7 @@ function runImageCrop(F) {
 
             self.$approveCropBtn.on('click.approve-' + self.uuid, function() {
                 self.closeCrop();
+                self.triggerSave();
             });
 
             self.$cancelCropBtn.on('click.cancel-' + self.uuid, function() {
@@ -406,6 +411,7 @@ function runImageCrop(F) {
                 // Save crop values if the keycode is enter key
                 if (e.keyCode === 13) {
                     self.closeCrop();
+                    self.triggerSave();
 
                 // If key code is escape key
                 } else if (e.keyCode === 27) {
@@ -415,8 +421,8 @@ function runImageCrop(F) {
                 // Otherwise if last key was ctrl/cmd and this key is s
                 } else if (lastKey && (lastKey === 91 && e.keyCode === 83)) {
                     e.preventDefault();
-
                     self.closeCrop();
+                    self.triggerSave();
                 }
 
                 // Check if the key is ctrl/cmd, otherwise we don't care about
@@ -445,10 +451,15 @@ function runImageCrop(F) {
             self.$el.detach();
 
             // Disable click and keyboard bindings
-            self.$approveCropBtn.off('click.approve');
-            self.$cancelCropBtn.off('click.cancel');
-            $window.off('keydown.ansel');
-            $window.off('keyup.ansel');
+            self.$approveCropBtn.off('click.approve-' + self.uuid);
+            self.$cancelCropBtn.off('click.cancel-' + self.uuid);
+            $window.off('keydown.ansel-' + self.uuid);
+            $window.off('keyup.ansel-' + self.uuid);
+        },
+
+        triggerSave: function() {
+            var self = this;
+            self.model.set('imageSave', self.model.get('imageSave') + 1);
         },
 
         resetCropValues: function() {

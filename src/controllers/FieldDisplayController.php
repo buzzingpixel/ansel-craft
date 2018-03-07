@@ -27,6 +27,7 @@ class FieldDisplayController extends Controller
             $this->getView()->renderTemplate('ansel/_field/Index.twig', [
                 'uploadKey' => Ansel::$plugin->getUploadKeysService()->createNew(),
                 'uploadActionUrl' => UrlHelper::actionUrl('ansel/field-upload/upload'),
+                'processActionUrl' => UrlHelper::actionUrl('ansel/image-process/process'),
                 'csrfToken' => Craft::$app->getRequest()->getCsrfToken(),
                 'settings' => $settings,
             ])

@@ -26,7 +26,8 @@ function runImage(F) {
         model: {
             isOverAllowed: 'bool',
             'runCrop': 'int',
-            coords: 'object'
+            coords: 'object',
+            imageSave: 'int'
         },
 
         init: function() {
@@ -76,6 +77,10 @@ function runImage(F) {
             self.$image.find('.JSAnselField__Input--CacheFileLocation').val(
                 self.cacheFile
             );
+
+            self.model.onChange('imageSave', function() {
+                self.processImage();
+            });
         },
 
         initFieldEditor: function() {
@@ -397,6 +402,22 @@ function runImage(F) {
                 'imageControllerUuids',
                 imageUuids
             );
+        },
+
+        processImage: function() {
+            var self = this;
+
+            F.AnselGlobalImageQueue[F.uuid.make()] = {
+                coords: self.model.get('coords'),
+                fileLocation: self.cacheFile, // TODO: use the appropriate source here
+                fileLocationType: 'cacheFile',
+                controller: self
+            };
+        },
+
+        processImageCallback: function(json) {
+            console.log(this);
+            console.log(json);
         }
     });
 }

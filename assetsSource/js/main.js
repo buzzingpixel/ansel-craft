@@ -11,6 +11,10 @@ function runMain(F) {
         return;
     }
 
+    F.AnselGlobalImageQueue = {};
+
+    F.controller.construct('ImageProcessor');
+
     $('.JSAnselField').each(function() {
         F.controller.construct('Field', {
             el: this
