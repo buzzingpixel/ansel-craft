@@ -69,7 +69,7 @@ function runImageProcessor(F) {
 
                 self.tries[key] = tries;
 
-                F.AnselGlobalImageQueue[key] = obj;
+                // F.AnselGlobalImageQueue[key] = obj;
             }
 
             ajaxData.append('CRAFT_CSRF_TOKEN', self.csrfToken);
@@ -80,6 +80,10 @@ function runImageProcessor(F) {
             ajaxData.append('y', obj.coords.y);
             ajaxData.append('fileLocation', obj.fileLocation);
             ajaxData.append('fileLocationType', obj.fileLocationType);
+            ajaxData.append('quality', obj.quality);
+            ajaxData.append('maxWidth', obj.maxWidth);
+            ajaxData.append('maxHeight', obj.maxHeight);
+            ajaxData.append('forceJpg', obj.forceJpg);
 
             $.ajax({
                 url: self.processActionUrl,

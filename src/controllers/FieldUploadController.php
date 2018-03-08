@@ -43,8 +43,7 @@ class FieldUploadController extends Controller
         $cacheService = Ansel::$plugin->getFileCacheService();
 
         $uuid = Uuid::uuid4()->toString();
-        $cachePath = $cacheService->getCachePath() .
-            "/{$uuid}";
+        $cachePath = $cacheService->getCachePath() . "/{$uuid}";
 
         $file = $_FILES['file'] ?? [];
         $file = \is_array($file) ? $file : [];

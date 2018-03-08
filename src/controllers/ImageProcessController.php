@@ -1,7 +1,15 @@
 <?php
 
+/**
+ * @author TJ Draper <tj@buzzingpixel.com>
+ * @copyright 2018 BuzzingPixel, LLC
+ * @license proprietary
+ * @link https://buzzingpixel.com/software/ansel-craft
+ */
+
 namespace buzzingpixel\ansel\controllers;
 
+use buzzingpixel\ansel\models\ProcessedFieldImageModel;
 use Craft;
 use yii\web\Response;
 use craft\web\Controller;
@@ -37,12 +45,26 @@ class ImageProcessController extends Controller
             ]);
         }
 
-        var_dump($requestService->post('h'));
-        var_dump($requestService->post('w'));
-        var_dump($requestService->post('x'));
-        var_dump($requestService->post('y'));
-        var_dump($requestService->post('fileLocation'));
-        var_dump($requestService->post('fileLocationType'));
-        die;
+        $processedFieldImageModel = new ProcessedFieldImageModel([
+            'h' => $requestService->post('h'),
+            'w' => $requestService->post('w'),
+            'x' => $requestService->post('x'),
+            'y' => $requestService->post('y'),
+            'fileLocation' => $requestService->post('fileLocation'),
+            'fileLocationType' => $requestService->post('fileLocationType'),
+            'quality' => $requestService->post('quality'),
+            'maxWidth' => $requestService->post('maxWidth'),
+            'maxHeight' => $requestService->post('maxHeight'),
+            'forceJpg' => $requestService->post('forceJpg'),
+        ]);
+
+        Ansel::$plugin->getFieldImageProcessService()->processImage(
+            $processedFieldImageModel
+        );
+
+        return $this->asJson([
+            'success' => true,
+            'model' => $processedFieldImageModel->asArray(true)
+        ]);
     }
 }

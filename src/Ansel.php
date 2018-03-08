@@ -20,11 +20,13 @@ use \craft\helpers\UrlHelper;
 use League\Flysystem\Filesystem;
 use craft\events\RegisterUrlRulesEvent;
 use buzzingpixel\ansel\fields\AnselField;
+use Gregwar\Image\Image as ImageManipulator;
 use craft\events\RegisterComponentTypesEvent;
 use buzzingpixel\ansel\services\FileCacheService;
 use buzzingpixel\ansel\services\UploadKeysService;
 use buzzingpixel\ansel\services\AnselSettingsService;
 use buzzingpixel\ansel\twigextensions\AnselTwigExtension;
+use buzzingpixel\ansel\services\FieldImageProcessService;
 use buzzingpixel\ansel\controllers\FieldDisplayController;
 use League\Flysystem\Adapter\Local as LocalFilesystemAdapter;
 
@@ -155,5 +157,18 @@ class Ansel extends Plugin
         }
 
         return $this->fileCacheService;
+    }
+
+    /**
+     * Gets dependency injected FieldImageProcessService
+     * @return FieldImageProcessService
+     * @throws \Exception
+     */
+    public function getFieldImageProcessService() : FieldImageProcessService
+    {
+        return new FieldImageProcessService(
+            $this->getFileCacheService(),
+            new ImageManipulator()
+        );
     }
 }

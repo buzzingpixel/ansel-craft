@@ -413,10 +413,14 @@ function runImage(F) {
 
             self.processImageTimer = setTimeout(function() {
                 F.AnselGlobalImageQueue[self.uuid] = {
+                    controller: self,
                     coords: self.model.get('coords'),
                     fileLocation: self.cacheFile, // TODO: use the appropriate source here
                     fileLocationType: 'cacheFile',
-                    controller: self
+                    quality: self.commonStorage.sharedModel.get('quality'),
+                    maxWidth: self.commonStorage.sharedModel.get('maxWidth'),
+                    maxHeight: self.commonStorage.sharedModel.get('maxHeight'),
+                    forceJpg: self.commonStorage.sharedModel.get('forceJpg')
                 };
             }, 500);
         },
