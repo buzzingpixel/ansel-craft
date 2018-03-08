@@ -57,10 +57,18 @@ function runImage(F) {
                 imageUuids
             );
 
+            self.$image = $(self.commonStorage.imageTemplate);
+
             // TODO: detect what methods should be used to set up this image
             // TODO: base64? Existing src etc.
 
-            self.$image = $(self.commonStorage.imageTemplate);
+            self.$image.find('.JSAnselField__Input--CacheFile').val(
+                self.cacheFile
+            );
+
+            self.$image.find('.JSAnselField__Input--FileName').val(
+                self.fileName
+            );
 
             self.$image.data('jsUuid', self.uuid);
 
@@ -426,8 +434,51 @@ function runImage(F) {
         },
 
         processImageCallback: function(json) {
-            console.log(this);
-            console.log(json);
+            var self = this;
+
+            self.$image.find('.JSAnselField__Input--PreFileLocation').val(
+                json.model.fileLocation
+            );
+
+            self.$image.find('.JSAnselField__Input--PreFileLocationType').val(
+                json.model.fileLocationType
+            );
+
+            self.$image.find('.JSAnselField__Input--PreH').val(
+                json.model.h
+            );
+
+            self.$image.find('.JSAnselField__Input--PreW').val(
+                json.model.w
+            );
+
+            self.$image.find('.JSAnselField__Input--PreX').val(
+                json.model.x
+            );
+
+            self.$image.find('.JSAnselField__Input--PreY').val(
+                json.model.y
+            );
+
+            self.$image.find('.JSAnselField__Input--PreHighQualityImgCacheLocation').val(
+                json.model.highQualityImgCacheLocation
+            );
+
+            self.$image.find('.JSAnselField__Input--PreStandardImgCacheLocation').val(
+                json.model.standardImgCacheLocation
+            );
+
+            self.$image.find('.JSAnselField__Input--PreThumbImgCacheLocation').val(
+                json.model.thumbImgCacheLocation
+            );
+
+            self.$image.find('.JSAnselField__Input--PreMaxHeight').val(
+                json.model.maxHeight
+            );
+
+            self.$image.find('.JSAnselField__Input--PreMaxWidth').val(
+                json.model.maxWidth
+            );
         }
     });
 }

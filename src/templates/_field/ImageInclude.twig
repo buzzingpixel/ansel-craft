@@ -31,6 +31,65 @@
         <input type="hidden" name="{{ m.fieldName(fieldName, id, 'width') }}" class="JSAnselField__Input JSAnselField__Input--Width">
         <input type="hidden" name="{{ m.fieldName(fieldName, id, 'height') }}" class="JSAnselField__Input JSAnselField__Input--Height">
 
+        <input type="hidden" name="{{ m.fieldName(fieldName, id, 'cacheFile') }}" class="JSAnselField__Input JSAnselField__Input--CacheFile">
+        <input type="hidden" name="{{ m.fieldName(fieldName, id, 'fileName') }}" class="JSAnselField__Input JSAnselField__Input--FileName">
+
+        <input
+            type="hidden"
+            name="{{ m.fieldName(fieldName, id, 'preManipulation[fileLocation]') }}"
+            class="JSAnselField__Input JSAnselField__Input--PreFileLocation"
+        >
+        <input
+            type="hidden"
+            name="{{ m.fieldName(fieldName, id, 'preManipulation[fileLocationType]') }}"
+            class="JSAnselField__Input JSAnselField__Input--PreFileLocationType"
+        >
+        <input
+            type="hidden"
+            name="{{ m.fieldName(fieldName, id, 'preManipulation[h]') }}"
+            class="JSAnselField__Input JSAnselField__Input--PreH"
+        >
+        <input
+            type="hidden"
+            name="{{ m.fieldName(fieldName, id, 'preManipulation[w]') }}"
+            class="JSAnselField__Input JSAnselField__Input--PreW"
+        >
+        <input
+            type="hidden"
+            name="{{ m.fieldName(fieldName, id, 'preManipulation[x]') }}"
+            class="JSAnselField__Input JSAnselField__Input--PreX"
+        >
+        <input
+            type="hidden"
+            name="{{ m.fieldName(fieldName, id, 'preManipulation[y]') }}"
+            class="JSAnselField__Input JSAnselField__Input--PreY"
+        >
+        <input
+            type="hidden"
+            name="{{ m.fieldName(fieldName, id, 'preManipulation[highQualityImgCacheLocation]') }}"
+            class="JSAnselField__Input JSAnselField__Input--PreHighQualityImgCacheLocation"
+        >
+        <input
+            type="hidden"
+            name="{{ m.fieldName(fieldName, id, 'preManipulation[standardImgCacheLocation]') }}"
+            class="JSAnselField__Input JSAnselField__Input--PreStandardImgCacheLocation"
+        >
+        <input
+            type="hidden"
+            name="{{ m.fieldName(fieldName, id, 'preManipulation[thumbImgCacheLocation]') }}"
+            class="JSAnselField__Input JSAnselField__Input--PreThumbImgCacheLocation"
+        >
+        <input
+            type="hidden"
+            name="{{ m.fieldName(fieldName, id, 'preManipulation[maxHeight]') }}"
+            class="JSAnselField__Input JSAnselField__Input--PreMaxHeight"
+        >
+        <input
+            type="hidden"
+            name="{{ m.fieldName(fieldName, id, 'preManipulation[maxWidth]') }}"
+            class="JSAnselField__Input JSAnselField__Input--PreMaxWidth"
+        >
+
     {% endif %}
 
     <div class="AnselField__ImageIcons">
