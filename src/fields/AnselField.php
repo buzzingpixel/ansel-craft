@@ -9,14 +9,15 @@
 
 namespace buzzingpixel\ansel\fields;
 
-use buzzingpixel\ansel\AnselAssetBundle;
-use buzzingpixel\ansel\models\AnselSettingsModel;
 use Craft;
-use craft\base\ElementInterface;
 use yii\db\Schema;
 use craft\base\Field;
+use \craft\base\Element;
 use buzzingpixel\ansel\Ansel;
+use craft\base\ElementInterface;
+use buzzingpixel\ansel\AnselAssetBundle;
 use craft\volumes\Local as LocalVolumeType;
+use buzzingpixel\ansel\models\AnselSettingsModel;
 use buzzingpixel\ansel\models\AnselFieldSettingsModel;
 
 /**
@@ -138,6 +139,12 @@ class AnselField extends Field
                 }
                 $this->fieldSettingsModel->setProperty($key, $val);
             }
+
+            if ($this->required === '1' &&
+                $this->fieldSettingsModel->minQty < 1
+            ) {
+                $this->fieldSettingsModel->setProperty('minQty', 1);
+            }
         }
 
         return $this->fieldSettingsModel;
@@ -186,5 +193,109 @@ class AnselField extends Field
     {
         Craft::$app->getView()->registerAssetBundle(AnselAssetBundle::class);
         return Ansel::$plugin->getFieldDisplayController()->display($this->getSettingsModel());
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getElementValidationRules(): array
+    {
+        $rules = parent::getElementValidationRules();
+        $rules[] = 'validateField';
+        return $rules;
+    }
+
+    /**
+     * Validates the field
+     * @param ElementInterface $element
+     * @throws \Exception
+     */
+    public function validateField(ElementInterface $element)
+    {
+        /** @var Element $element */
+
+        $values = $element->getFieldValue($this->handle);
+
+        unset($values['placeholder']);
+
+        $settings = $this->getSettingsModel();
+
+        $totalImages = \count($values);
+
+        if ($totalImages < $settings->minQty) {
+            $plural = $settings->minQty > 1 ? 'images' : 'image';
+            $element->addError(
+                $this->handle,
+                Craft::t('app', "You must add at least {count} {$plural}", [
+                    'count' => $settings->minQty,
+                ])
+            );
+        }
+
+        if ($settings->requireTitle) {
+            $hasValues = true;
+
+            foreach ($values as $value) {
+                $val = $value['title'] ?? null;
+                if ($val) {
+                    continue;
+                }
+                $hasValues = false;
+                break;
+            }
+
+            if (! $hasValues) {
+                $element->addError(
+                    $this->handle,
+                    Craft::t('app', 'The "{fieldName}" field is required for each image', [
+                        'fieldName' => $settings->titleLabel ?: 'Title',
+                    ])
+                );
+            }
+        }
+
+        if ($settings->requireCaption) {
+            $hasValues = true;
+
+            foreach ($values as $value) {
+                $val = $value['caption'] ?? null;
+                if ($val) {
+                    continue;
+                }
+                $hasValues = false;
+                break;
+            }
+
+            if (! $hasValues) {
+                $element->addError(
+                    $this->handle,
+                    Craft::t('app', 'The "{fieldName}" field is required for each image', [
+                        'fieldName' => $settings->captionLabel ?: 'Caption',
+                    ])
+                );
+            }
+        }
+
+        if ($settings->requireCover) {
+            $coverSet = false;
+
+            foreach ($values as $value) {
+                $val = $value['cover'] ?? null;
+                if ($value !== '1') {
+                    continue;
+                }
+                $coverSet = true;
+                break;
+            }
+
+            if (! $coverSet) {
+                $element->addError(
+                    $this->handle,
+                    Craft::t('app', 'The "{fieldName}" field must be set on one image', [
+                        'fieldName' => $settings->coverLabel ?: 'Caption',
+                    ])
+                );
+            }
+        }
     }
 }
