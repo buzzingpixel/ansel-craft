@@ -12,7 +12,7 @@ namespace buzzingpixel\ansel\fields;
 use Craft;
 use yii\db\Schema;
 use craft\base\Field;
-use \craft\base\Element;
+use craft\base\Element;
 use buzzingpixel\ansel\Ansel;
 use craft\base\ElementInterface;
 use buzzingpixel\ansel\AnselAssetBundle;
