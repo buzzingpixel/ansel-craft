@@ -10,9 +10,11 @@
 namespace buzzingpixel\ansel\fields;
 
 use Craft;
+use Minify_HTML;
 use yii\db\Schema;
 use craft\base\Field;
 use craft\base\Element;
+use craft\helpers\UrlHelper;
 use buzzingpixel\ansel\Ansel;
 use craft\base\ElementInterface;
 use buzzingpixel\ansel\AnselAssetBundle;
@@ -25,6 +27,10 @@ use buzzingpixel\ansel\models\AnselFieldSettingsModel;
  */
 class AnselField extends Field
 {
+    /**
+     * Irritatingly, public properties on the class represent field settings
+     */
+
     /** @var int $uploadLocation */
     public $uploadLocation;
 
@@ -111,7 +117,7 @@ class AnselField extends Field
     }
 
     /**
-     * Gets settings
+     * Runs before field settings save
      * @param bool $isNew
      * @return bool
      * @throws \Exception
@@ -192,7 +198,17 @@ class AnselField extends Field
     public function getInputHtml($value, ElementInterface $element = null) : string
     {
         Craft::$app->getView()->registerAssetBundle(AnselAssetBundle::class);
-        return Ansel::$plugin->getFieldDisplayController()->display($this->getSettingsModel());
+        $settings = $this->getSettingsModel();
+        $settings->retinizeValues();
+        return Minify_HTML::minify(
+            Craft::$app->getView()->renderTemplate('ansel/_field/Index.twig', [
+                'uploadKey' => Ansel::$plugin->getUploadKeysService()->createNew(),
+                'uploadActionUrl' => UrlHelper::actionUrl('ansel/field-upload/upload'),
+                'processActionUrl' => UrlHelper::actionUrl('ansel/image-process/process'),
+                'csrfToken' => Craft::$app->getRequest()->getCsrfToken(),
+                'settings' => $settings,
+            ])
+        );
     }
 
     /**
