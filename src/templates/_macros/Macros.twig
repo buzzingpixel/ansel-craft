@@ -1,1 +1,1 @@
-{% macro fieldName(topLevelFieldName, rowId, name) %}{{ topLevelFieldName }}[anselRowId{{ rowId }}][{{ name }}]{% endmacro %}
+{% macro fieldName(topLevelFieldName, rowId, name, nameLevel2) %}{{ topLevelFieldName }}[anselRowId{{ rowId }}][{{ name }}]{% if nameLevel2 %}[{{ nameLevel2 }}]{% endif %}{% endmacro %}
