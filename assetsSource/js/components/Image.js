@@ -34,6 +34,7 @@ function runImage(F) {
             var self = this;
 
             self.setUp();
+            self.setUpRowId();
             self.initFieldEditor();
             self.watchOpenFieldEditor();
             self.watchForCoverChange();
@@ -88,6 +89,26 @@ function runImage(F) {
 
             self.model.onChange('imageSave', function() {
                 self.processImage();
+            });
+        },
+
+        setUpRowId: function() {
+            var self = this;
+            var $imageInputs = self.$image.find('.JSAnselField__Input');
+            var oldId = self.$image.data('id');
+
+            self.$image.data('id', self.uuid).attr('data-id', self.uuid);
+
+            $imageInputs.each(function() {
+                var $el = $(this);
+                var name = $el.attr('name');
+
+                name = name.replace(
+                    'anselRowId' + oldId,
+                    'anselRowId' + self.uuid
+                );
+
+                $el.attr('name', name);
             });
         },
 

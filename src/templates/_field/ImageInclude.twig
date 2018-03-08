@@ -9,7 +9,7 @@
 
 {% import 'ansel/_macros/Macros.twig' as m %}
 
-<div class="AnselField__Image JSAnselField__Image">
+<div class="AnselField__Image JSAnselField__Image" data-id="{{ id }}">
     {% if settings.hasModalFields() %}
 
         {% if settings.showTitle %}
@@ -21,7 +21,7 @@
         {% endif %}
 
         {% if settings.showCover %}
-            <input type="hidden" name="{{ m.fieldName(fieldName, id, 'cover') }}" value="0">
+            <input type="hidden" name="{{ m.fieldName(fieldName, id, 'cover') }}" value="0" class="JSAnselField__Input">
             <input type="hidden" name="{{ m.fieldName(fieldName, id, 'cover') }}" class="JSAnselField__Input JSAnselField__Input--Cover">
         {% endif %}
 
