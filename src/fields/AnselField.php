@@ -296,7 +296,6 @@ class AnselField extends Field
             $coverSet = false;
 
             foreach ($values as $value) {
-                $val = $value['cover'] ?? null;
                 if ($value !== '1') {
                     continue;
                 }
