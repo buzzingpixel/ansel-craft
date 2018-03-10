@@ -14,20 +14,22 @@ use craft\db\Query;
 use yii\base\Event;
 use Ramsey\Uuid\Uuid;
 use craft\base\Plugin;
+use craft\elements\Asset;
 use craft\web\UrlManager;
 use craft\services\Fields;
 use \craft\helpers\UrlHelper;
 use League\Flysystem\Filesystem;
 use craft\events\RegisterUrlRulesEvent;
+use craft\helpers\Assets as AssetsHelper;
 use buzzingpixel\ansel\fields\AnselField;
 use Gregwar\Image\Image as ImageManipulator;
 use craft\events\RegisterComponentTypesEvent;
+use buzzingpixel\ansel\services\FieldSaveService;
 use buzzingpixel\ansel\services\FileCacheService;
 use buzzingpixel\ansel\services\UploadKeysService;
 use buzzingpixel\ansel\services\AnselSettingsService;
 use buzzingpixel\ansel\twigextensions\AnselTwigExtension;
 use buzzingpixel\ansel\services\FieldImageProcessService;
-use buzzingpixel\ansel\controllers\FieldDisplayController;
 use League\Flysystem\Adapter\Local as LocalFilesystemAdapter;
 
 /**
@@ -101,18 +103,6 @@ class Ansel extends Plugin
     }
 
     /**
-     * Gets dependency injected FieldDisplayController
-     * @return FieldDisplayController
-     */
-    public function getFieldDisplayController() : FieldDisplayController
-    {
-        return new FieldDisplayController(
-            uniqid('', false),
-            $this
-        );
-    }
-
-    /**
      * Gets dependency injected UploadKeysService
      * @return UploadKeysService
      * @throws \Exception
@@ -169,6 +159,38 @@ class Ansel extends Plugin
         return new FieldImageProcessService(
             $this->getFileCacheService(),
             new ImageManipulator()
+        );
+    }
+
+    /**
+     * Gets dependency injected FieldSaveService
+     * @return FieldSaveService
+     * @throws \Exception
+     */
+    public function getFieldSaveService() : FieldSaveService
+    {
+        $currentUser = Craft::$app->getUser();
+        $userId = null;
+
+        if ($currentUser) {
+            $userId = (int) $currentUser->id;
+        }
+
+        if (! $userId) {
+            $userId = (int) (new Query())->select('id')
+                ->from('{{%users}}')
+                ->where('`admin` = 1')
+                ->one()['id'];
+        }
+
+        return new FieldSaveService(
+            $this->getFileCacheService(),
+            $this->getFieldImageProcessService(),
+            Craft::$app->getDb(),
+            new Asset(),
+            new AssetsHelper(),
+            Craft::$app->getElements(),
+            $userId
         );
     }
 }
