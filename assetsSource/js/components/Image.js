@@ -83,10 +83,6 @@ function runImage(F) {
 
             self.base64Image = null;
 
-            self.$image.find('.JSAnselField__Input--CacheFileLocation').val(
-                self.cacheFile
-            );
-
             self.model.onChange('imageSave', function() {
                 self.processImage();
             });
