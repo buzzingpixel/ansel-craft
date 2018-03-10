@@ -24,9 +24,11 @@ use craft\helpers\Assets as AssetsHelper;
 use buzzingpixel\ansel\fields\AnselField;
 use Gregwar\Image\Image as ImageManipulator;
 use craft\events\RegisterComponentTypesEvent;
+use buzzingpixel\ansel\models\AnselImageModel;
 use buzzingpixel\ansel\services\FieldSaveService;
 use buzzingpixel\ansel\services\FileCacheService;
 use buzzingpixel\ansel\services\UploadKeysService;
+use buzzingpixel\ansel\services\AnselImageService;
 use buzzingpixel\ansel\services\AnselSettingsService;
 use buzzingpixel\ansel\twigextensions\AnselTwigExtension;
 use buzzingpixel\ansel\services\FieldImageProcessService;
@@ -191,6 +193,19 @@ class Ansel extends Plugin
             new AssetsHelper(),
             Craft::$app->getElements(),
             $userId
+        );
+    }
+
+    /**
+     * Gets dependency injected AnselImageService
+     * @return AnselImageService
+     * @throws \Exception
+     */
+    public function getAnselImageService() : AnselImageService
+    {
+        return new AnselImageService(
+            new Query(),
+            new AnselImageModel()
         );
     }
 }
