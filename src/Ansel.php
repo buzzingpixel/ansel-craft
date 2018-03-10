@@ -25,6 +25,7 @@ use buzzingpixel\ansel\fields\AnselField;
 use Gregwar\Image\Image as ImageManipulator;
 use craft\events\RegisterComponentTypesEvent;
 use buzzingpixel\ansel\models\AnselImageModel;
+use buzzingpixel\ansel\services\StorageService;
 use buzzingpixel\ansel\services\FieldSaveService;
 use buzzingpixel\ansel\services\FileCacheService;
 use buzzingpixel\ansel\services\UploadKeysService;
@@ -207,5 +208,14 @@ class Ansel extends Plugin
             new Query(),
             new AnselImageModel()
         );
+    }
+
+    /**
+     * Gets the storage service
+     * @return StorageService
+     */
+    public function getStorageService() : StorageService
+    {
+        return StorageService::getInstance();
     }
 }

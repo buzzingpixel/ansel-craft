@@ -9,6 +9,10 @@
 
 namespace buzzingpixel\ansel\models;
 
+use Craft;
+use craft\elements\User;
+use craft\elements\Asset;
+use buzzingpixel\ansel\Ansel;
 use felicity\datamodel\Model;
 use felicity\datamodel\services\datahandlers\IntHandler;
 use felicity\datamodel\services\datahandlers\BoolHandler;
@@ -107,5 +111,195 @@ class AnselImageModel extends Model
             'dateUpdated' => ['class' => DateTimeHandler::class],
             'uid' => ['class' => StringHandler::class],
         ];
+    }
+
+    /**
+     * Gets the user
+     */
+    public function getUser()
+    {
+        return self::getUserFromId($this->userId);
+    }
+
+    /**
+     * Gets asset
+     * @return null|Asset
+     */
+    public function getAsset()
+    {
+        return self::getAssetFromId($this->assetId);
+    }
+
+    /**
+     * Gets high quality asset
+     * @return null|Asset
+     */
+    public function getHighQualAsset()
+    {
+        return self::getAssetFromId($this->highQualAssetId);
+    }
+
+    /**
+     * Gets thumb quality asset
+     * @return null|Asset
+     */
+    public function getThumbAsset()
+    {
+        return self::getAssetFromId($this->thumbAssetId);
+    }
+
+    /**
+     * Gets original asset
+     * @return null|Asset
+     */
+    public function getOriginalAsset()
+    {
+        return self::getAssetFromId($this->originalAssetId);
+    }
+
+    /**
+     * Gets an asset from the asset id
+     * @param int $assetId
+     * @return null|Asset
+     */
+    private static function getAssetFromId(int $assetId)
+    {
+        $assets = Ansel::$plugin->getStorageService()->get('assets') ?: [];
+
+        if (isset($assets[$assetId])) {
+            return $assets[$assetId];
+        }
+
+        $asset = Asset::find()->id($assetId)->one();
+
+        if (! $asset) {
+            return null;
+        }
+
+        $assets[$assetId] = $asset;
+
+        Ansel::$plugin->getStorageService()->set($assets, 'assets');
+
+        return $asset;
+    }
+
+    /**
+     * @param int $userId
+     * @return null|User
+     */
+    private static function getUserFromId(int $userId)
+    {
+        $users = Ansel::$plugin->getStorageService()->get('users') ?: [];
+
+        if (isset($users[$userId])) {
+            return $users[$userId];
+        }
+
+        $user = User::find()->id($userId)->one();
+
+        if (! $user) {
+            return null;
+        }
+
+        $users[$userId] = $user;
+
+        Ansel::$plugin->getStorageService()->set($users, 'users');
+
+        return $user;
+    }
+
+    /**
+     * Preloads element for a set of AnselImageModels
+     * @param AnselImageModel[] $set
+     * @param string[] $toPreload
+     */
+    public static function preLoadElementsForSet(
+        array $set = [],
+        array $toPreload = []
+    ) {
+        $available = [
+            'userId',
+            'assetId',
+            'highQualAssetId',
+            'thumbAssetId',
+            'originalAssetId',
+        ];
+
+        if (! $toPreload) {
+            $toPreload = $available;
+        }
+
+        /**
+         * Preload users
+         */
+
+        if (\in_array('userId', $toPreload, true)) {
+            $users = Ansel::$plugin->getStorageService()->get('users') ?: [];
+
+            $userIds = [];
+
+            foreach ($set as $anselImageModel) {
+                if (isset($users[$anselImageModel->userId])) {
+                    continue;
+                }
+
+                $userIds[$anselImageModel->userId] = $anselImageModel->userId;
+            }
+
+            $userQuery = User::find()->id(array_values($userIds))->all();
+
+            foreach ($userQuery as $user) {
+                $users[$user->id] = $user;
+            }
+
+            Ansel::$plugin->getStorageService()->set($users, 'users');
+        }
+
+
+        /**
+         * Preload Assets
+         */
+
+        $assets = Ansel::$plugin->getStorageService()->get('assets') ?: [];
+
+        $assetIds = [];
+
+        foreach ($set as $anselImageModel) {
+            if (! isset($assets[$anselImageModel->assetId]) &&
+                \in_array('assetId', $toPreload, true)
+            ) {
+                $assetIds[$anselImageModel->assetId] = $anselImageModel->assetId;
+            }
+
+            if (! isset($assets[$anselImageModel->highQualAssetId]) &&
+                \in_array('highQualAssetId', $toPreload, true)
+            ) {
+                $assetIds[$anselImageModel->highQualAssetId] = $anselImageModel->highQualAssetId;
+            }
+
+            if (! isset($assets[$anselImageModel->thumbAssetId]) &&
+                \in_array('thumbAssetId', $toPreload, true)
+            ) {
+                $assetIds[$anselImageModel->thumbAssetId] = $anselImageModel->thumbAssetId;
+            }
+
+            if (! isset($assets[$anselImageModel->originalAssetId]) &&
+                \in_array('originalAssetId', $toPreload, true)
+            ) {
+                $assetIds[$anselImageModel->originalAssetId] = $anselImageModel->originalAssetId;
+            }
+        }
+
+        if (! $assetIds) {
+            return;
+        }
+
+        $assetQuery = Asset::find()->id($assetIds)->all();
+
+        foreach ($assetQuery as $asset) {
+            $assets[$asset->id] = $asset;
+        }
+
+        Ansel::$plugin->getStorageService()->set($assets, 'assets');
     }
 }

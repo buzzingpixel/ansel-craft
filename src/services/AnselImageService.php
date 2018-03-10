@@ -434,7 +434,7 @@ class AnselImageService
 
     /**
      * Gets all results based on criteria set on object
-     * @return array
+     * @return AnselImageModel[]
      * @throws \Exception
      */
     public function all() : array
