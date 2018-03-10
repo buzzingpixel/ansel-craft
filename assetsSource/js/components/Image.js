@@ -13,10 +13,13 @@ function runImage(F) {
     F.controller.make('Image', {
         commonStorage: {},
 
+        setFromTemplate: false,
+
         $image: null,
         $imageTag: null,
         $fieldsModal: null,
 
+        imageSrc: null,
         base64Image: null,
         cacheFile: null,
         fileName: null,
@@ -27,7 +30,8 @@ function runImage(F) {
             isOverAllowed: 'bool',
             'runCrop': 'int',
             coords: 'object',
-            imageSave: 'int'
+            imageSave: 'int',
+            imageLoaded: 'bool'
         },
 
         init: function() {
@@ -49,6 +53,8 @@ function runImage(F) {
                 'imageControllerUuids'
             ).slice(0);
 
+            self.setFromTemplate = ! self.$image;
+
             self.uuid = F.uuid.make();
 
             imageUuids.push(self.uuid);
@@ -58,30 +64,44 @@ function runImage(F) {
                 imageUuids
             );
 
-            self.$image = $(self.commonStorage.imageTemplate);
-
-            // TODO: detect what methods should be used to set up this image
-            // TODO: base64? Existing src etc.
-
-            self.$image.find('.JSAnselField__Input--CacheFile').val(
-                self.cacheFile
-            );
-
-            self.$image.find('.JSAnselField__Input--FileName').val(
-                self.fileName
-            );
+            if (self.setFromTemplate) {
+                self.$image = $(self.commonStorage.imageTemplate);
+            }
 
             self.$image.data('jsUuid', self.uuid);
 
             self.$imageTag = self.$image.find('.JSAnselField__ImageTag');
 
-            self.$imageTag.attr('src', self.base64Image);
+            if (self.base64Image && self.cacheFile && self.fileName) {
+                self.$image.find('.JSAnselField__Input--CacheFile').val(
+                    self.cacheFile
+                );
 
-            self.commonStorage.$imagesHolder.append(self.$image);
+                self.$image.find('.JSAnselField__Input--FileName').val(
+                    self.fileName
+                );
+
+                self.$imageTag.attr('src', self.base64Image);
+
+                self.base64Image = null;
+            } else if (self.imageSrc) {
+                self.$imageTag.attr('src', self.imageSrc);
+            }
+
+            if (self.setFromTemplate) {
+                self.commonStorage.$imagesHolder.append(self.$image);
+            }
 
             self.commonStorage.sorter.addItems(self.$image);
 
-            self.base64Image = null;
+            if (! self.setFromTemplate) {
+                self.model.set('coords', {
+                    h: parseInt(self.$image.find('.JSAnselField__Input--Height').val()),
+                    w: parseInt(self.$image.find('.JSAnselField__Input--Width').val()),
+                    x: parseInt(self.$image.find('.JSAnselField__Input--X').val()),
+                    y: parseInt(self.$image.find('.JSAnselField__Input--Y').val())
+                });
+            }
 
             self.model.onChange('imageSave', function() {
                 self.processImage();
@@ -307,10 +327,17 @@ function runImage(F) {
         setUpCrop: function() {
             var self = this;
 
+            if (! self.setFromTemplate) {
+                self.model.onChange('imageLoaded', function() {
+                    self.updateThumbImgPosition(self.model.get('coords'));
+                });
+            }
+
             self.anselCropController = F.controller.construct('ImageCrop', {
                 model: self.model,
                 commonStorage: self.commonStorage,
-                $imageTag: self.$imageTag
+                $imageTag: self.$imageTag,
+                setInitialCoords: self.setFromTemplate
             });
 
             self.$image.find('.JSAnselField__ImageIconCrop').on('click', function() {

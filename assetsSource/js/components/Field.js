@@ -87,6 +87,13 @@ function runField(F) {
             F.controller.construct('FieldDropUploader', sendObj);
             F.controller.construct('MaxTracker', sendObj);
             F.controller.construct('MinTracker', sendObj);
+
+            self.$el.find('.JSAnselField__Image').each(function() {
+                F.controller.construct('Image', {
+                    commonStorage: self.commonStorage,
+                    $image: $(this)
+                });
+            });
         },
 
         setUp: function() {

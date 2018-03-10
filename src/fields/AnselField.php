@@ -9,6 +9,7 @@
 
 namespace buzzingpixel\ansel\fields;
 
+use buzzingpixel\ansel\models\AnselImageModel;
 use Craft;
 use Minify_HTML;
 use yii\db\Schema;
@@ -200,6 +201,20 @@ class AnselField extends Field
         Craft::$app->getView()->registerAssetBundle(AnselAssetBundle::class);
         $settings = $this->getSettingsModel();
         $settings->retinizeValues();
+
+        $images = [];
+
+        if ($element) {
+            $images = Ansel::$plugin->getAnselImageService()
+                ->showDisabled()
+                ->elementId($element->getId())
+                ->fieldId($settings->fieldId)
+                ->order('position asc')
+                ->all();
+        }
+
+        AnselImageModel::preLoadElementsForSet($images);
+
         return Minify_HTML::minify(
             Craft::$app->getView()->renderTemplate('ansel/_field/Index.twig', [
                 'uploadKey' => Ansel::$plugin->getUploadKeysService()->createNew(),
@@ -207,6 +222,7 @@ class AnselField extends Field
                 'processActionUrl' => UrlHelper::actionUrl('ansel/image-process/process'),
                 'csrfToken' => Craft::$app->getRequest()->getCsrfToken(),
                 'settings' => $settings,
+                'images' => $images,
             ])
         );
     }

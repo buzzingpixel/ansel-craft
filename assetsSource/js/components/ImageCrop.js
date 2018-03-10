@@ -78,6 +78,8 @@ function runImageCrop(F) {
                 self.model.onChange('runCrop', function() {
                     self.render();
                 });
+
+                self.model.set('imageLoaded', true);
             });
 
             self.$cropImage.attr('src', self.$imageTag.attr('src'));
