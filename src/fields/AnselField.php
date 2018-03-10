@@ -313,4 +313,30 @@ class AnselField extends Field
             }
         }
     }
+
+    /**
+     * Manipulates Ansel field data after the containing element is saved
+     * @param ElementInterface $element
+     * @param bool $isNew
+     * @throws \Exception
+     * @throws \Throwable
+     */
+    public function afterElementSave(ElementInterface $element, bool $isNew)
+    {
+        parent::afterElementSave($element, $isNew);
+
+        /** @var Element $element */
+
+        $values = $element->getFieldValue($this->handle);
+
+        $settings = $this->getSettingsModel();
+        $settings->setProperty('elementId', $element->getId());
+
+        Ansel::$plugin->getFieldSaveService()->saveFieldFromPostArray(
+            $values,
+            $settings
+        );
+    }
+
+    // Deal with delete
 }

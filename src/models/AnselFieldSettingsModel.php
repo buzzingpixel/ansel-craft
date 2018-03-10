@@ -9,9 +9,12 @@
 
 namespace buzzingpixel\ansel\models;
 
+use Craft;
+use craft\models\VolumeFolder;
+use craft\volumes\Local;
 use felicity\datamodel\Model;
-use felicity\datamodel\services\datahandlers\BoolHandler;
 use felicity\datamodel\services\datahandlers\IntHandler;
+use felicity\datamodel\services\datahandlers\BoolHandler;
 use felicity\datamodel\services\datahandlers\StringHandler;
 
 /**
@@ -42,6 +45,12 @@ class AnselFieldSettingsModel extends Model
 
     /** @var int $saveFolderId */
     public $saveFolderId;
+
+    /** @var int $highQualFolderId */
+    public $highQualFolderId;
+
+    /** @var int $thumbFolderId */
+    public $thumbFolderId;
 
     /** @var int $minQty */
     public $minQty;
@@ -128,6 +137,8 @@ class AnselFieldSettingsModel extends Model
                 'required' => true,
             ],
             'saveFolderId' => ['class' => IntHandler::class],
+            'highQualFolderId' => ['class' => IntHandler::class],
+            'thumbFolderId' => ['class' => IntHandler::class],
             'minQty' => [
                 'class' => IntHandler::class,
                 'min' => 0,
@@ -477,5 +488,189 @@ class AnselFieldSettingsModel extends Model
     public function hasModalFields() : bool
     {
         return $this->showTitle || $this->showCaption || $this->showCover;
+    }
+
+    /**
+     * Gets upload folder ID
+     * @param $val
+     * @return int
+     */
+    public function castUploadFolderId($val) : int
+    {
+        if ($val !== null) {
+            return $val;
+        }
+
+        $volume = Craft::$app->getVolumes()->getVolumeById(
+            $this->uploadLocation
+        );
+
+        if (! $volume) {
+            $this->uploadFolderId = 0;
+            return 0;
+        }
+
+        /** @var Local $volume */
+
+        $folder = Craft::$app->getAssets()->findFolder([
+            'name' => $volume->name,
+            'volumeId' => $volume->id,
+        ]);
+
+        if (! $folder) {
+            $this->uploadFolderId = 0;
+            return 0;
+        }
+
+        $this->uploadFolderId = (int) $folder->id;
+
+        return $this->uploadFolderId;
+    }
+
+    /**
+     * Gets save folder ID
+     * @param $val
+     * @return int
+     */
+    public function castSaveFolderId($val) : int
+    {
+        if ($val !== null) {
+            return $val;
+        }
+
+        $volume = Craft::$app->getVolumes()->getVolumeById(
+            $this->saveLocation
+        );
+
+        if (! $volume) {
+            $this->saveFolderId = 0;
+            return 0;
+        }
+
+        /** @var Local $volume */
+
+        $folder = Craft::$app->getAssets()->findFolder([
+            'name' => $volume->name,
+            'volumeId' => $volume->id,
+        ]);
+
+        if (! $folder) {
+            $this->saveFolderId = 0;
+            return 0;
+        }
+
+        $this->saveFolderId = (int) $folder->id;
+
+        return $this->saveFolderId;
+    }
+
+    /**
+     * Gets high quality folder ID
+     * @param $val
+     * @return int
+     * @throws \Exception
+     */
+    public function castHighQualFolderId($val) : int
+    {
+        if ($val !== null) {
+            return $val;
+        }
+
+        $volume = Craft::$app->getVolumes()->getVolumeById(
+            $this->saveLocation
+        );
+
+        if (! $volume) {
+            $this->highQualFolderId = 0;
+            return 0;
+        }
+
+        /** @var Local $volume */
+
+        $folder = Craft::$app->getAssets()->findFolder([
+            'name' => 'ansel_high_qual',
+            'volumeId' => $volume->id,
+        ]);
+
+        if (! $folder) {
+            $parentFolder = Craft::$app->getAssets()->findFolder([
+                'name' => $volume->name,
+                'volumeId' => $volume->id,
+            ]);
+
+            if ($parentFolder === null) {
+                throw new \Exception('Parent folder not found');
+            }
+
+            /** @var VolumeFolder $parentFolder */
+
+            $folder = new VolumeFolder();
+
+            $folder->parentId = $parentFolder->id;
+            $folder->volumeId = $volume->id;
+            $folder->name = 'ansel_high_qual';
+            $folder->path = 'ansel_high_qual/';
+
+            Craft::$app->getAssets()->createFolder($folder);
+        }
+
+        $this->highQualFolderId = $folder->id;
+
+        return $this->highQualFolderId;
+    }
+
+    /**
+     * Gets thumb folder ID
+     * @param $val
+     * @return int
+     * @throws \Exception
+     */
+    public function castThumbFolderId($val) : int
+    {
+        if ($val !== null) {
+            return $val;
+        }
+
+        $volume = Craft::$app->getVolumes()->getVolumeById(
+            $this->saveLocation
+        );
+
+        if (! $volume) {
+            $this->thumbFolderId = 0;
+            return 0;
+        }
+
+        /** @var Local $volume */
+
+        $folder = Craft::$app->getAssets()->findFolder([
+            'name' => 'ansel_thumbs',
+            'volumeId' => $volume->id,
+        ]);
+
+        if (! $folder) {
+            $parentFolder = Craft::$app->getAssets()->findFolder([
+                'name' => $volume->name,
+                'volumeId' => $volume->id,
+            ]);
+
+            if ($parentFolder === null) {
+                throw new \Exception('Parent folder not found');
+            }
+
+            /** @var VolumeFolder $parentFolder */
+
+            $folder = new VolumeFolder();
+
+            $folder->parentId = $parentFolder->id;
+            $folder->volumeId = $volume->id;
+            $folder->name = 'ansel_thumbs';
+            $folder->path = 'ansel_thumbs/';
+
+            Craft::$app->getAssets()->createFolder($folder);
+        }
+
+        $this->thumbFolderId = $folder->id;
+
+        return $this->thumbFolderId;
     }
 }
