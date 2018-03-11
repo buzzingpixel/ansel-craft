@@ -35,7 +35,7 @@ function runImageProcessor(F) {
             var self = this;
             var keys = Object.keys(F.AnselGlobalImageQueue);
 
-            if (self.inProgress || ! keys.length) {
+            if (self.inProgress || ! keys.length || F.imagesBeingUploaded > 0) {
                 setTimeout(function() {
                     self.watcher();
                 }, 500);

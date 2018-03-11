@@ -11,6 +11,8 @@ function runMain(F) {
         return;
     }
 
+    F.imagesBeingUploaded = 0;
+
     F.AnselGlobalImageQueue = {};
 
     F.controller.construct('ImageProcessor');

@@ -59,9 +59,12 @@ function runFieldDropUploader(F) {
             var maxQty = self.commonStorage.sharedModel.get('maxQty');
             var pluralized = maxQty > 1 ? 'images' : 'image';
             var imageCount = self.commonStorage.eventTriggers.get('imageControllerUuids').length;
+            var numFilesWaiting = Object.keys(self.uploadFiles).length;
+
+            F.imagesBeingUploaded = numFilesWaiting;
 
             if (self.commonStorage.$el.hasClass('AnselField--IsUploading') &&
-                ! Object.keys(self.uploadFiles).length
+                ! numFilesWaiting
             ) {
                 self.commonStorage.$el.removeClass('AnselField--IsUploading');
                 self.commonStorage.eventTriggers.set(
@@ -70,7 +73,7 @@ function runFieldDropUploader(F) {
                 );
             }
 
-            if (Object.keys(self.uploadFiles).length &&
+            if (numFilesWaiting &&
                 self.commonStorage.sharedModel.get('preventUploadOverMax') &&
                 imageCount >= maxQty
             ) {
@@ -84,7 +87,7 @@ function runFieldDropUploader(F) {
             }
 
             if (self.uploadInProgress ||
-                ! Object.keys(self.uploadFiles).length
+                ! numFilesWaiting
             ) {
                 setTimeout(function() {
                     self.processUploadFilesWatcher();
