@@ -2,6 +2,7 @@
 
 namespace buzzingpixel\ansel\services;
 
+use craft\db\Query;
 use craft\elements\Asset;
 use craft\db\Connection as DbConnection;
 use craft\helpers\Assets as AssetsHelper;
@@ -20,6 +21,9 @@ class FieldSaveService
     /** @var FieldImageProcessService $fieldImageProcessService */
     private $fieldImageProcessService;
 
+    /** @var Query $query */
+    private $query;
+
     /** @var DbConnection $dbConnection */
     private $dbConnection;
 
@@ -35,10 +39,14 @@ class FieldSaveService
     /** @var int $userId */
     private $userId;
 
+    /** @var array $existingImageQueries */
+    private $existingImageQueries = [];
+
     /**
      * FieldSaveService constructor
      * @param FileCacheService $fileCacheService
      * @param FieldImageProcessService $fieldImageProcessService
+     * @param Query $query
      * @param DbConnection $dbConnection
      * @param Asset $newAssetElement
      * @param AssetsHelper $assetsHelper
@@ -48,6 +56,7 @@ class FieldSaveService
     public function __construct(
         FileCacheService $fileCacheService,
         FieldImageProcessService $fieldImageProcessService,
+        Query $query,
         DbConnection $dbConnection,
         Asset $newAssetElement,
         AssetsHelper $assetsHelper,
@@ -56,6 +65,7 @@ class FieldSaveService
     ) {
         $this->fileCacheService = $fileCacheService;
         $this->fieldImageProcessService = $fieldImageProcessService;
+        $this->query = $query;
         $this->dbConnection = $dbConnection;
         $this->newAssetElement = $newAssetElement;
         $this->assetsHelper = $assetsHelper;
@@ -101,11 +111,19 @@ class FieldSaveService
             return;
         }
 
+        $imageIds = [];
+
         $deleteIds = [];
 
         $pos = 1;
 
         foreach ($postArray as &$imageArray) {
+            $id = (int) ($imageArray['id'] ?? null);
+
+            if ($id) {
+                $imageIds[] = $id;
+            }
+
             $imageArray['position'] = $pos;
 
             $imageArray['disabled'] = 0;
@@ -118,6 +136,19 @@ class FieldSaveService
         }
 
         unset($imageArray);
+
+        if ($imageIds) {
+            $imageIds = implode(',', $imageIds);
+            $existingImageQuery = (clone $this->query)->from('{{%anselImages}}')
+                ->where("`id` IN ({$imageIds})")
+                ->all();
+
+            foreach ($existingImageQuery as $item) {
+                $this->existingImageQueries[$item['id']] = $this->castRowVars(
+                    $item
+                );
+            }
+        }
 
         foreach ($postArray as $imageArray) {
             $delete = $imageArray['deleteImage'] ?? '0';
@@ -157,6 +188,25 @@ class FieldSaveService
         $uniqueId = uniqid('', false);
 
         /**
+         * Check for an existing image row
+         */
+
+        $existingId = (int) ($postArray['id'] ?? null);
+        $existingRow = null;
+
+        if ($existingId) {
+            $existingRow = $this->existingImageQueries[$existingId] ?? null;
+        }
+
+        if (! $existingRow && $existingId) {
+            $query = (clone $this->query)->from('{{%anselImages}}')
+                ->where("`id` = {$existingId}")
+                ->one();
+
+            $existingRow = $this->castRowVars($query);
+        }
+
+        /**
          * We need to check if the pre-manipulations had time to run and if they
          * match the values the should be
          */
@@ -175,94 +225,131 @@ class FieldSaveService
         $x = (int) $postArray['x'];
         $y = (int) $postArray['y'];
 
-        // TODO: check if the image exists and manipulation has changed
-        // TODO: we don't need to run manipulations if that's the case
+        $assetId = (int) $postArray['assetId'];
 
-        if ($height !== $preHeight ||
-            $width !== $preWidth ||
-            $x !== $preX ||
-            $y !== $preY ||
-            ! $this->fileCacheService->cacheFileExists($highQualCacheLoc) ||
-            ! $this->fileCacheService->cacheFileExists($standardCacheLoc) ||
-            ! $this->fileCacheService->cacheFileExists($thumbCacheLoc)
-        ) {
-            $processedFieldImageModel = new ProcessedFieldImageModel([
-                'h' => $height,
-                'w' => $width,
-                'x' => $x,
-                'y' => $y,
-                'fileLocation' => $postArray['cacheFile'], // TODO: Get the approprate image
-                'fileLocationType' => 'cacheFile', // TODO: set this appropriately
-                'quality' => $fieldSettings->quality,
-                'maxWidth' => $fieldSettings->maxWidth,
-                'maxHeight' => $fieldSettings->maxHeight,
-                'forceJpg' => $fieldSettings->forceJpg,
-            ]);
+        $hasChanged = empty($existingRow);
 
-            $this->fieldImageProcessService->processImage(
-                $processedFieldImageModel
-            );
-
-            $highQualCacheLoc = $processedFieldImageModel->highQualityImgCacheLocation;
-            $standardCacheLoc = $processedFieldImageModel->standardImgCacheLocation;
-            $thumbCacheLoc = $processedFieldImageModel->thumbImgCacheLocation;
+        if ($existingRow['assetId'] !== $assetId) {
+            $hasChanged = true;
         }
 
-        // TODO: Check if we need to add the original asset or we're working
-        // from an existing asset
-        $newAssetFileName = pathinfo($postArray['fileName']);
-        $newAssetFileName = $this->assetsHelper::prepareAssetName(
-            "{$newAssetFileName['filename']}-{$uniqueId}.{$newAssetFileName['extension']}"
-        );
+        if ($existingRow['height'] !== $height) {
+            $hasChanged = true;
+        }
 
-        $cachePath = $this->fileCacheService->getCachePath();
+        if ($existingRow['width'] !== $width) {
+            $hasChanged = true;
+        }
 
-        $originalAssetCacheLoc = "{$cachePath}/{$postArray['cacheFile']}";
-        $highQualCacheLoc = "{$cachePath}/{$highQualCacheLoc}";
-        $standardCacheLoc = "{$cachePath}/{$standardCacheLoc}";
-        $thumbCacheLoc = "{$cachePath}/{$thumbCacheLoc}";
+        if ($existingRow['x'] !== $x) {
+            $hasChanged = true;
+        }
 
-        $originalAsset = clone $this->newAssetElement;
-        $originalAsset->tempFilePath = $originalAssetCacheLoc;
-        $originalAsset->filename = $newAssetFileName;
-        $originalAsset->newFolderId = $fieldSettings->getProperty('uploadFolderId');
-        $originalAsset->volumeId = $fieldSettings->getProperty('uploadLocation');
-        $originalAsset->avoidFilenameConflicts = true;
-        $originalAsset->setScenario($originalAsset::SCENARIO_CREATE);
+        if ($existingRow['y'] !== $y) {
+            $hasChanged = true;
+        }
 
-        $this->elementsService->saveElement($originalAsset);
+        /**
+         * $hasChanged tells us whether we need to run manipulations. If the
+         * file already existed and nothing changed, we don't need to
+         * be running any manipulations
+         */
+        if ($hasChanged) {
+            /**
+             * We need to make sure the form was not submitted before all the
+             * pre-processing of manipulations ran. If the pre-manipulation
+             * values don't match the expected values, we need to run the
+             * manipulations
+             */
 
-        $highQualAsset = clone $this->newAssetElement;
-        $highQualAsset->tempFilePath = $highQualCacheLoc;
-        $highQualAsset->filename = $newAssetFileName;
-        $highQualAsset->newFolderId = $fieldSettings->getProperty('highQualFolderId');
-        $highQualAsset->volumeId = $fieldSettings->getProperty('saveLocation');
-        $highQualAsset->avoidFilenameConflicts = true;
-        $highQualAsset->setScenario($originalAsset::SCENARIO_CREATE);
+            if ($height !== $preHeight ||
+                $width !== $preWidth ||
+                $x !== $preX ||
+                $y !== $preY ||
+                ! $this->fileCacheService->cacheFileExists($highQualCacheLoc) ||
+                ! $this->fileCacheService->cacheFileExists($standardCacheLoc) ||
+                ! $this->fileCacheService->cacheFileExists($thumbCacheLoc)
+            ) {
+                $processedFieldImageModel = new ProcessedFieldImageModel([
+                    'h' => $height,
+                    'w' => $width,
+                    'x' => $x,
+                    'y' => $y,
+                    'fileLocation' => $postArray['cacheFile'], // TODO: Get the appropriate image
+                    'fileLocationType' => 'cacheFile', // TODO: set this appropriately
+                    'quality' => $fieldSettings->quality,
+                    'maxWidth' => $fieldSettings->maxWidth,
+                    'maxHeight' => $fieldSettings->maxHeight,
+                    'forceJpg' => $fieldSettings->forceJpg,
+                ]);
 
-        $this->elementsService->saveElement($highQualAsset);
+                $this->fieldImageProcessService->processImage(
+                    $processedFieldImageModel
+                );
 
-        $standardAsset = clone $this->newAssetElement;
-        $standardAsset->tempFilePath = $standardCacheLoc;
-        $standardAsset->filename = $newAssetFileName;
-        $standardAsset->newFolderId = $fieldSettings->getProperty('saveFolderId');
-        $standardAsset->volumeId = $fieldSettings->getProperty('saveLocation');
-        $standardAsset->avoidFilenameConflicts = true;
-        $standardAsset->setScenario($originalAsset::SCENARIO_CREATE);
+                $highQualCacheLoc = $processedFieldImageModel->highQualityImgCacheLocation;
+                $standardCacheLoc = $processedFieldImageModel->standardImgCacheLocation;
+                $thumbCacheLoc = $processedFieldImageModel->thumbImgCacheLocation;
+            }
 
-        $this->elementsService->saveElement($standardAsset);
+            var_dump("TODO: Check if we need to add the original asset or we're working from an existing asset");
+            var_dump($postArray);
+            die;
 
-        $thumbAsset = clone $this->newAssetElement;
-        $thumbAsset->tempFilePath = $thumbCacheLoc;
-        $thumbAsset->filename = $newAssetFileName;
-        $thumbAsset->newFolderId = $fieldSettings->getProperty('thumbFolderId');
-        $thumbAsset->volumeId = $fieldSettings->getProperty('saveLocation');
-        $thumbAsset->avoidFilenameConflicts = true;
-        $thumbAsset->setScenario($originalAsset::SCENARIO_CREATE);
+            // TODO: Check if we need to add the original asset or we're working
+            // from an existing asset
+            $newAssetFileName = pathinfo($postArray['fileName']);
+            $newAssetFileName = $this->assetsHelper::prepareAssetName(
+                "{$newAssetFileName['filename']}-{$uniqueId}.{$newAssetFileName['extension']}"
+            );
 
-        $this->elementsService->saveElement($thumbAsset);
+            $cachePath = $this->fileCacheService->getCachePath();
 
-        // TODO: check for existing image row
+            $originalAssetCacheLoc = "{$cachePath}/{$postArray['cacheFile']}";
+            $highQualCacheLoc = "{$cachePath}/{$highQualCacheLoc}";
+            $standardCacheLoc = "{$cachePath}/{$standardCacheLoc}";
+            $thumbCacheLoc = "{$cachePath}/{$thumbCacheLoc}";
+
+            $originalAsset = clone $this->newAssetElement;
+            $originalAsset->tempFilePath = $originalAssetCacheLoc;
+            $originalAsset->filename = $newAssetFileName;
+            $originalAsset->newFolderId = $fieldSettings->getProperty('uploadFolderId');
+            $originalAsset->volumeId = $fieldSettings->getProperty('uploadLocation');
+            $originalAsset->avoidFilenameConflicts = true;
+            $originalAsset->setScenario($originalAsset::SCENARIO_CREATE);
+
+            $this->elementsService->saveElement($originalAsset);
+
+            $highQualAsset = clone $this->newAssetElement;
+            $highQualAsset->tempFilePath = $highQualCacheLoc;
+            $highQualAsset->filename = $newAssetFileName;
+            $highQualAsset->newFolderId = $fieldSettings->getProperty('highQualFolderId');
+            $highQualAsset->volumeId = $fieldSettings->getProperty('saveLocation');
+            $highQualAsset->avoidFilenameConflicts = true;
+            $highQualAsset->setScenario($originalAsset::SCENARIO_CREATE);
+
+            $this->elementsService->saveElement($highQualAsset);
+
+            $standardAsset = clone $this->newAssetElement;
+            $standardAsset->tempFilePath = $standardCacheLoc;
+            $standardAsset->filename = $newAssetFileName;
+            $standardAsset->newFolderId = $fieldSettings->getProperty('saveFolderId');
+            $standardAsset->volumeId = $fieldSettings->getProperty('saveLocation');
+            $standardAsset->avoidFilenameConflicts = true;
+            $standardAsset->setScenario($originalAsset::SCENARIO_CREATE);
+
+            $this->elementsService->saveElement($standardAsset);
+
+            $thumbAsset = clone $this->newAssetElement;
+            $thumbAsset->tempFilePath = $thumbCacheLoc;
+            $thumbAsset->filename = $newAssetFileName;
+            $thumbAsset->newFolderId = $fieldSettings->getProperty('thumbFolderId');
+            $thumbAsset->volumeId = $fieldSettings->getProperty('saveLocation');
+            $thumbAsset->avoidFilenameConflicts = true;
+            $thumbAsset->setScenario($originalAsset::SCENARIO_CREATE);
+
+            $this->elementsService->saveElement($thumbAsset);
+        }
 
         $cover = $postArray['cover'] ?? '';
         $cover = $cover === '1' || $cover === 1 ? 1 : 0;
@@ -272,25 +359,59 @@ class FieldSaveService
         $this->dbConnection->createCommand()->upsert(
             '{{%anselImages}}',
             [
-                'id' => null, // TODO: Real ID here if exists/applicable
+                'id' => $existingRow['id'] ?? null,
                 'elementId' => $fieldSettings->elementId,
                 'fieldId' => $fieldSettings->fieldId,
-                'userId' => $this->userId,
-                'assetId' => $standardAsset->id,
-                'highQualAssetId' => $highQualAsset->id,
-                'thumbAssetId' => $thumbAsset->id,
-                'originalAssetId' => $originalAsset->id,
+                'userId' => $existingRow['userId'] ?? $this->userId,
+                'assetId' => $standardAsset->id ?? $existingRow['assetId'],
+                'highQualAssetId' => $highQualAsset->id ?? $existingRow['highQualAssetId'],
+                'thumbAssetId' => $thumbAsset->id ?? $existingRow['thumbAssetId'],
+                'originalAssetId' => $originalAsset->id ?? $existingRow['originalAssetId'],
                 'width' => $width,
                 'height' => $height,
                 'x' => $x,
                 'y' => $y,
-                'title' => $postArray['title'] ?? '',
-                'caption' => $postArray['caption'] ?? '',
+                'title' => $postArray['title'] ?? $existingRow['title'] ?? '',
+                'caption' => $postArray['caption'] ?? $existingRow['caption'] ?? '',
                 'cover' => $cover,
-                'position' => $postArray['position'] ?? 1,
+                'position' => $postArray['position'] ?? $existingRow['position'] ?? 1,
                 'disabled' => $disabled,
             ]
         )
         ->execute();
+    }
+
+    /**
+     * Casts row variables
+     * @param null $row
+     * @return null|array
+     */
+    private function castRowVars($row = null)
+    {
+        if (! $row) {
+            return null;
+        }
+
+        $newRow = [];
+
+        $newRow['id'] = (int) ($row['id'] ?? null);
+        $newRow['elementId'] = (int) ($row['elementId'] ?? null);
+        $newRow['fieldId'] = (int) ($row['fieldId'] ?? null);
+        $newRow['userId'] = (int) ($row['userId'] ?? null);
+        $newRow['assetId'] = (int) ($row['assetId'] ?? null);
+        $newRow['highQualAssetId'] = (int) ($row['highQualAssetId'] ?? null);
+        $newRow['thumbAssetId'] = (int) ($row['thumbAssetId'] ?? null);
+        $newRow['originalAssetId'] = (int) ($row['originalAssetId'] ?? null);
+        $newRow['width'] = (int) ($row['width'] ?? null);
+        $newRow['height'] = (int) ($row['height'] ?? null);
+        $newRow['x'] = (int) ($row['x'] ?? null);
+        $newRow['y'] = (int) ($row['y'] ?? null);
+        $newRow['title'] = (string) ($row['title'] ?? null);
+        $newRow['caption'] = (string) ($row['caption'] ?? null);
+        $newRow['cover'] = $row['cover'] === '1' || $row['cover'] === 1;
+        $newRow['position'] = (int) ($row['position'] ?? null);
+        $newRow['disabled'] = $row['disabled'] === '1' || $row['disabled'] === 1;
+
+        return $newRow;
     }
 }

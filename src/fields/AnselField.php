@@ -215,6 +215,8 @@ class AnselField extends Field
 
         AnselImageModel::preLoadElementsForSet($images);
 
+        // TODO: populate postback data if necesary
+
         return Minify_HTML::minify(
             Craft::$app->getView()->renderTemplate('ansel/_field/Index.twig', [
                 'uploadKey' => Ansel::$plugin->getUploadKeysService()->createNew(),

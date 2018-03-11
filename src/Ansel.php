@@ -189,6 +189,7 @@ class Ansel extends Plugin
         return new FieldSaveService(
             $this->getFileCacheService(),
             $this->getFieldImageProcessService(),
+            new Query,
             Craft::$app->getDb(),
             new Asset(),
             new AssetsHelper(),

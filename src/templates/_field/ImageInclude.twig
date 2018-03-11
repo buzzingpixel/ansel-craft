@@ -32,6 +32,24 @@
         {% endif %}
     >
 
+    <input
+        type="hidden"
+        name="{{ m.fieldName(fieldName, id, 'id') }}"
+        class="JSAnselField__Input JSAnselField__Input--Id"
+        {% if image %}
+        value="{{ image.id }}"
+        {% endif %}
+    >
+
+    <input
+        type="hidden"
+        name="{{ m.fieldName(fieldName, id, 'assetId') }}"
+        class="JSAnselField__Input JSAnselField__Input--AssetId"
+        {% if image %}
+        value="{{ image.assetId }}"
+        {% endif %}
+    >
+
     <input type="hidden" name="{{ m.fieldName(fieldName, id, 'cover') }}" value="0" class="JSAnselField__Input">
     <input
         type="hidden"
