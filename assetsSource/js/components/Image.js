@@ -192,8 +192,6 @@ function runImage(F) {
                 modal = null;
             }
 
-            // TODO: hide prev/next image buttons as required
-
             $img.attr('src', self.$imageTag.attr('src'));
 
             $heading.text(self.fileName);
