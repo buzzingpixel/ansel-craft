@@ -301,8 +301,8 @@ class FieldSaveService
                     'w' => $width,
                     'x' => $x,
                     'y' => $y,
-                    'fileLocation' => $postArray['cacheFile'], // TODO: Get the appropriate image
-                    'fileLocationType' => 'cacheFile', // TODO: set this appropriately
+                    'fileLocation' => $originalAssetId ?: $postArray['cacheFile'],
+                    'fileLocationType' =>$originalAssetId ? 'asset' : 'cacheFile',
                     'quality' => $fieldSettings->quality,
                     'maxWidth' => $fieldSettings->maxWidth,
                     'maxHeight' => $fieldSettings->maxHeight,
