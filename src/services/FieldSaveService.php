@@ -429,6 +429,56 @@ class FieldSaveService
     }
 
     /**
+     * Deletes images by element ID
+     * @param int $elementId
+     * @throws \Exception
+     * @throws \Throwable
+     */
+    public function deleteByElementId(int $elementId)
+    {
+        $imageQuery = (clone $this->query)->from('{{%anselImages}}')
+            ->where("`elementId` = {$elementId}")
+            ->all();
+
+        $assetIds = [];
+
+        foreach ($imageQuery as $row) {
+            $row = $this->castRowVars($row);
+
+            if (! $row) {
+                continue;
+            }
+
+            if ($row['assetId']) {
+                $assetIds[] = $row['assetId'];
+            }
+
+            if ($row['highQualAssetId']) {
+                $assetIds[] = $row['highQualAssetId'];
+            }
+
+            if ($row['thumbAssetId']) {
+                $assetIds[] = $row['thumbAssetId'];
+            }
+        }
+
+        $this->dbConnection->createCommand()
+            ->delete(
+                '{{%anselImages}}',
+                "`elementId` = {$elementId}"
+            )
+            ->execute();
+
+        if (! $assetIds) {
+            return;
+        }
+
+        foreach ($assetIds as $id) {
+            $this->elementsService->deleteElementById($id);
+        }
+    }
+
+    /**
      * Casts row variables
      * @param null $row
      * @return null|array

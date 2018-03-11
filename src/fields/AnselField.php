@@ -341,8 +341,6 @@ class AnselField extends Field
      */
     public function afterElementSave(ElementInterface $element, bool $isNew)
     {
-        parent::afterElementSave($element, $isNew);
-
         /** @var Element $element */
 
         $values = $element->getFieldValue($this->handle);
@@ -356,5 +354,20 @@ class AnselField extends Field
         );
     }
 
-    // Deal with delete
+    /**
+     * @param ElementInterface $element
+     * @return bool
+     * @throws \Exception
+     * @throws \Throwable
+     */
+    public function beforeElementDelete(ElementInterface $element) : bool
+    {
+        /** @var Element $element */
+
+        Ansel::$plugin->getFieldSaveService()->deleteByElementId(
+            $element->getId()
+        );
+
+        return true;
+    }
 }
