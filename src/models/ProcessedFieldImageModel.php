@@ -9,6 +9,7 @@
 
 namespace buzzingpixel\ansel\models;
 
+use Craft;
 use buzzingpixel\ansel\Ansel;
 use felicity\datamodel\Model;
 use felicity\datamodel\services\datahandlers\IntHandler;
@@ -88,7 +89,16 @@ class ProcessedFieldImageModel extends Model
      */
     public function getFilePath() : string
     {
-        // TODO: get the file path from the right place based on the fileLocationType property
+        if ($this->fileLocationType === 'asset') {
+            $asset = Craft::$app->getAssets()->getAssetById($this->fileLocation);
+
+            if (! $asset) {
+                throw new \Exception('Unable to locate Asset');
+            }
+
+            return $asset->getCopyOfFile();
+        }
+
         $path = Ansel::$plugin->getFileCacheService()->getCachePath();
         return "{$path}/{$this->fileLocation}";
     }

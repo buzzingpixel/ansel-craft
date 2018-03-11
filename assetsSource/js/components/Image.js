@@ -19,6 +19,7 @@ function runImage(F) {
         $imageTag: null,
         $fieldsModal: null,
 
+        originalAssetId: null,
         imageSrc: null,
         base64Image: null,
         cacheFile: null,
@@ -66,6 +67,8 @@ function runImage(F) {
 
             if (self.setFromTemplate) {
                 self.$image = $(self.commonStorage.imageTemplate);
+            } else {
+                self.originalAssetId = parseInt(self.$image.data('originalAssetId'));
             }
 
             self.$image.data('jsUuid', self.uuid);
@@ -328,6 +331,14 @@ function runImage(F) {
             if (! self.setFromTemplate) {
                 self.model.onChange('imageLoaded', function() {
                     self.updateThumbImgPosition(self.model.get('coords'));
+
+                    setTimeout(function() {
+                        self.updateThumbImgPosition(self.model.get('coords'));
+                    }, 200);
+
+                    setTimeout(function() {
+                        self.updateThumbImgPosition(self.model.get('coords'));
+                    }, 400);
                 });
             }
 
@@ -465,8 +476,8 @@ function runImage(F) {
                 F.AnselGlobalImageQueue[self.uuid] = {
                     controller: self,
                     coords: self.model.get('coords'),
-                    fileLocation: self.cacheFile, // TODO: use the appropriate source here
-                    fileLocationType: 'cacheFile',
+                    fileLocation: self.originalAssetId || self.cacheFile,
+                    fileLocationType: self.originalAssetId ? 'asset' : 'cacheFile',
                     quality: self.commonStorage.sharedModel.get('quality'),
                     maxWidth: self.commonStorage.sharedModel.get('maxWidth'),
                     maxHeight: self.commonStorage.sharedModel.get('maxHeight'),

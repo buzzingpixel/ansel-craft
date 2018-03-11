@@ -116,6 +116,11 @@ function runImageCrop(F) {
                 coords.h = self.imgHeight;
             }
 
+            coords.w = parseInt(coords.w);
+            coords.h = parseInt(coords.h);
+            coords.x = parseInt(coords.x);
+            coords.y = parseInt(coords.y);
+
             self.model.set('coords', coords);
 
             setTimeout(function() {
@@ -157,6 +162,11 @@ function runImageCrop(F) {
                     if (self.locked) {
                         return;
                     }
+
+                    coords.w = parseInt(coords.w);
+                    coords.h = parseInt(coords.h);
+                    coords.x = parseInt(coords.x);
+                    coords.y = parseInt(coords.y);
 
                     self.jCropOnChange(coords);
 

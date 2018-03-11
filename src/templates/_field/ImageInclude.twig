@@ -14,7 +14,13 @@
 
 {% import 'ansel/_macros/Macros.twig' as m %}
 
-<div class="AnselField__Image JSAnselField__Image" data-id="{{ id }}">
+<div
+    class="AnselField__Image JSAnselField__Image"
+    data-id="{{ id }}"
+    {% if image %}
+    data-original-asset-id="{{ image.getOriginalAsset().id }}"
+    {% endif %}
+>
     <input
         type="hidden"
         name="{{ m.fieldName(fieldName, id, 'title') }}"

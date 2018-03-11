@@ -187,6 +187,8 @@ class FieldSaveService
     ) {
         $uniqueId = uniqid('', false);
 
+        $oldAssetIds = [];
+
         /**
          * Check for an existing image row
          */
@@ -270,6 +272,18 @@ class FieldSaveService
                 ! $this->fileCacheService->cacheFileExists($standardCacheLoc) ||
                 ! $this->fileCacheService->cacheFileExists($thumbCacheLoc)
             ) {
+                if ($existingRow['assetId']) {
+                    $oldAssetIds[] = $existingRow['assetId'];
+                }
+
+                if ($existingRow['highQualAssetId']) {
+                    $oldAssetIds[] = $existingRow['highQualAssetId'];
+                }
+
+                if ($existingRow['thumbAssetId']) {
+                    $oldAssetIds[] = $existingRow['thumbAssetId'];
+                }
+
                 $processedFieldImageModel = new ProcessedFieldImageModel([
                     'h' => $height,
                     'w' => $width,
@@ -292,33 +306,46 @@ class FieldSaveService
                 $thumbCacheLoc = $processedFieldImageModel->thumbImgCacheLocation;
             }
 
-            var_dump("TODO: Check if we need to add the original asset or we're working from an existing asset");
-            var_dump($postArray);
-            die;
+            $originalAsset = null;
+            $newAssetFileName = null;
 
-            // TODO: Check if we need to add the original asset or we're working
-            // from an existing asset
-            $newAssetFileName = pathinfo($postArray['fileName']);
+            if ($assetId) {
+                $originalAsset = $this->newAssetElement::find()->id($assetId)->one();
+
+                if ($originalAsset) {
+                    $newAssetFileName = $originalAsset->getFilename();
+                }
+            }
+
+            if (! $newAssetFileName) {
+                $newAssetFileName = $postArray['fileName'] ?? false;
+                $newAssetFileName = $newAssetFileName ?: uniqid('', false);
+            }
+
+            $newAssetFileName = pathinfo($newAssetFileName);
+
             $newAssetFileName = $this->assetsHelper::prepareAssetName(
                 "{$newAssetFileName['filename']}-{$uniqueId}.{$newAssetFileName['extension']}"
             );
 
             $cachePath = $this->fileCacheService->getCachePath();
 
-            $originalAssetCacheLoc = "{$cachePath}/{$postArray['cacheFile']}";
             $highQualCacheLoc = "{$cachePath}/{$highQualCacheLoc}";
             $standardCacheLoc = "{$cachePath}/{$standardCacheLoc}";
             $thumbCacheLoc = "{$cachePath}/{$thumbCacheLoc}";
 
-            $originalAsset = clone $this->newAssetElement;
-            $originalAsset->tempFilePath = $originalAssetCacheLoc;
-            $originalAsset->filename = $newAssetFileName;
-            $originalAsset->newFolderId = $fieldSettings->getProperty('uploadFolderId');
-            $originalAsset->volumeId = $fieldSettings->getProperty('uploadLocation');
-            $originalAsset->avoidFilenameConflicts = true;
-            $originalAsset->setScenario($originalAsset::SCENARIO_CREATE);
+            if (! $originalAsset) {
+                $originalAssetCacheLoc = "{$cachePath}/{$postArray['cacheFile']}";
+                $originalAsset = clone $this->newAssetElement;
+                $originalAsset->tempFilePath = $originalAssetCacheLoc;
+                $originalAsset->filename = $newAssetFileName;
+                $originalAsset->newFolderId = $fieldSettings->getProperty('uploadFolderId');
+                $originalAsset->volumeId = $fieldSettings->getProperty('uploadLocation');
+                $originalAsset->avoidFilenameConflicts = true;
+                $originalAsset->setScenario($originalAsset::SCENARIO_CREATE);
 
-            $this->elementsService->saveElement($originalAsset);
+                $this->elementsService->saveElement($originalAsset);
+            }
 
             $highQualAsset = clone $this->newAssetElement;
             $highQualAsset->tempFilePath = $highQualCacheLoc;
@@ -379,6 +406,14 @@ class FieldSaveService
             ]
         )
         ->execute();
+
+        if (! $oldAssetIds) {
+            return;
+        }
+
+        foreach ($oldAssetIds as $id) {
+            $this->elementsService->deleteElementById($id);
+        }
     }
 
     /**
