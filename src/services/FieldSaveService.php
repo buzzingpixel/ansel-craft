@@ -269,6 +269,18 @@ class FieldSaveService
          * be running any manipulations
          */
         if ($hasChanged) {
+            if ($existingRow['assetId']) {
+                $oldAssetIds[] = $existingRow['assetId'];
+            }
+
+            if ($existingRow['highQualAssetId']) {
+                $oldAssetIds[] = $existingRow['highQualAssetId'];
+            }
+
+            if ($existingRow['thumbAssetId']) {
+                $oldAssetIds[] = $existingRow['thumbAssetId'];
+            }
+
             /**
              * We need to make sure the form was not submitted before all the
              * pre-processing of manipulations ran. If the pre-manipulation
