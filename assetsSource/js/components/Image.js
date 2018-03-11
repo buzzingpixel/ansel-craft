@@ -417,8 +417,16 @@ function runImage(F) {
             var imageUuids = self.commonStorage.eventTriggers.get(
                 'imageControllerUuids'
             ).slice(0);
+            var $delInput = self.$image.find('.JSAnselField__Input--Delete');
 
-            // TODO: check if we need to set delete inputs
+            console.log($delInput);
+
+            self.$image.find('.JSAnselField__Input--Id').prependTo(
+                self.commonStorage.$el
+            );
+
+            $delInput.val('1');
+            $delInput.prependTo(self.commonStorage.$el);
 
             self.anselCropController.destroy();
 

@@ -113,8 +113,6 @@ class FieldSaveService
 
         $imageIds = [];
 
-        $deleteIds = [];
-
         $pos = 1;
 
         foreach ($postArray as &$imageArray) {
@@ -151,27 +149,8 @@ class FieldSaveService
         }
 
         foreach ($postArray as $imageArray) {
-            $delete = $imageArray['deleteImage'] ?? '0';
-
-            if ($delete === '1') {
-                // TODO: add this image to the delete array
-                var_dump('// TODO: add this image to the delete array');
-                die;
-                // $deleteIds[] = $imageArray['id'];
-                continue;
-            }
-
             $this->saveFieldImageFromPostArray($imageArray, $fieldSettings);
         }
-
-
-        // TODO: delete images if there are any images to delete
-        if (! $deleteIds) {
-            return;
-        }
-
-        var_dump('TODO: delete images', $deleteIds);
-        die;
     }
 
     /**
@@ -185,10 +164,6 @@ class FieldSaveService
         array $postArray,
         AnselFieldSettingsModel $fieldSettings
     ) {
-        $uniqueId = uniqid('', false);
-
-        $oldAssetIds = [];
-
         /**
          * Check for an existing image row
          */
@@ -207,6 +182,43 @@ class FieldSaveService
 
             $existingRow = $this->castRowVars($query);
         }
+
+        $delete = $postArray['delete'] ?? '0';
+
+        $oldAssetIds = [];
+
+        if (($delete === '1' || $delete === 1) && $existingRow) {
+            if ($existingRow['assetId']) {
+                $oldAssetIds[] = $existingRow['assetId'];
+            }
+
+            if ($existingRow['highQualAssetId']) {
+                $oldAssetIds[] = $existingRow['highQualAssetId'];
+            }
+
+            if ($existingRow['thumbAssetId']) {
+                $oldAssetIds[] = $existingRow['thumbAssetId'];
+            }
+
+            $this->dbConnection->createCommand()
+                ->delete(
+                    '{{%anselImages}}',
+                    "`id` = {$existingRow['id']}"
+                )
+                ->execute();
+
+            if (! $oldAssetIds) {
+                return;
+            }
+
+            foreach ($oldAssetIds as $id) {
+                $this->elementsService->deleteElementById($id);
+            }
+
+            return;
+        }
+
+        $uniqueId = uniqid('', false);
 
         /**
          * We need to check if the pre-manipulations had time to run and if they
@@ -272,18 +284,6 @@ class FieldSaveService
                 ! $this->fileCacheService->cacheFileExists($standardCacheLoc) ||
                 ! $this->fileCacheService->cacheFileExists($thumbCacheLoc)
             ) {
-                if ($existingRow['assetId']) {
-                    $oldAssetIds[] = $existingRow['assetId'];
-                }
-
-                if ($existingRow['highQualAssetId']) {
-                    $oldAssetIds[] = $existingRow['highQualAssetId'];
-                }
-
-                if ($existingRow['thumbAssetId']) {
-                    $oldAssetIds[] = $existingRow['thumbAssetId'];
-                }
-
                 $processedFieldImageModel = new ProcessedFieldImageModel([
                     'h' => $height,
                     'w' => $width,

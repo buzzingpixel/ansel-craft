@@ -49,6 +49,12 @@
 
     <input
         type="hidden"
+        name="{{ m.fieldName(fieldName, id, 'delete') }}"
+        class="JSAnselField__Input JSAnselField__Input--Delete"
+    >
+
+    <input
+        type="hidden"
         name="{{ m.fieldName(fieldName, id, 'assetId') }}"
         class="JSAnselField__Input JSAnselField__Input--AssetId"
         {% if image %}
