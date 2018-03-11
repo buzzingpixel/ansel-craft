@@ -239,11 +239,11 @@ class FieldSaveService
         $x = (int) $postArray['x'];
         $y = (int) $postArray['y'];
 
-        $assetId = (int) $postArray['assetId'];
+        $originalAssetId = (int) $postArray['originalAssetId'];
 
         $hasChanged = empty($existingRow);
 
-        if ($existingRow['assetId'] !== $assetId) {
+        if ($existingRow['originalAssetId'] !== $originalAssetId) {
             $hasChanged = true;
         }
 
@@ -307,22 +307,22 @@ class FieldSaveService
             }
 
             $originalAsset = null;
-            $newAssetFileName = null;
+            $originalAssetFileName = null;
 
-            if ($assetId) {
-                $originalAsset = $this->newAssetElement::find()->id($assetId)->one();
+            if ($originalAssetId) {
+                $originalAsset = $this->newAssetElement::find()->id($originalAssetId)->one();
 
                 if ($originalAsset) {
-                    $newAssetFileName = $originalAsset->getFilename();
+                    $originalAssetFileName = $originalAsset->getFilename();
                 }
             }
 
-            if (! $newAssetFileName) {
-                $newAssetFileName = $postArray['fileName'] ?? false;
-                $newAssetFileName = $newAssetFileName ?: uniqid('', false);
+            if (! $originalAssetFileName) {
+                $originalAssetFileName = $postArray['fileName'] ?? false;
+                $originalAssetFileName = $originalAssetFileName ?: uniqid('', false);
             }
 
-            $newAssetFileName = pathinfo($newAssetFileName);
+            $newAssetFileName = pathinfo($originalAssetFileName);
 
             $newAssetFileName = $this->assetsHelper::prepareAssetName(
                 "{$newAssetFileName['filename']}-{$uniqueId}.{$newAssetFileName['extension']}"
@@ -338,7 +338,7 @@ class FieldSaveService
                 $originalAssetCacheLoc = "{$cachePath}/{$postArray['cacheFile']}";
                 $originalAsset = clone $this->newAssetElement;
                 $originalAsset->tempFilePath = $originalAssetCacheLoc;
-                $originalAsset->filename = $newAssetFileName;
+                $originalAsset->filename = $originalAssetFileName;
                 $originalAsset->newFolderId = $fieldSettings->getProperty('uploadFolderId');
                 $originalAsset->volumeId = $fieldSettings->getProperty('uploadLocation');
                 $originalAsset->avoidFilenameConflicts = true;

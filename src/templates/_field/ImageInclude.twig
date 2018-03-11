@@ -18,7 +18,7 @@
     class="AnselField__Image JSAnselField__Image"
     data-id="{{ id }}"
     {% if image %}
-    data-original-asset-id="{{ image.getOriginalAsset().id }}"
+    data-original-asset-id="{{ image.originalAssetId }}"
     {% endif %}
 >
     <input
@@ -55,10 +55,10 @@
 
     <input
         type="hidden"
-        name="{{ m.fieldName(fieldName, id, 'assetId') }}"
-        class="JSAnselField__Input JSAnselField__Input--AssetId"
+        name="{{ m.fieldName(fieldName, id, 'originalAssetId') }}"
+        class="JSAnselField__Input JSAnselField__Input--OriginalAssetId"
         {% if image %}
-        value="{{ image.assetId }}"
+        value="{{ image.originalAssetId }}"
         {% endif %}
     >
 
