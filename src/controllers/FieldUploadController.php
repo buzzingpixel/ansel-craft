@@ -78,9 +78,19 @@ class FieldUploadController extends Controller
             }
 
             if (! $meetsMin) {
+                $message = 'Minimum dimensions not met.';
+
+                if ($minWidth && $minHeight) {
+                    $message = "Field requires images to be at least {$minWidth}px wide and {$minHeight}px tall.";
+                } elseif ($minWidth) {
+                    $message = "Field requires images to be at least {$minWidth}px wide.";
+                } elseif ($minHeight) {
+                    $message = "Field requires images to be at least {$minHeight}px tall.";
+                }
+
                 return $this->asJson([
                     'success' => false,
-                    'message' => 'Minimum dimensions not met.',
+                    'message' => $message,
                     'file' => [],
                 ]);
             }

@@ -14,6 +14,7 @@ function runImage(F) {
         commonStorage: {},
 
         setFromTemplate: false,
+        insertImage: false,
 
         $image: null,
         $imageTag: null,
@@ -91,7 +92,7 @@ function runImage(F) {
                 self.$imageTag.attr('src', self.imageSrc);
             }
 
-            if (self.setFromTemplate) {
+            if (self.setFromTemplate || self.insertImage) {
                 self.commonStorage.$imagesHolder.append(self.$image);
             }
 
@@ -346,7 +347,7 @@ function runImage(F) {
                 model: self.model,
                 commonStorage: self.commonStorage,
                 $imageTag: self.$imageTag,
-                setInitialCoords: self.setFromTemplate
+                setInitialCoords: self.setFromTemplate || self.insertImage
             });
 
             self.$image.find('.JSAnselField__ImageIconCrop').on('click', function() {
