@@ -9,7 +9,6 @@
 
 namespace buzzingpixel\ansel\models;
 
-use Craft;
 use craft\elements\User;
 use craft\elements\Asset;
 use buzzingpixel\ansel\Ansel;
@@ -83,6 +82,14 @@ class AnselImageModel extends Model
 
     /** @var string $uid */
     public $uid;
+
+    /**
+     * Following properties are used by the field type for postback
+     */
+    public $delete;
+    public $cacheFile;
+    public $fileName;
+    public $preManipulation = [];
 
     /**
      * @inheritdoc
@@ -265,25 +272,29 @@ class AnselImageModel extends Model
         $assetIds = [];
 
         foreach ($set as $anselImageModel) {
-            if (! isset($assets[$anselImageModel->assetId]) &&
+            if ($anselImageModel->assetId &&
+                ! isset($assets[$anselImageModel->assetId]) &&
                 \in_array('assetId', $toPreload, true)
             ) {
                 $assetIds[$anselImageModel->assetId] = $anselImageModel->assetId;
             }
 
-            if (! isset($assets[$anselImageModel->highQualAssetId]) &&
+            if ($anselImageModel->highQualAssetId &&
+                ! isset($assets[$anselImageModel->highQualAssetId]) &&
                 \in_array('highQualAssetId', $toPreload, true)
             ) {
                 $assetIds[$anselImageModel->highQualAssetId] = $anselImageModel->highQualAssetId;
             }
 
-            if (! isset($assets[$anselImageModel->thumbAssetId]) &&
+            if ($anselImageModel->thumbAssetId &&
+                ! isset($assets[$anselImageModel->thumbAssetId]) &&
                 \in_array('thumbAssetId', $toPreload, true)
             ) {
                 $assetIds[$anselImageModel->thumbAssetId] = $anselImageModel->thumbAssetId;
             }
 
-            if (! isset($assets[$anselImageModel->originalAssetId]) &&
+            if ($anselImageModel->originalAssetId &&
+                ! isset($assets[$anselImageModel->originalAssetId]) &&
                 \in_array('originalAssetId', $toPreload, true)
             ) {
                 $assetIds[$anselImageModel->originalAssetId] = $anselImageModel->originalAssetId;
@@ -301,5 +312,37 @@ class AnselImageModel extends Model
         }
 
         Ansel::$plugin->getStorageService()->set($assets, 'assets');
+    }
+
+    /**
+     * Gets base 64 from cache file
+     * @throws \Exception
+     */
+    public function getBase64FromCacheFile()
+    {
+        $cacheService = Ansel::$plugin->getFileCacheService();
+        $cachePath = $cacheService->getCachePath();
+        $mimeType = (new \finfo())->file(
+            "{$cachePath}/{$this->cacheFile}",
+            FILEINFO_MIME_TYPE
+        );
+        $base64 = "data:image/{$mimeType};base64,";
+        $base64 .= base64_encode($cacheService->getCacheFileContents(
+            $this->cacheFile
+        ));
+        return $base64;
+    }
+
+    /**
+     * Gets a value from the predefined array
+     * @param string $key
+     * @return mixed
+     */
+    public function getFromPreManipulationArray(string $key)
+    {
+        if (isset($this->preManipulation[$key])) {
+            return $this->preManipulation[$key];
+        }
+        return null;
     }
 }

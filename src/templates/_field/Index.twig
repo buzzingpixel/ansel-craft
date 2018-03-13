@@ -58,11 +58,29 @@
                 {{ 'Drag images here to upload'|t('app')|anselWidont }}
             </div>
             <div class="AnselField__ImagesHolder JSAnselField__ImagesHolder">
+                {% import 'ansel/_macros/Macros.twig' as m %}
                 {% for image in images %}
-                    {% include 'ansel/_field/ImageInclude.twig' with {
-                        settings: settings,
-                        image: image,
-                    } only %}
+                    {% if image.delete %}
+                        {% set id = anselUniqueId() %}
+                        {% set fieldName = settings.fieldName %}
+                        <input
+                            type="hidden"
+                            name="{{ m.fieldName(fieldName, id, 'delete') }}"
+                            class="JSAnselField__Input JSAnselField__Input--Delete"
+                            value="1"
+                        >
+                        <input
+                            type="hidden"
+                            name="{{ m.fieldName(fieldName, id, 'id') }}"
+                            class="JSAnselField__Input JSAnselField__Input--Id"
+                            value="{{ image.id }}"
+                        >
+                    {% else %}
+                        {% include 'ansel/_field/ImageInclude.twig' with {
+                            settings: settings,
+                            image: image,
+                        } only %}
+                    {% endif %}
                 {% endfor %}
             </div>
             <div class="AnselField__SelectImage JSAnselField__SelectImage">

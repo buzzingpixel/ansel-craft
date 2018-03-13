@@ -205,17 +205,27 @@ class AnselField extends Field
         $images = [];
 
         if ($element) {
-            $images = Ansel::$plugin->getAnselImageService()
-                ->showDisabled()
-                ->elementId($element->getId())
-                ->fieldId($settings->fieldId)
-                ->order('position asc')
-                ->all();
+            // Deal with postback
+            $values = $element->getFieldValue($this->handle);
+            $isPostback = \is_array($values);
+
+            if ($isPostback) {
+                unset($values['placeholder']);
+
+                foreach ($values as $item) {
+                    $images[] = new AnselImageModel($item);
+                }
+            } else {
+                $images = Ansel::$plugin->getAnselImageService()
+                    ->showDisabled()
+                    ->elementId($element->getId())
+                    ->fieldId($settings->fieldId)
+                    ->order('position asc')
+                    ->all();
+            }
         }
 
-        AnselImageModel::preLoadElementsForSet($images);
-
-        // TODO: populate postback data if necesary
+        AnselImageModel::preLoadElementsForSet($images, ['originalAssetId']);
 
         return Minify_HTML::minify(
             Craft::$app->getView()->renderTemplate('ansel/_field/Index.twig', [
