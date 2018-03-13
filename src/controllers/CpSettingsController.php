@@ -68,7 +68,7 @@ class CpSettingsController extends Controller
         if (! $this->settings->validate()) {
             if (Craft::$app->getSession()) {
                 Craft::$app->getSession()->setError(
-                    Craft::t('ansel', "Couldn't save settings.")
+                    Craft::t('app', "Couldn't save settings.")
                 );
             }
             return $this->actionIndex();
@@ -78,7 +78,7 @@ class CpSettingsController extends Controller
 
         if (Craft::$app->getSession()) {
             Craft::$app->getSession()->setNotice(
-                Craft::t('ansel', 'Settings saved.')
+                Craft::t('app', 'Settings saved.')
             );
         }
 

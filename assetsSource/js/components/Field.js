@@ -116,7 +116,8 @@ function runField(F) {
                 $imagesHolder: $imageHolder,
                 $notificationList: self.$el.find('.JSAnselField__Notifications'),
                 fieldsModalHtml: self.$el.find('.JSAnselField__ModalTemplate').html(),
-                cropTableTemplate: self.$el.find('.JSAnselField__CropTableTemplate').html()
+                cropTableTemplate: self.$el.find('.JSAnselField__CropTableTemplate').html(),
+                translateActionUrl: self.$el.data('translateActionUrl')
             };
         },
 

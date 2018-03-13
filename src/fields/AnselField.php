@@ -106,7 +106,7 @@ class AnselField extends Field
      */
     public static function displayName(): string
     {
-        return Craft::t('ansel', 'Ansel');
+        return Craft::t('app', 'Ansel');
     }
 
     /**
@@ -222,6 +222,7 @@ class AnselField extends Field
                 'uploadKey' => Ansel::$plugin->getUploadKeysService()->createNew(),
                 'uploadActionUrl' => UrlHelper::actionUrl('ansel/field-upload/upload'),
                 'processActionUrl' => UrlHelper::actionUrl('ansel/image-process/process'),
+                'translateActionUrl' => UrlHelper::actionUrl('ansel/translation/translate'),
                 'csrfToken' => Craft::$app->getRequest()->getCsrfToken(),
                 'settings' => $settings,
                 'images' => $images,

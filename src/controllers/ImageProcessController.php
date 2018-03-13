@@ -9,11 +9,11 @@
 
 namespace buzzingpixel\ansel\controllers;
 
-use buzzingpixel\ansel\models\ProcessedFieldImageModel;
 use Craft;
 use yii\web\Response;
 use craft\web\Controller;
 use buzzingpixel\ansel\Ansel;
+use buzzingpixel\ansel\models\ProcessedFieldImageModel;
 
 /**
  * Class ImageProcessController

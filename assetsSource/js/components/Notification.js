@@ -20,19 +20,48 @@ function runNotification(F) {
 
         init: function() {
             var self = this;
-            var message = '';
+            var ajaxData = new FormData();
+
+            ajaxData.append(
+                'CRAFT_CSRF_TOKEN',
+                self.commonStorage.sharedModel.get('csrfToken')
+            );
+
+            ajaxData.append('toTranslate[heading]', self.heading);
+            ajaxData.append('toTranslate[message]', self.message);
+
+            $.ajax({
+                url: self.commonStorage.translateActionUrl,
+                type: 'post',
+                data: ajaxData,
+                dataType: 'json',
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function(json) {
+                    self.render(json.message, json.heading);
+                },
+                error: function() {
+                    self.render(self.message, self.heading);
+                }
+            });
+        },
+
+        render: function(message, heading) {
+            var self = this;
+            var localMessage = '';
 
             self.$line = $(
                 '<li class="AnselField__Notification JSAnselField__Notification"></li>'
             );
 
-            if (self.heading) {
-                message += '<strong>' + self.heading + '</strong>: ';
+            if (heading) {
+                localMessage += '<strong>' + heading + '</strong>: ';
             }
 
-            message += self.message;
+            localMessage += message;
 
-            self.$line.html(message);
+            self.$line.html(localMessage);
 
             if (self.error) {
                 self.$line.addClass('AnselField__Notification--IsError');
