@@ -173,12 +173,14 @@ class AnselField extends Field
 
         foreach (Craft::$app->getVolumes()->getAllVolumes() as $volume) {
             /** @var LocalVolumeType $volume */
-            $volumeSelectOptions[] = [
+            $volumeSelectOptions[$volume->name] = [
                 'label' => $volume->name,
                 'name' => $volume->id,
                 'value' => $volume->id,
             ];
         }
+
+        ksort($volumeSelectOptions);
 
         return Craft::$app->getView()->renderTemplate(
             'ansel/_core/FieldSettings.twig',
