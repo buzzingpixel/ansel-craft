@@ -9,7 +9,6 @@
 
 namespace buzzingpixel\ansel\fields;
 
-use buzzingpixel\ansel\models\AnselImageModel;
 use Craft;
 use Minify_HTML;
 use yii\db\Schema;
@@ -20,7 +19,9 @@ use buzzingpixel\ansel\Ansel;
 use craft\base\ElementInterface;
 use buzzingpixel\ansel\AnselAssetBundle;
 use craft\volumes\Local as LocalVolumeType;
+use buzzingpixel\ansel\models\AnselImageModel;
 use buzzingpixel\ansel\models\AnselSettingsModel;
+use \buzzingpixel\ansel\services\AnselImageService;
 use buzzingpixel\ansel\models\AnselFieldSettingsModel;
 
 /**
@@ -215,12 +216,8 @@ class AnselField extends Field
                 foreach ($values as $item) {
                     $images[] = new AnselImageModel($item);
                 }
-            } else {
-                $images = Ansel::$plugin->getAnselImageService()
-                    ->showDisabled()
-                    ->elementId($element->getId())
-                    ->fieldId($settings->fieldId)
-                    ->order('position asc')
+            } elseif ($value instanceof AnselImageService) {
+                $images = $value->showDisabled()
                     ->all();
             }
         }
@@ -238,6 +235,29 @@ class AnselField extends Field
                 'images' => $images,
             ])
         );
+    }
+
+    /**
+     * Prepares field data for use in templates
+     * @param $value
+     * @param ElementInterface|null $element
+     * @return null|array|AnselImageService
+     * @throws \Exception
+     */
+    public function normalizeValue($value, ElementInterface $element = null)
+    {
+        if (\is_array($value)) {
+            return $value;
+        }
+
+        if (! $element) {
+            return null;
+        }
+
+        return Ansel::$plugin->getAnselImageService()
+            ->elementId($element->getId())
+            ->fieldId($this->getSettingsModel()->fieldId)
+            ->order('position asc');
     }
 
     /**
