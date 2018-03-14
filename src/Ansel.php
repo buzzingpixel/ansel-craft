@@ -22,9 +22,11 @@ use League\Flysystem\Filesystem;
 use craft\events\RegisterUrlRulesEvent;
 use craft\helpers\Assets as AssetsHelper;
 use buzzingpixel\ansel\fields\AnselField;
+use craft\web\twig\variables\CraftVariable;
 use Gregwar\Image\Image as ImageManipulator;
 use craft\events\RegisterComponentTypesEvent;
 use buzzingpixel\ansel\models\AnselImageModel;
+use buzzingpixel\ansel\variables\AnselVariable;
 use buzzingpixel\ansel\services\StorageService;
 use buzzingpixel\ansel\services\FieldSaveService;
 use buzzingpixel\ansel\services\FileCacheService;
@@ -72,6 +74,16 @@ class Ansel extends Plugin
             Fields::EVENT_REGISTER_FIELD_TYPES,
             function (RegisterComponentTypesEvent $event) {
                 $event->types[] = AnselField::class;
+            }
+        );
+
+        Event::on(
+            CraftVariable::class,
+            CraftVariable::EVENT_INIT,
+            function (Event $e) {
+                /** @var CraftVariable $variable */
+                $variable = $e->sender;
+                $variable->set('ansel', AnselVariable::class);
             }
         );
     }
