@@ -17,11 +17,23 @@ function runMain(F) {
 
     F.controller.construct('ImageProcessor');
 
-    $('.JSAnselField').each(function() {
-        F.controller.construct('Field', {
-            el: this
+    F.runInitOnFields = function() {
+        $('.JSAnselField').each(function() {
+            var $el = $(this);
+
+            if ($el.data('anselInit')) {
+                return;
+            }
+
+            $el.data('anselInit', true);
+
+            F.controller.construct('Field', {
+                el: this
+            });
         });
-    });
+    };
+
+    F.runInitOnFields();
 }
 
 runMain(window.ANSEL);

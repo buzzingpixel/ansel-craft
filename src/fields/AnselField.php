@@ -226,6 +226,16 @@ class AnselField extends Field
 
         AnselImageModel::preLoadElementsForSet($images, ['originalAssetId']);
 
+        Craft::$app->getView()->registerJs(
+            '(function() {' .
+                "'use strict';" .
+                'if (! window.ANSEL) {' .
+                    'return;' .
+                '}' .
+                'window.ANSEL.runInitOnFields();' .
+            '})();'
+        );
+
         return Minify_HTML::minify(
             Craft::$app->getView()->renderTemplate('ansel/_field/Index.twig', [
                 'uploadKey' => Ansel::$plugin->getUploadKeysService()->createNew(),
