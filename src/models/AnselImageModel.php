@@ -9,12 +9,14 @@
 
 namespace buzzingpixel\ansel\models;
 
+use Craft;
 use craft\elements\User;
 use craft\elements\Asset;
 use buzzingpixel\ansel\Ansel;
 use felicity\datamodel\Model;
 use felicity\datamodel\services\datahandlers\IntHandler;
 use felicity\datamodel\services\datahandlers\BoolHandler;
+use buzzingpixel\ansel\services\AnselLivePreviewMockAsset;
 use felicity\datamodel\services\datahandlers\StringHandler;
 use felicity\datamodel\services\datahandlers\DateTimeHandler;
 
@@ -23,6 +25,9 @@ use felicity\datamodel\services\datahandlers\DateTimeHandler;
  */
 class AnselImageModel extends Model
 {
+    /** @var bool $isLivePreview */
+    public $isLivePreview;
+
     /** @var int $id */
     public $id;
 
@@ -97,6 +102,7 @@ class AnselImageModel extends Model
     protected function defineHandlers(): array
     {
         return [
+            'isLivePreview' => ['class' => BoolHandler::class],
             'id' => ['class' => IntHandler::class],
             'elementId' => ['class' => IntHandler::class],
             'fieldId' => ['class' => IntHandler::class],
@@ -131,9 +137,37 @@ class AnselImageModel extends Model
     /**
      * Gets asset
      * @return null|Asset
+     * @throws \Exception
      */
     public function getAsset()
     {
+        if ($this->isLivePreview &&
+            $this->getFromPreManipulationArray('standardImgCacheLocation')
+        ) {
+            $mockAsset = new AnselLivePreviewMockAsset();
+            $mockAsset->filename = 'Live Preview';
+            $mockAsset->kind = 'image';
+
+            $cacheService = Ansel::$plugin->getFileCacheService();
+            $cachePath = $cacheService->getCachePath();
+            $mimeType = (new \finfo())->file(
+                "{$cachePath}/{$this->getFromPreManipulationArray('standardImgCacheLocation')}",
+                FILEINFO_MIME_TYPE
+            );
+            $base64 = "data:image/{$mimeType};base64,";
+            $base64 .= base64_encode($cacheService->getCacheFileContents(
+                $this->getFromPreManipulationArray('standardImgCacheLocation')
+            ));
+
+            $mockAsset->base64Image = $base64;
+
+            return $mockAsset;
+        }
+
+        if (! $this->assetId) {
+            return null;
+        }
+
         return self::getAssetFromId($this->assetId);
     }
 
@@ -143,6 +177,10 @@ class AnselImageModel extends Model
      */
     public function getHighQualAsset()
     {
+        if (! $this->highQualAssetId) {
+            return null;
+        }
+
         return self::getAssetFromId($this->highQualAssetId);
     }
 
@@ -152,6 +190,10 @@ class AnselImageModel extends Model
      */
     public function getThumbAsset()
     {
+        if (! $this->thumbAssetId) {
+            return null;
+        }
+
         return self::getAssetFromId($this->thumbAssetId);
     }
 
@@ -161,6 +203,10 @@ class AnselImageModel extends Model
      */
     public function getOriginalAsset()
     {
+        if (! $this->originalAssetId) {
+            return null;
+        }
+
         return self::getAssetFromId($this->originalAssetId);
     }
 
@@ -224,6 +270,10 @@ class AnselImageModel extends Model
         array $set = [],
         array $toPreload = []
     ) {
+        if (Craft::$app->getRequest()->getIsLivePreview()) {
+            return;
+        }
+
         $available = [
             'userId',
             'assetId',

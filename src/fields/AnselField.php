@@ -246,7 +246,46 @@ class AnselField extends Field
      */
     public function normalizeValue($value, ElementInterface $element = null)
     {
+        $settings = $this->getSettingsModel();
+
         if (\is_array($value)) {
+            if (Craft::$app->getRequest()->getIsLivePreview()) {
+                unset($value['placeholder']);
+
+                $images = [];
+
+                $maxQty = $settings->maxQty;
+
+                $counter = 1;
+
+                foreach ($value as $item) {
+                    $image = new AnselImageModel($item);
+
+                    $image->isLivePreview = true;
+                    $image->setProperty('fieldId', $settings->fieldId);
+                    $image->setProperty('userId', Craft::$app->getUser()->getId());
+
+                    if ($element) {
+                        $image->setProperty('elementId', $element->getId());
+                    }
+
+                    if ($image->delete === '1') {
+                        continue;
+                    }
+
+                    if ($counter > $maxQty) {
+                        $image->disabled = true;
+                    }
+
+                    $images[] = $image;
+
+                    $counter++;
+                }
+
+                return Ansel::$plugin->getAnselImageServiceLivePreview()
+                    ->setFieldArray($images);
+            }
+
             return $value;
         }
 
@@ -256,7 +295,7 @@ class AnselField extends Field
 
         return Ansel::$plugin->getAnselImageService()
             ->elementId($element->getId())
-            ->fieldId($this->getSettingsModel()->fieldId)
+            ->fieldId($settings->fieldId)
             ->order('position asc');
     }
 

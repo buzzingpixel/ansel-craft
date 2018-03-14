@@ -21,30 +21,30 @@ class AnselImageService
     private $query;
 
     /** @var AnselImageModel $anselImageModel */
-    private $anselImageModel;
+    protected $anselImageModel;
 
     /** @var int $limit */
-    private $limit;
+    protected $limit;
 
     /** @var int $offset */
-    private $offset = 0;
+    protected $offset = 0;
 
     /** @var string $order */
-    private $order;
+    protected $order;
 
     /** @var bool $random */
-    private $random = false;
+    protected $random = false;
 
     /** @var bool $coverOnly */
-    private $coverOnly = false;
+    protected $coverOnly = false;
 
     /** @var bool $skipCover */
-    private $skipCover = false;
+    protected $skipCover = false;
 
     /** @var bool $showDisabled */
-    private $showDisabled = false;
+    protected $showDisabled = false;
 
-    private $includeArrayParams = [
+    protected $includeArrayParams = [
         'id' => [],
         'elementId' => [],
         'fieldId' => [],
@@ -55,7 +55,7 @@ class AnselImageService
         'caption' => null,
     ];
 
-    private $excludeArrayParams = [
+    protected $excludeArrayParams = [
         'id' => [],
         'elementId' => [],
         'fieldId' => [],
@@ -67,7 +67,7 @@ class AnselImageService
     ];
 
     /** @var array $queryParams */
-    private $comparisonOperatorParams = [
+    protected $comparisonOperatorParams = [
         'width' => null,
         'height' => null,
         'position' => null,

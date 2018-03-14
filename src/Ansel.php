@@ -9,6 +9,7 @@
 
 namespace buzzingpixel\ansel;
 
+use buzzingpixel\ansel\services\AnselImageServiceLivePreview;
 use Craft;
 use craft\db\Query;
 use yii\base\Event;
@@ -218,6 +219,19 @@ class Ansel extends Plugin
     public function getAnselImageService() : AnselImageService
     {
         return new AnselImageService(
+            new Query(),
+            new AnselImageModel()
+        );
+    }
+
+    /**
+     * Gets dependency injected AnselImageServiceLivePreview
+     * @return AnselImageServiceLivePreview
+     * @throws \Exception
+     */
+    public function getAnselImageServiceLivePreview() : AnselImageServiceLivePreview
+    {
+        return new AnselImageServiceLivePreview(
             new Query(),
             new AnselImageModel()
         );

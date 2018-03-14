@@ -23,6 +23,33 @@
     data-original-asset-id="{{ image.originalAssetId }}"
     {% endif %}
 >
+    {% if image %}
+        <input
+            type="hidden"
+            name="{{ m.fieldName(fieldName, id, 'assetId') }}"
+            class="JSAnselField__Input JSAnselField__Input--AssetId"
+            value="{{ image.assetId }}"
+        >
+        <input
+            type="hidden"
+            name="{{ m.fieldName(fieldName, id, 'highQualAssetId') }}"
+            class="JSAnselField__Input JSAnselField__Input--HighQualAssetId"
+            value="{{ image.highQualAssetId }}"
+        >
+        <input
+            type="hidden"
+            name="{{ m.fieldName(fieldName, id, 'thumbAssetId') }}"
+            class="JSAnselField__Input JSAnselField__Input--ThumbAssetId"
+            value="{{ image.thumbAssetId }}"
+        >
+        <input
+            type="hidden"
+            name="{{ m.fieldName(fieldName, id, 'thumbAssetId') }}"
+            class="JSAnselField__Input JSAnselField__Input--ThumbAssetId"
+            value="{{ image.thumbAssetId }}"
+        >
+    {% endif %}
+
     <input
         type="hidden"
         name="{{ m.fieldName(fieldName, id, 'title') }}"
