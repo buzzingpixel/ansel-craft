@@ -320,6 +320,10 @@ class AnselField extends Field
 
         $values = $element->getFieldValue($this->handle);
 
+        if ($values instanceof  AnselImageService) {
+            return;
+        }
+
         unset($values['placeholder']);
 
         $settings = $this->getSettingsModel();
@@ -414,6 +418,10 @@ class AnselField extends Field
         /** @var Element $element */
 
         $values = $element->getFieldValue($this->handle);
+
+        if ($values instanceof  AnselImageService) {
+            return;
+        }
 
         $settings = $this->getSettingsModel();
         $settings->setProperty('elementId', $element->getId());
