@@ -73,8 +73,8 @@ class FieldImageProcessService
          * Resize the image
          */
 
-        $imageWidth = $imageManipulator->width();
-        $imageHeight = $imageManipulator->height();
+        $imageWidth = $model->w;
+        $imageHeight = $model->h;
 
         if (($model->maxWidth && $imageWidth > $model->maxWidth) ||
             ($model->maxHeight && $imageHeight > $model->maxHeight)
@@ -96,8 +96,8 @@ class FieldImageProcessService
             $imageManipulator->forceResize($width, $height);
         }
 
-        $imageWidth = $imageManipulator->width();
-        $imageHeight = $imageManipulator->height();
+        $imageWidth = $model->w;
+        $imageHeight = $model->h;
 
 
         /**
