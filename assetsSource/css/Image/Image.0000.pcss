@@ -32,6 +32,18 @@
     vertical-align: middle;
 }
 
+.AnselField__ImageIcon--NeedsAttention {
+    background-image: none;
+    color: #fff;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {background: rgba(218, 90, 71, 0.75);}
+    50% {background: #da5a47;}
+    100% {background: rgba(218, 90, 71, 0.75);}
+}
+
 .AnselField__ImageIcon:first-child {
     border-radius: 2px 0 0 2px;
 }
@@ -42,6 +54,11 @@
 
 .AnselField__ImageIcon:active {
     background-image: linear-gradient(#e4e5e7, #eaebec);
+}
+
+.AnselField__ImageIcon--NeedsAttention:active {
+    background: #934735;
+    animation: none;
 }
 
 .AnselField__Image img {

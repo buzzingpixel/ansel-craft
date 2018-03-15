@@ -23,7 +23,8 @@ function runField(F) {
         activeCover: 'string',
         openFieldEditor: 'string',
         orderChange: 'int',
-        imageControllerUuids: 'array'
+        imageControllerUuids: 'array',
+        modalClosed: 'int'
     });
 
     SharedModelConstructor = F.model.make({
@@ -51,7 +52,7 @@ function runField(F) {
         ratioWidth: 'int',
         ratioHeight: 'int',
         showTitle: 'bool',
-        requireTitle: 'int',
+        requireTitle: 'bool',
         titleLabel: 'string',
         showCaption: 'bool',
         requireCaption: 'bool',

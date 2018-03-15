@@ -47,6 +47,7 @@ function runImage(F) {
             self.watchForOrderChange();
             self.watchForRemove();
             self.setUpCrop();
+            self.checkFieldRequirements();
         },
 
         setUp: function() {
@@ -136,6 +137,10 @@ function runImage(F) {
             var self = this;
             var $editIcon = self.$image.find('.JSAnselField__ImageIconEdit');
 
+            self.commonStorage.eventTriggers.onChange('modalClosed', function() {
+                self.checkFieldRequirements();
+            });
+
             $editIcon.on('click.' + self.uuid, function() {
                 self.$fieldsModal = $(self.commonStorage.fieldsModalHtml);
                 self.openFieldEditor();
@@ -194,6 +199,11 @@ function runImage(F) {
                 modal.hide();
                 modal.destroy();
                 modal = null;
+
+                self.commonStorage.eventTriggers.set(
+                    'modalClosed',
+                    self.commonStorage.eventTriggers.get('modalClosed') + 1
+                );
             }
 
             $img.attr('src', self.$imageTag.attr('src'));
@@ -541,6 +551,48 @@ function runImage(F) {
             self.$image.find('.JSAnselField__Input--PreMaxWidth').val(
                 json.model.maxWidth
             );
+        },
+
+        checkFieldRequirements: function() {
+            var self = this;
+            var needsEdits = false;
+            var coverNeedsEdits = self.commonStorage.sharedModel.get('requireCover');
+            var $imageTitle = self.$image.find('.JSAnselField__Input--Title');
+            var $imageCaption = self.$image.find('.JSAnselField__Input--Caption');
+            var $coverInputs = self.commonStorage.$el.find('.JSAnselField__Input--Cover');
+            var $editIcon = self.$image.find('.JSAnselField__ImageIconEdit');
+            var attentionClass = 'AnselField__ImageIcon--NeedsAttention';
+
+            if (self.commonStorage.sharedModel.get('requireTitle')) {
+                if (! $imageTitle.val()) {
+                    needsEdits = true;
+                }
+            }
+
+            if (self.commonStorage.sharedModel.get('requireCaption')) {
+                if (! $imageCaption.val()) {
+                    needsEdits = true;
+                }
+            }
+
+            if (coverNeedsEdits) {
+                $coverInputs.each(function() {
+                    if (this.value) {
+                        coverNeedsEdits = false;
+                    }
+                });
+
+                if (coverNeedsEdits) {
+                    needsEdits = true;
+                }
+            }
+
+            if (needsEdits) {
+                $editIcon.addClass(attentionClass);
+                return;
+            }
+
+            $editIcon.removeClass(attentionClass);
         }
     });
 }
