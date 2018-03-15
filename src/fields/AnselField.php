@@ -285,7 +285,7 @@ class AnselField extends Field
                         continue;
                     }
 
-                    if ($counter > $maxQty) {
+                    if ($maxQty && $counter > $maxQty) {
                         $image->disabled = true;
                     }
 
