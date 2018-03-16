@@ -352,6 +352,10 @@ class AnselField extends Field
             );
         }
 
+        if ($totalImages < 1) {
+            return;
+        }
+
         if ($settings->requireTitle) {
             $hasValues = true;
 
