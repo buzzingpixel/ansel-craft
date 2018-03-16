@@ -46,6 +46,12 @@
         {% endfilter %}
     </script>
 
+    <script type="text/template" class="JSAnselField__FocalPointTableTemplate">
+        {% filter anselMinify %}
+            {% include 'ansel/_field/FocalPointTable.twig' only %}
+        {% endfilter %}
+    </script>
+
     <ul class="AnselField__Notifications JSAnselField__Notifications"></ul>
 
     <div class="AnselField__MainWrap">

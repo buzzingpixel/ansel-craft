@@ -28,9 +28,13 @@ function runImage(F) {
 
         uuid: null,
 
+        anselCropController: null,
+        focalPointController: null,
+
         model: {
             isOverAllowed: 'bool',
-            'runCrop': 'int',
+            runCrop: 'int',
+            runFocusPoint: 'int',
             coords: 'object',
             imageSave: 'int',
             imageLoaded: 'bool'
@@ -47,6 +51,7 @@ function runImage(F) {
             self.watchForOrderChange();
             self.watchForRemove();
             self.setUpCrop();
+            self.setUpFocalPoint();
             self.checkFieldRequirements();
         },
 
@@ -370,6 +375,21 @@ function runImage(F) {
             });
         },
 
+        setUpFocalPoint: function() {
+            var self = this;
+
+            self.focalPointController = F.controller.construct('FocalPoint', {
+                model: self.model,
+                commonStorage: self.commonStorage,
+                $imageTag: self.$imageTag,
+                $image: self.$image
+            });
+
+            self.$image.find('.JSAnselField__ImageIconFocalPoint').on('click', function() {
+                self.model.set('runFocusPoint', self.model.get('runFocusPoint') + 1);
+            });
+        },
+
         updateCoordsInputs: function(coords) {
             var self = this;
 
@@ -430,8 +450,6 @@ function runImage(F) {
             ).slice(0);
             var $delInput = self.$image.find('.JSAnselField__Input--Delete');
 
-            console.log($delInput);
-
             self.$image.find('.JSAnselField__Input--Id').prependTo(
                 self.commonStorage.$el
             );
@@ -440,6 +458,9 @@ function runImage(F) {
             $delInput.prependTo(self.commonStorage.$el);
 
             self.anselCropController.destroy();
+            self.focalPointController.destroy();
+            self.anselCropController = null;
+            self.focalPointController = null;
 
             self.$image.find('.JSAnselField__ImageIconRemove').off(
                 'click.' + self.uuid

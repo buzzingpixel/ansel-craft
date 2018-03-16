@@ -118,6 +118,7 @@ function runField(F) {
                 $notificationList: self.$el.find('.JSAnselField__Notifications'),
                 fieldsModalHtml: self.$el.find('.JSAnselField__ModalTemplate').html(),
                 cropTableTemplate: self.$el.find('.JSAnselField__CropTableTemplate').html(),
+                focalPointTableTemplate: self.$el.find('.JSAnselField__FocalPointTableTemplate').html(),
                 translateActionUrl: self.$el.data('translateActionUrl')
             };
         },
