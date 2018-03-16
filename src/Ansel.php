@@ -9,7 +9,6 @@
 
 namespace buzzingpixel\ansel;
 
-use buzzingpixel\ansel\services\AnselImageServiceLivePreview;
 use Craft;
 use craft\db\Query;
 use yii\base\Event;
@@ -20,12 +19,13 @@ use craft\web\UrlManager;
 use craft\services\Fields;
 use \craft\helpers\UrlHelper;
 use League\Flysystem\Filesystem;
+use Imagine\Gd\Imagine as ImagineGd;
 use craft\events\RegisterUrlRulesEvent;
 use craft\helpers\Assets as AssetsHelper;
 use buzzingpixel\ansel\fields\AnselField;
 use craft\web\twig\variables\CraftVariable;
-use Gregwar\Image\Image as ImageManipulator;
 use craft\events\RegisterComponentTypesEvent;
+use Imagine\Imagick\Imagine as ImagineImagick;
 use buzzingpixel\ansel\models\AnselImageModel;
 use buzzingpixel\ansel\variables\AnselVariable;
 use buzzingpixel\ansel\services\StorageService;
@@ -36,6 +36,7 @@ use buzzingpixel\ansel\services\AnselImageService;
 use buzzingpixel\ansel\services\AnselSettingsService;
 use buzzingpixel\ansel\twigextensions\AnselTwigExtension;
 use buzzingpixel\ansel\services\FieldImageProcessService;
+use buzzingpixel\ansel\services\AnselImageServiceLivePreview;
 use League\Flysystem\Adapter\Local as LocalFilesystemAdapter;
 
 /**
@@ -178,9 +179,15 @@ class Ansel extends Plugin
      */
     public function getFieldImageProcessService() : FieldImageProcessService
     {
+        if (class_exists('Imagick')) {
+            $imagine = new ImagineImagick();
+        } else {
+            $imagine = new ImagineGd();
+        }
+
         return new FieldImageProcessService(
             $this->getFileCacheService(),
-            new ImageManipulator()
+            $imagine
         );
     }
 

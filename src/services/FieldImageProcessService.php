@@ -9,7 +9,9 @@
 
 namespace buzzingpixel\ansel\services;
 
-use Gregwar\Image\Image as ImageManipulator;
+use Imagine\Image\Box;
+use Imagine\Image\Point;
+use Imagine\Image\AbstractImagine;
 use buzzingpixel\ansel\models\ProcessedFieldImageModel;
 
 /**
@@ -20,28 +22,21 @@ class FieldImageProcessService
     /** @var FileCacheService $fileCacheService */
     private $fileCacheService;
 
-    /** @var ImageManipulator $imageManipulator */
+    /** @var AbstractImagine $imageManipulator */
     private $imageManipulator;
 
     /**
      * FieldImageProcessService constructor
      * @param FileCacheService $fileCacheService
-     * @param ImageManipulator $imageManipulator
+     * @param AbstractImagine $imageManipulator
+     * @throws \Exception
      */
     public function __construct(
         FileCacheService $fileCacheService,
-        ImageManipulator $imageManipulator
+        AbstractImagine $imageManipulator
     ) {
         $this->fileCacheService = $fileCacheService;
         $this->imageManipulator = $imageManipulator;
-
-        $this->imageManipulator->setCacheDir(
-            $this->fileCacheService->getCachePath()
-        );
-
-        // TODO: check if we should be using imagick
-        // var_dump(extension_loaded('imagick'));
-        // die;
     }
 
     /**
@@ -51,17 +46,14 @@ class FieldImageProcessService
      */
     public function processImage(ProcessedFieldImageModel $model)
     {
-        $outputType = $model->forceJpg ? 'jpeg' : 'guess';
+        $image = $this->imageManipulator->open($model->getFilePath());
 
-        $imageManipulator = clone $this->imageManipulator;
+        $image->crop(
+            new Point($model->x, $model->y),
+            new Box($model->w, $model->h)
+        );
 
-        $imageManipulator->fromFile($model->getFilePath());
-
-        $imageManipulator->setForceCache();
-
-        $imageManipulator->crop($model->x, $model->y, $model->w, $model->h);
-
-        $ext = $imageManipulator->guessType();
+        $ext = pathinfo($model->getFilePath())['extension'];
         $ext = $ext === 'jpeg' ? 'jpg' : $ext;
 
         if ($model->forceJpg) {
@@ -93,7 +85,7 @@ class FieldImageProcessService
                 $width = (int) round($imageWidth * $ratio);
             }
 
-            $imageManipulator->forceResize($width, $height);
+            $image->resize(new Box($width, $height));
         }
 
         $imageWidth = $model->w;
@@ -109,10 +101,12 @@ class FieldImageProcessService
             $this->fileCacheService->createEmptyFile($ext)
         );
 
-        $imageManipulator->save(
+        $image->save(
             $model->getHighQualityFilePath(),
-            $outputType,
-            100
+            [
+                'jpeg_quality' => 100,
+                'png_compression_level' => 0,
+            ]
         );
 
 
@@ -125,10 +119,54 @@ class FieldImageProcessService
             $this->fileCacheService->createEmptyFile($ext)
         );
 
-        $imageManipulator->save(
+        $pngCompressionLevel = 0;
+
+        if ($model->quality < 90) {
+            $pngCompressionLevel = 1;
+        }
+
+        if ($model->quality < 80) {
+            $pngCompressionLevel = 2;
+        }
+
+        if ($model->quality < 70) {
+            $pngCompressionLevel = 3;
+        }
+
+        if ($model->quality < 60) {
+            $pngCompressionLevel = 4;
+        }
+
+        if ($model->quality > 49) {
+            $pngCompressionLevel = 5;
+        }
+
+        if ($model->quality < 50) {
+            $pngCompressionLevel = 6;
+        }
+
+        if ($model->quality < 40) {
+            $pngCompressionLevel = 7;
+        }
+
+        if ($model->quality < 30) {
+            $pngCompressionLevel = 7;
+        }
+
+        if ($model->quality < 20) {
+            $pngCompressionLevel = 8;
+        }
+
+        if ($model->quality < 10) {
+            $pngCompressionLevel = 9;
+        }
+
+        $image->save(
             $model->getStandardFilePath(),
-            $outputType,
-            $model->quality
+            [
+                'jpeg_quality' => $model->quality,
+                'png_compression_level' => $pngCompressionLevel,
+            ]
         );
 
         /**
@@ -139,17 +177,19 @@ class FieldImageProcessService
         $ratio = (float) $width / $imageWidth;
         $height = (int) round($imageHeight * $ratio);
 
-        $imageManipulator->forceResize($width, $height);
+        $image->resize(new Box($width, $height));
 
         $model->setProperty(
             'thumbImgCacheLocation',
             $this->fileCacheService->createEmptyFile($ext)
         );
 
-        $imageManipulator->save(
+        $image->save(
             $model->getThumbFilePath(),
-            $outputType,
-            90
+            [
+                'jpeg_quality' => $model->quality,
+                'png_compression_level' => $pngCompressionLevel,
+            ]
         );
     }
 }
