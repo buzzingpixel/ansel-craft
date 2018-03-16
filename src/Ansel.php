@@ -43,6 +43,12 @@ use League\Flysystem\Adapter\Local as LocalFilesystemAdapter;
  */
 class Ansel extends Plugin
 {
+    /** @var string $changelogUrl */
+    public $changelogUrl = 'https://raw.githubusercontent.com/buzzingpixel/ansel-craft/master/changelog.md';
+
+    /** @var string $downloadUrl */
+    public $downloadUrl = 'https://github.com/buzzingpixel/ansel-craft/archive/master.zip';
+
     /** @var Ansel $plugin */
     public static $plugin;
 
