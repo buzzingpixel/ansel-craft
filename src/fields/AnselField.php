@@ -338,6 +338,16 @@ class AnselField extends Field
 
         unset($values['placeholder']);
 
+        foreach ($values as $key => $val) {
+            $delete = $val['delete'] ?? null;
+
+            if (! $delete) {
+                continue;
+            }
+
+            unset($values[$key]);
+        }
+
         $settings = $this->getSettingsModel();
 
         $totalImages = \count($values);
