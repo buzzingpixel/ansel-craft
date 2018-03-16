@@ -345,6 +345,10 @@ class FieldSaveService
 
             $newAssetFileName = pathinfo($originalAssetFileName);
 
+            if ($fieldSettings->forceJpg) {
+                $newAssetFileName['extension'] = 'jpg';
+            }
+
             $newAssetFileName = $this->assetsHelper::prepareAssetName(
                 "{$newAssetFileName['filename']}-{$uniqueId}.{$newAssetFileName['extension']}"
             );
