@@ -90,7 +90,7 @@ function runField(F) {
             F.controller.construct('MinTracker', sendObj);
 
             F.controller.construct('CraftFileChooser', {
-                el: '.JSAnselField__SelectImageButton',
+                el: self.$el.find('.JSAnselField__SelectImageButton').get(0),
                 commonStorage: self.commonStorage
             });
 
