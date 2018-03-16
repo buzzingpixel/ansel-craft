@@ -452,7 +452,7 @@ function runImage(F) {
             var thumbX = Math.round(rx * coords.x) * -1;
             var thumbY = Math.round(ry * coords.y) * -1;
 
-            // Check if the source file is missing
+            // TODO: Check if the source file is missing
             // if (self.sourceFileMissing) {
             //     self.$anselImage.css('position', 'static');
             //     self.$anselImage.show();
