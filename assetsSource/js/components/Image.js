@@ -270,6 +270,39 @@ function runImage(F) {
             if (! $previousImage.length && ! $nextImage.length) {
                 $prevNextContainer.hide();
             }
+
+            self.setFieldEditorThumbPosition($img);
+        },
+
+        setFieldEditorThumbPosition: function($img) {
+            var self = this;
+            var coords = self.model.get('coords');
+            var ratio = coords.w / coords.h;
+            var holderWidth = 168;
+            var holderHeight = Math.round(holderWidth / ratio);
+            var rx = holderWidth / coords.w;
+            var ry = holderHeight / coords.h;
+            var thumbWidth = Math.round(rx * self.anselCropController.imgWidth);
+            var thumbHeight = Math.round(ry * self.anselCropController.imgHeight);
+            var thumbX = Math.round(rx * coords.x) * -1;
+            var thumbY = Math.round(ry * coords.y) * -1;
+            var $container = $img.parent();
+
+            $container.css({
+                height: holderHeight + 'px',
+                overflow: 'hidden',
+                position: 'relative',
+                width: holderWidth + 'px'
+            });
+
+            $img.css({
+                height: thumbHeight + 'px',
+                left: thumbX + 'px',
+                'max-width': 'none',
+                position: 'absolute',
+                top: thumbY + 'px',
+                width: thumbWidth + 'px'
+            });
         },
 
         watchOpenFieldEditor: function() {
