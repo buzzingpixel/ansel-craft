@@ -263,6 +263,15 @@ class FieldSaveService
             $hasChanged = true;
         }
 
+        $standardAsset = null;
+        $highQualAsset = null;
+        $thumbAsset = null;
+
+        $focalArr = [
+            'x' => (float) ($postArray['focalX'] ?? 0.5),
+            'y' => (float) ($postArray['focalY'] ?? 0.5),
+        ];
+
         /**
          * $hasChanged tells us whether we need to run manipulations. If the
          * file already existed and nothing changed, we don't need to
@@ -365,6 +374,7 @@ class FieldSaveService
             $highQualAsset->newFolderId = $fieldSettings->getProperty('highQualFolderId');
             $highQualAsset->volumeId = $fieldSettings->getProperty('saveLocation');
             $highQualAsset->avoidFilenameConflicts = true;
+            $highQualAsset->setFocalPoint($focalArr);
             $highQualAsset->setScenario($originalAsset::SCENARIO_CREATE);
 
             $this->elementsService->saveElement($highQualAsset);
@@ -375,6 +385,7 @@ class FieldSaveService
             $standardAsset->newFolderId = $fieldSettings->getProperty('saveFolderId');
             $standardAsset->volumeId = $fieldSettings->getProperty('saveLocation');
             $standardAsset->avoidFilenameConflicts = true;
+            $standardAsset->setFocalPoint($focalArr);
             $standardAsset->setScenario($originalAsset::SCENARIO_CREATE);
 
             $this->elementsService->saveElement($standardAsset);
@@ -385,6 +396,7 @@ class FieldSaveService
             $thumbAsset->newFolderId = $fieldSettings->getProperty('thumbFolderId');
             $thumbAsset->volumeId = $fieldSettings->getProperty('saveLocation');
             $thumbAsset->avoidFilenameConflicts = true;
+            $thumbAsset->setFocalPoint($focalArr);
             $thumbAsset->setScenario($originalAsset::SCENARIO_CREATE);
 
             $this->elementsService->saveElement($thumbAsset);
@@ -395,6 +407,24 @@ class FieldSaveService
         $disabled = $postArray['disabled'] ?? '';
         $disabled = $disabled === '1' || $disabled === 1 ? 1 : 0;
 
+        if (! $standardAsset) {
+            $standardAsset = Asset::find()->id($existingRow['assetId'])->one();
+            $standardAsset->setFocalPoint($focalArr);
+            $this->elementsService->saveElement($standardAsset);
+        }
+
+        if (! $highQualAsset) {
+            $highQualAsset = Asset::find()->id($existingRow['highQualAssetId'])->one();
+            $highQualAsset->setFocalPoint($focalArr);
+            $this->elementsService->saveElement($highQualAsset);
+        }
+
+        if (! $thumbAsset) {
+            $thumbAsset = Asset::find()->id($existingRow['thumbAssetId'])->one();
+            $thumbAsset->setFocalPoint($focalArr);
+            $this->elementsService->saveElement($thumbAsset);
+        }
+
         $this->dbConnection->createCommand()->upsert(
             '{{%anselImages}}',
             [
@@ -403,7 +433,7 @@ class FieldSaveService
                 'fieldId' => $fieldSettings->fieldId,
                 'userId' => $existingRow['userId'] ?? $this->userId,
                 'assetId' => $standardAsset->id ?? $existingRow['assetId'],
-                'highQualAssetId' => $highQualAsset->id ?? $existingRow['highQualAssetId'],
+                    'highQualAssetId' => $highQualAsset->id ?? $existingRow['highQualAssetId'],
                 'thumbAssetId' => $thumbAsset->id ?? $existingRow['thumbAssetId'],
                 'originalAssetId' => $originalAsset->id ?? $existingRow['originalAssetId'],
                 'width' => $width,
