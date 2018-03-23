@@ -24,7 +24,9 @@ function runField(F) {
         openFieldEditor: 'string',
         orderChange: 'int',
         imageControllerUuids: 'array',
-        modalClosed: 'int'
+        modalClosed: 'int',
+        imageProcessingQueue: 'int',
+        imageProcessingInProgress: 'bool'
     });
 
     SharedModelConstructor = F.model.make({
@@ -83,6 +85,28 @@ function runField(F) {
             sendObj = {
                 commonStorage: self.commonStorage
             };
+
+            self.commonStorage.eventTriggers.onChange('imageProcessingInProgress', function(val) {
+                if (! val) {
+                    return;
+                }
+
+                F.controller.construct('Notification', {
+                    commonStorage: self.commonStorage,
+                    heading: 'Image Processing',
+                    message: 'This field is currently processing images...',
+                    destroyEvents: ['imageProcessingInProgress']
+                });
+            });
+
+            self.commonStorage.eventTriggers.onChange('imageProcessingQueue', function(val) {
+                if (val) {
+                    self.commonStorage.eventTriggers.set('imageProcessingInProgress', true);
+                    return;
+                }
+
+                self.commonStorage.eventTriggers.set('imageProcessingInProgress', false);
+            });
 
             F.controller.construct('Notifications', sendObj);
             F.controller.construct('FieldDropUploader', sendObj);

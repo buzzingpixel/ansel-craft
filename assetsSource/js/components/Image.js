@@ -542,6 +542,7 @@ function runImage(F) {
 
         processImage: function() {
             var self = this;
+            var triggers = self.commonStorage.eventTriggers;
 
             clearTimeout(self.processImageTimer);
 
@@ -556,11 +557,17 @@ function runImage(F) {
                     maxHeight: self.commonStorage.sharedModel.get('maxHeight'),
                     forceJpg: self.commonStorage.sharedModel.get('forceJpg')
                 };
+
+                triggers.set(
+                    'imageProcessingQueue',
+                    triggers.get('imageProcessingQueue') + 1
+                );
             }, 500);
         },
 
         processImageCallback: function(json) {
             var self = this;
+            var triggers = self.commonStorage.eventTriggers;
 
             self.$image.find('.JSAnselField__Input--PreFileLocation').val(
                 json.model.fileLocation
@@ -604,6 +611,11 @@ function runImage(F) {
 
             self.$image.find('.JSAnselField__Input--PreMaxWidth').val(
                 json.model.maxWidth
+            );
+
+            triggers.set(
+                'imageProcessingQueue',
+                triggers.get('imageProcessingQueue') - 1
             );
         },
 
