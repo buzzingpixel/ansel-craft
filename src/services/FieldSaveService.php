@@ -218,6 +218,10 @@ class FieldSaveService
             return;
         }
 
+        if (($delete === '1' || $delete === 1) && ! $existingRow) {
+            return;
+        }
+
         $uniqueId = uniqid('', false);
 
         /**
