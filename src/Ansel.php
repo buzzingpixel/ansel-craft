@@ -14,6 +14,7 @@ use craft\db\Query;
 use yii\base\Event;
 use Ramsey\Uuid\Uuid;
 use craft\base\Plugin;
+use craft\elements\User;
 use craft\elements\Asset;
 use craft\web\UrlManager;
 use craft\services\Fields;
@@ -31,6 +32,7 @@ use buzzingpixel\ansel\variables\AnselVariable;
 use buzzingpixel\ansel\services\StorageService;
 use buzzingpixel\ansel\services\FieldSaveService;
 use buzzingpixel\ansel\services\FileCacheService;
+use buzzingpixel\ansel\services\UserDeleteService;
 use buzzingpixel\ansel\services\UploadKeysService;
 use buzzingpixel\ansel\services\AnselImageService;
 use buzzingpixel\ansel\services\AnselSettingsService;
@@ -92,6 +94,16 @@ class Ansel extends Plugin
                 /** @var CraftVariable $variable */
                 $variable = $e->sender;
                 $variable->set('ansel', AnselVariable::class);
+            }
+        );
+
+        Event::on(
+            User::class,
+            User::EVENT_BEFORE_DELETE,
+            function (Event $e) {
+                /** @var User $user */
+                $user = $e->sender;
+                $this->getUserDeleteService()->onDeleteUser($user);
             }
         );
     }
@@ -257,5 +269,14 @@ class Ansel extends Plugin
     public function getStorageService() : StorageService
     {
         return StorageService::getInstance();
+    }
+
+    /**
+     * Gets the dependency injected user delete service
+     * @return UserDeleteService
+     */
+    public function getUserDeleteService() : UserDeleteService
+    {
+        return new UserDeleteService(Craft::$app->getDb());
     }
 }
