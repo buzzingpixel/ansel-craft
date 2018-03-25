@@ -90,7 +90,9 @@
         type="hidden"
         name="{{ m.fieldName(fieldName, id, 'originalAssetId') }}"
         class="JSAnselField__Input JSAnselField__Input--OriginalAssetId"
-        {% if image %}
+        {% if srcMissing %}
+        value="0"
+        {% elseif image %}
         value="{{ image.originalAssetId }}"
         {% endif %}
     >

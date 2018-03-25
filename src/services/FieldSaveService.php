@@ -433,6 +433,8 @@ class FieldSaveService
             $this->elementsService->saveElement($thumbAsset);
         }
 
+        $existingOrigAssetId = ($existingRow['originalAssetId'] ?? 0) ?: null;
+
         $this->dbConnection->createCommand()->upsert(
             '{{%anselImages}}',
             [
@@ -443,7 +445,7 @@ class FieldSaveService
                 'assetId' => $standardAsset->id ?? $existingRow['assetId'],
                     'highQualAssetId' => $highQualAsset->id ?? $existingRow['highQualAssetId'],
                 'thumbAssetId' => $thumbAsset->id ?? $existingRow['thumbAssetId'],
-                'originalAssetId' => $originalAsset->id ?? $existingRow['originalAssetId'],
+                'originalAssetId' => $originalAsset->id ?? $existingOrigAssetId,
                 'width' => $width,
                 'height' => $height,
                 'x' => $x,
