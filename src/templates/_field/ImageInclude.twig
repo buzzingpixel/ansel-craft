@@ -7,11 +7,15 @@
 {% set fieldName = settings.fieldName %}
 
 {% set src = false %}
+{% set srcMissing = false %}
 
 {% if image and image.cacheFile %}
     {% set src = image.getBase64FromCacheFile() %}
 {% elseif image and image.getOriginalAsset() %}
     {% set src = image.getOriginalAsset().getUrl() %}
+{% elseif image and image.getThumbAsset() %}
+    {% set srcMissing = true %}
+    {% set src = image.getThumbAsset().getUrl() %}
 {% endif %}
 
 {% import 'ansel/_macros/Macros.twig' as m %}
@@ -291,7 +295,16 @@
     </div>
     <div class="AnselField__ImageWrapper">
         <div class="AnselField__ImageWrapperInner JSAnselField__ImageWrapperInner">
-            <img{% if src %} src="{{ src }}"{% endif %} alt="" class="AnselField__ImageTag JSAnselField__ImageTag">
+            <img
+                {% if src %}
+                src="{{ src }}"
+                {% endif %}
+                alt=""
+                class="AnselField__ImageTag JSAnselField__ImageTag"
+                {% if srcMissing %}
+                data-source-missing="true"
+                {% endif %}
+            >
         </div>
     </div>
 </div>

@@ -13,6 +13,7 @@ function runImage(F) {
     F.controller.make('Image', {
         commonStorage: {},
 
+        srcMissing: false,
         setFromTemplate: false,
         insertImage: false,
 
@@ -116,6 +117,8 @@ function runImage(F) {
             self.model.onChange('imageSave', function() {
                 self.processImage();
             });
+
+            self.srcMissing = self.$imageTag.data('sourceMissing');
         },
 
         setUpRowId: function() {
@@ -376,6 +379,21 @@ function runImage(F) {
 
         setUpCrop: function() {
             var self = this;
+            var $cropBtn = self.$image.find('.JSAnselField__ImageIconCrop');
+
+            if (self.srcMissing) {
+                $cropBtn.on('click', function() {
+                    F.controller.construct('Notification', {
+                        commonStorage: self.commonStorage,
+                        error: true,
+                        heading: 'Error',
+                        message: 'The source image has been deleted and this image is no longer editable.',
+                        destroyAfter: 6000
+                    });
+                });
+
+                return;
+            }
 
             if (! self.setFromTemplate) {
                 self.model.onChange('imageLoaded', function() {
@@ -398,7 +416,7 @@ function runImage(F) {
                 setInitialCoords: self.setFromTemplate || self.insertImage
             });
 
-            self.$image.find('.JSAnselField__ImageIconCrop').on('click', function() {
+            $cropBtn.on('click', function() {
                 self.model.set('runCrop', self.model.get('runCrop') + 1);
             });
 

@@ -16,6 +16,7 @@ function runNotification(F) {
         heading: '',
         message: '',
         destroyEvents: [],
+        destroyAfter: false,
         $line: null,
 
         init: function() {
@@ -82,6 +83,14 @@ function runNotification(F) {
                     }
                 );
             });
+
+            if (! self.destroyAfter) {
+                return;
+            }
+
+            setTimeout(function() {
+                self.destroy();
+            }, self.destroyAfter);
         },
 
         destroy: function() {
