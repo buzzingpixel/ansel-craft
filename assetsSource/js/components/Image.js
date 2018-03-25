@@ -428,6 +428,21 @@ function runImage(F) {
 
         setUpFocalPoint: function() {
             var self = this;
+            var $btn = self.$image.find('.JSAnselField__ImageIconFocalPoint');
+
+            if (self.srcMissing) {
+                $btn.on('click', function() {
+                    F.controller.construct('Notification', {
+                        commonStorage: self.commonStorage,
+                        error: true,
+                        heading: 'Error',
+                        message: 'The source image has been deleted and this image is no longer editable.',
+                        destroyAfter: 6000
+                    });
+                });
+
+                return;
+            }
 
             self.focalPointController = F.controller.construct('FocalPoint', {
                 model: self.model,
@@ -436,7 +451,7 @@ function runImage(F) {
                 $image: self.$image
             });
 
-            self.$image.find('.JSAnselField__ImageIconFocalPoint').on('click', function() {
+            $btn.on('click', function() {
                 self.model.set('runFocusPoint', self.model.get('runFocusPoint') + 1);
             });
         },
@@ -508,8 +523,14 @@ function runImage(F) {
             $delInput.val('1');
             $delInput.prependTo(self.commonStorage.$el);
 
-            self.anselCropController.destroy();
-            self.focalPointController.destroy();
+            if (self.anselCropController) {
+                self.anselCropController.destroy();
+            }
+
+            if (self.focalPointController) {
+                self.focalPointController.destroy();
+            }
+
             self.anselCropController = null;
             self.focalPointController = null;
 
