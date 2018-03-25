@@ -32,13 +32,21 @@
             type="hidden"
             name="{{ m.fieldName(fieldName, id, 'assetId') }}"
             class="JSAnselField__Input JSAnselField__Input--AssetId"
+            {% if image.getAsset() %}
             value="{{ image.assetId }}"
+            {% else %}
+            value="0"
+            {% endif %}
         >
         <input
             type="hidden"
             name="{{ m.fieldName(fieldName, id, 'highQualAssetId') }}"
             class="JSAnselField__Input JSAnselField__Input--HighQualAssetId"
+            {% if image.getHighQualAsset() %}
             value="{{ image.highQualAssetId }}"
+            {% else %}
+            value="0"
+            {% endif %}
         >
         <input
             type="hidden"
@@ -50,7 +58,11 @@
             type="hidden"
             name="{{ m.fieldName(fieldName, id, 'thumbAssetId') }}"
             class="JSAnselField__Input JSAnselField__Input--ThumbAssetId"
+            {% if image.getThumbAsset() %}
             value="{{ image.thumbAssetId }}"
+            {% else %}
+            value="0"
+            {% endif %}
         >
     {% endif %}
 

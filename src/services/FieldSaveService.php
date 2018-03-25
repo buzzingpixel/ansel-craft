@@ -276,22 +276,32 @@ class FieldSaveService
             'y' => (float) ($postArray['focalY'] ?? 0.5),
         ];
 
+        $existingAssetId = (int) $existingRow['assetId'];
+        $highQualAssetId = (int) $existingRow['highQualAssetId'];
+        $thumbAssetId = (int) $existingRow['thumbAssetId'];
+
+        if ($existingId &&
+            (! $existingAssetId || ! $highQualAssetId || ! $thumbAssetId)
+        ) {
+            $hasChanged = true;
+        }
+
         /**
          * $hasChanged tells us whether we need to run manipulations. If the
          * file already existed and nothing changed, we don't need to
          * be running any manipulations
          */
         if ($hasChanged) {
-            if ($existingRow['assetId']) {
-                $oldAssetIds[] = $existingRow['assetId'];
+            if ($existingAssetId) {
+                $oldAssetIds[] = $existingAssetId;
             }
 
-            if ($existingRow['highQualAssetId']) {
-                $oldAssetIds[] = $existingRow['highQualAssetId'];
+            if ($highQualAssetId) {
+                $oldAssetIds[] = $highQualAssetId;
             }
 
-            if ($existingRow['thumbAssetId']) {
-                $oldAssetIds[] = $existingRow['thumbAssetId'];
+            if ($thumbAssetId) {
+                $oldAssetIds[] = $thumbAssetId;
             }
 
             /**
@@ -417,8 +427,11 @@ class FieldSaveService
 
         if (! $standardAsset) {
             $standardAsset = Asset::find()->id($existingRow['assetId'])->one();
-            $standardAsset->setFocalPoint($focalArr);
-            $this->elementsService->saveElement($standardAsset);
+
+            if ($standardAsset) {
+                $standardAsset->setFocalPoint($focalArr);
+                $this->elementsService->saveElement($standardAsset);
+            }
         }
 
         if (! $highQualAsset) {
@@ -433,6 +446,7 @@ class FieldSaveService
             $this->elementsService->saveElement($thumbAsset);
         }
 
+        $existingAssetId = ($existingRow['assetId'] ?? 0) ?: null;
         $existingOrigAssetId = ($existingRow['originalAssetId'] ?? 0) ?: null;
 
         $this->dbConnection->createCommand()->upsert(
@@ -442,8 +456,8 @@ class FieldSaveService
                 'elementId' => $fieldSettings->elementId,
                 'fieldId' => $fieldSettings->fieldId,
                 'userId' => $existingRow['userId'] ?? $this->userId,
-                'assetId' => $standardAsset->id ?? $existingRow['assetId'],
-                    'highQualAssetId' => $highQualAsset->id ?? $existingRow['highQualAssetId'],
+                'assetId' => $standardAsset->id ?? $existingAssetId,
+                'highQualAssetId' => $highQualAsset->id ?? $existingRow['highQualAssetId'],
                 'thumbAssetId' => $thumbAsset->id ?? $existingRow['thumbAssetId'],
                 'originalAssetId' => $originalAsset->id ?? $existingOrigAssetId,
                 'width' => $width,
