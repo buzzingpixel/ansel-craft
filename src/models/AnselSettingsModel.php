@@ -64,6 +64,18 @@ class AnselSettingsModel extends Model
     /** @var bool $hideSourceSaveInstructions */
     public $hideSourceSaveInstructions;
 
+    /** @var bool $optimizerShowErrors */
+    public $optimizerShowErrors = false;
+
+    /** @var bool $disableOptipng */
+    public $disableOptipng = false;
+
+    /** @var bool $disableJpegoptim */
+    public $disableJpegoptim = false;
+
+    /** @var bool $disableGifsicle */
+    public $disableGifsicle = false;
+
     /**
      * Gets property type
      * @param string $prop
@@ -173,6 +185,10 @@ class AnselSettingsModel extends Model
             'defaultRequireCover' => ['class' => BoolHandler::class],
             'defaultCoverLabel' => ['class' => StringHandler::class],
             'hideSourceSaveInstructions' => ['class' => BoolHandler::class],
+            'optimizerShowErrors' => ['class' => BoolHandler::class],
+            'disableOptipng' => ['class' => BoolHandler::class],
+            'disableJpegoptim' => ['class' => BoolHandler::class],
+            'disableGifsicle' => ['class' => BoolHandler::class],
         ];
     }
 }

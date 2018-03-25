@@ -11,6 +11,7 @@ namespace buzzingpixel\ansel;
 
 use Craft;
 use craft\db\Query;
+use ImageOptimizer\OptimizerFactory;
 use yii\base\Event;
 use Ramsey\Uuid\Uuid;
 use craft\base\Plugin;
@@ -197,9 +198,15 @@ class Ansel extends Plugin
             $imagine = new ImagineGd();
         }
 
+        $settings = $this->getAnselSettingsService()->getSettings();
+
         return new FieldImageProcessService(
             $this->getFileCacheService(),
-            $imagine
+            $imagine,
+            new OptimizerFactory([
+                'ignore_errors' => ! $settings->optimizerShowErrors,
+            ]),
+            $settings
         );
     }
 

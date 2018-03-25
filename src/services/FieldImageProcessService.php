@@ -12,6 +12,8 @@ namespace buzzingpixel\ansel\services;
 use Imagine\Image\Box;
 use Imagine\Image\Point;
 use Imagine\Image\AbstractImagine;
+use ImageOptimizer\OptimizerFactory;
+use buzzingpixel\ansel\models\AnselSettingsModel;
 use buzzingpixel\ansel\models\ProcessedFieldImageModel;
 
 /**
@@ -25,18 +27,30 @@ class FieldImageProcessService
     /** @var AbstractImagine $imageManipulator */
     private $imageManipulator;
 
+    /** @var OptimizerFactory $optimizerFactory */
+    private $optimizerFactory;
+
+    /** @var AnselSettingsModel $settings */
+    private $settings;
+
     /**
      * FieldImageProcessService constructor
      * @param FileCacheService $fileCacheService
      * @param AbstractImagine $imageManipulator
+     * @param OptimizerFactory $optimizerFactory
+     * @param AnselSettingsModel $settings
      * @throws \Exception
      */
     public function __construct(
         FileCacheService $fileCacheService,
-        AbstractImagine $imageManipulator
+        AbstractImagine $imageManipulator,
+        OptimizerFactory $optimizerFactory,
+        AnselSettingsModel $settings
     ) {
         $this->fileCacheService = $fileCacheService;
         $this->imageManipulator = $imageManipulator;
+        $this->optimizerFactory = $optimizerFactory;
+        $this->settings = $settings;
     }
 
     /**
@@ -191,5 +205,40 @@ class FieldImageProcessService
                 'png_compression_level' => $pngCompressionLevel,
             ]
         );
+
+
+        /**
+         * Optimize images
+         */
+
+        $imageOptimizer = null;
+        $imageType = exif_imagetype($model->getStandardFilePath());
+
+        if ($imageType === IMAGETYPE_GIF) {
+            if ($this->settings->disableGifsicle) {
+                return;
+            }
+
+            $imageOptimizer = $this->optimizerFactory->get('gifsicle');
+        } elseif ($imageType === IMAGETYPE_JPEG) {
+            if ($this->settings->disableJpegoptim) {
+                return;
+            }
+
+            $imageOptimizer = $this->optimizerFactory->get('jpegoptim');
+        } elseif ($imageType === IMAGETYPE_PNG) {
+            if ($this->settings->disableOptipng) {
+                return;
+            }
+
+            $imageOptimizer = $this->optimizerFactory->get('optipng');
+        }
+
+        if (! $imageOptimizer) {
+            return;
+        }
+
+        $imageOptimizer->optimize($model->getStandardFilePath());
+        $imageOptimizer->optimize($model->getThumbFilePath());
     }
 }
