@@ -96,7 +96,9 @@ function runNotification(F) {
         destroy: function() {
             var self = this;
 
-            self.$line.remove();
+            if (self.$line) {
+                self.$line.remove();
+            }
 
             self.destroyEvents.forEach(function(i) {
                 self.commonStorage.eventTriggers.offChange(
