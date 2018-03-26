@@ -1,6 +1,6 @@
 {
     "name": "buzzingpixel/ansel-craft",
-    "version": "2.0.0-beta1",
+    "version": "2.0.0-beta2",
     "type": "craft-plugin",
     "description": "A Craft CMS field type for defining image requirements and non-destructive editing of images per-field",
     "license": "proprietary",
@@ -46,6 +46,8 @@
         "handle": "ansel",
         "developer": "BuzzingPixel, LLC",
         "developerUrl": "https://buzzingpixel.com",
+        "documentationUrl": "https://buzzingpixel.com/software/ansel-craft/documentation",
+        "changelogUrl": "https://github.com/buzzingpixel/ansel-craft/blob/master/changelog.md",
         "schemaVersion": "2.0.0",
         "hasCpSettings": true,
         "class": "buzzingpixel\\ansel\\Ansel"
