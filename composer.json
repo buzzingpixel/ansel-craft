@@ -46,7 +46,7 @@
         "handle": "ansel",
         "developer": "BuzzingPixel, LLC",
         "developerUrl": "https://buzzingpixel.com",
-        "schemaVersion": "0.0.0.0",
+        "schemaVersion": "2.0.0",
         "hasCpSettings": true,
         "class": "buzzingpixel\\ansel\\Ansel"
     }
