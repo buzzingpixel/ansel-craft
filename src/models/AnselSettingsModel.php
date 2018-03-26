@@ -77,6 +77,21 @@ class AnselSettingsModel extends Model
     public $disableGifsicle = false;
 
     /**
+     * Gets config settings hidden from the settings page
+     * @return array
+     */
+    public function getHiddenConfigSettings() : array
+    {
+        return [
+            'defaultHost' => 'defaultHost',
+            'optimizerShowErrors' => 'optimizerShowErrors',
+            'disableOptipng' => 'disableOptipng',
+            'disableJpegoptim' => 'disableJpegoptim',
+            'disableGifsicle' => 'disableGifsicle',
+        ];
+    }
+
+    /**
      * Gets property type
      * @param string $prop
      * @return string

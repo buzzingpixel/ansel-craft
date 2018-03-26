@@ -20,30 +20,33 @@
 {% block content %}
     <input type="hidden" name="action" value="ansel/cp-settings/save-settings">
     <div id="fields">
-        {% for setting,value in settings.asArray(true) if setting != 'defaultHost' %}
-            {% switch settings.getPropertyType(setting) %}
-                {% case 'bool' %}
-                    {{ forms.lightswitchField({
-                        label: settings.getLabel(setting)|t('app'),
-                        instructions: settings.getInstructions(setting)|t('app'),
-                        id: setting,
-                        name: setting,
-                        on: value,
-                        errors: errors[setting] ?? []
-                    }) }}
-                {% default %}
-                    {{ forms.textField({
-                        label: settings.getLabel(setting)|t('app'),
-                        instructions: settings.getInstructions(setting)|t('app'),
-                        id: setting,
-                        name: setting,
-                        value: value,
-                        first: true,
-                        autofocus: true,
-                        maxlength: 255,
-                        errors: errors[setting] ?? []
-                    }) }}
-            {% endswitch %}
+        {% set hiddenSettings = settings.getHiddenConfigSettings %}
+        {% for setting,value in settings.asArray(true) %}
+            {% if hiddenSettings[setting] is not defined %}
+                {% switch settings.getPropertyType(setting) %}
+                    {% case 'bool' %}
+                        {{ forms.lightswitchField({
+                            label: settings.getLabel(setting)|t('app'),
+                            instructions: settings.getInstructions(setting)|t('app'),
+                            id: setting,
+                            name: setting,
+                            on: value,
+                            errors: errors[setting] ?? []
+                        }) }}
+                    {% default %}
+                        {{ forms.textField({
+                            label: settings.getLabel(setting)|t('app'),
+                            instructions: settings.getInstructions(setting)|t('app'),
+                            id: setting,
+                            name: setting,
+                            value: value,
+                            first: true,
+                            autofocus: true,
+                            maxlength: 255,
+                            errors: errors[setting] ?? []
+                        }) }}
+                {% endswitch %}
+            {% endif %}
         {% endfor %}
     </div>
 {% endblock %}
