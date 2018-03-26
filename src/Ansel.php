@@ -11,7 +11,6 @@ namespace buzzingpixel\ansel;
 
 use Craft;
 use craft\db\Query;
-use ImageOptimizer\OptimizerFactory;
 use yii\base\Event;
 use Ramsey\Uuid\Uuid;
 use craft\base\Plugin;
@@ -22,6 +21,7 @@ use craft\services\Fields;
 use \craft\helpers\UrlHelper;
 use League\Flysystem\Filesystem;
 use Imagine\Gd\Imagine as ImagineGd;
+use ImageOptimizer\OptimizerFactory;
 use craft\events\RegisterUrlRulesEvent;
 use craft\helpers\Assets as AssetsHelper;
 use buzzingpixel\ansel\fields\AnselField;
