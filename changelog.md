@@ -18,9 +18,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 - The user interface is entirely new and takes up less room while still providing all the same basic features as Ansel for Craft 1.x.
+- The new user interface is now 100% more mobile friendly.
 - Ansel now utilizes Craft 3's native focal points by allowing you to set the focal point on the cropped image.
 - Ansel will now work on image manipulations in the background via ajax while you work on content entry. In most cases, the images will all be pre-manipulated before you ever click save on your entry or element. What this means in real world terms is that you will do less waiting after clicking save because Ansel will have already done the heavy lifting of image cropping and manipulation by the time you save. It also means the save process should be less error prone since Ansel will now manipulate one image at a time via AJAX, giving less chance for server timeouts and memory errors.
 - Ansel now supports live preview! (as best it can).
+- Did I mention that this is a complete re-write of Ansel for Craft? It was a lot of work. But it was well worth it and I think you'll love it
 
 ## 1.0.7 - 2017-12-02
 
