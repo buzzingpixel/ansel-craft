@@ -128,6 +128,7 @@ class AnselImageModel extends Model
 
     /**
      * Gets the user
+     * @return null|User
      */
     public function getUser()
     {
