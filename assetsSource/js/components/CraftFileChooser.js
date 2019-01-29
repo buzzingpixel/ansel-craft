@@ -29,7 +29,7 @@ function runCraftFileChooser(F) {
                 },
                 multiSelect: true,
                 sources: [
-                    'folder:' + self.commonStorage.sharedModel.get('uploadFolderId')
+                    'folder:' + self.commonStorage.sharedModel.get('uploadFolderUid')
                 ],
                 onSelect: function(files) {
                     $('.modal-shade').remove();

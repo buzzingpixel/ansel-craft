@@ -611,8 +611,22 @@ class AnselFieldSettingsModel extends Model
         }
 
         $this->uploadFolderId = (int) $folder->id;
+        $this->uploadFolderUid = $folder->uid;
 
         return $this->uploadFolderId;
+    }
+
+    private $uploadFolderUid;
+
+    /**
+     * Gets the upload folder UID
+     * @return mixed
+     * @throws \ReflectionException
+     */
+    public function getUploadFolderUid()
+    {
+        $this->getProperty('uploadFolderId');
+        return $this->uploadFolderUid;
     }
 
     /**
@@ -648,8 +662,22 @@ class AnselFieldSettingsModel extends Model
         }
 
         $this->saveFolderId = (int) $folder->id;
+        $this->saveFolderUid = $folder->uid;
 
         return $this->saveFolderId;
+    }
+
+    private $saveFolderUid;
+
+    /**
+     * Ges the save folder UID
+     * @return mixed
+     * @throws \ReflectionException
+     */
+    public function getSaveFolderUid()
+    {
+        $this->getProperty('saveFolderId');
+        return $this->saveFolderUid;
     }
 
     /**
@@ -760,5 +788,22 @@ class AnselFieldSettingsModel extends Model
         $this->thumbFolderId = $folder->id;
 
         return $this->thumbFolderId;
+    }
+
+    /**
+     * @param bool $excludeUuid
+     * @return array
+     * @throws \ReflectionException
+     */
+    public function asArray(bool $excludeUuid = false): array
+    {
+        $array = parent::asArray($excludeUuid);
+
+        $array['uploadLocationUid'] = $this->getUploadLocationUid();
+        $array['saveLocationUid'] = $this->getSaveLocationUid();
+        $array['uploadFolderUid'] = $this->getUploadFolderUid();
+        $array['saveFolderUid'] = $this->getSaveFolderUid();
+
+        return $array;
     }
 }
