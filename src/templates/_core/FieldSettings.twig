@@ -39,6 +39,11 @@
         {% endif %}
         {% switch val.type %}
             {% case 'volume' %}
+                {% if key == 'uploadLocation' %}
+                    {% set value = fieldSettingsModel.getUploadLocationUid() %}
+                {% elseif key == 'saveLocation' %}
+                    {% set value = fieldSettingsModel.getSaveLocationUid() %}
+                {% endif %}
                 {{ forms.selectField({
                     label: val.name|t('app'),
                     instructions: val.instructions ? val.instructions|t('app') : null,
