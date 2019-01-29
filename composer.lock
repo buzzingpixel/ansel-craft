@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "df38936dba6320e7f986618a61371eed",
+    "content-hash": "7d8741c2ac7261212416b47b3c7dde7e",
     "packages": [
         {
             "name": "cebe/markdown",
@@ -5627,7 +5627,6 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "craftcms/cms": 5,
         "roave/security-advisories": 20
     },
     "prefer-stable": false,

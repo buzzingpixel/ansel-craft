@@ -28,7 +28,7 @@
         }
     },
     "require": {
-        "craftcms/cms": "^3.0.0-RC1",
+        "craftcms/cms": "~3.1.0",
         "felicity-php/felicity-datamodel": "^1.0",
         "ramsey/uuid": "^3.7",
         "samayo/bulletproof": "^3.2",
