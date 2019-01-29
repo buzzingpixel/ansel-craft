@@ -491,6 +491,94 @@ class AnselFieldSettingsModel extends Model
     }
 
     /**
+     * @param $val
+     */
+    public function setUploadLocationFromUid($val)
+    {
+        if (! $val) {
+            return;
+        }
+
+        $this->uploadLocationUid = $val;
+
+        $volume = Craft::$app->getVolumes()->getVolumeByUid($val);
+
+        $this->uploadLocation = (int) $volume->id;
+    }
+
+    private $uploadLocationUid;
+
+    /**
+     * @return string|null
+     */
+    public function getUploadLocationUid()
+    {
+        if ($this->uploadLocationUid) {
+            return $this->uploadLocationUid;
+        }
+
+        if (! $this->uploadLocation) {
+            return null;
+        }
+
+        $volume = Craft::$app->getVolumes()->getVolumeById($this->uploadLocation);
+
+        if (! $volume) {
+            return null;
+        }
+
+        $this->uploadLocation = $volume->uid;
+
+        return $this->uploadLocation;
+    }
+
+    /**
+     * @param $val
+     */
+    public function setSaveLocationFromUid($val)
+    {
+        if (! $val) {
+            return;
+        }
+
+        $this->saveLocationUid = $val;
+
+        $volume = Craft::$app->getVolumes()->getVolumeByUid($val);
+
+        if (! $volume) {
+            return;
+        }
+
+        $this->saveLocation = (int) $volume->id;
+    }
+
+    private $saveLocationUid;
+
+    /**
+     * @return string|null
+     */
+    public function getSaveLocationUid()
+    {
+        if ($this->saveLocationUid) {
+            return $this->saveLocationUid;
+        }
+
+        if (! $this->saveLocation) {
+            return null;
+        }
+
+        $volume = Craft::$app->getVolumes()->getVolumeById($this->saveLocation);
+
+        if (! $volume) {
+            return null;
+        }
+
+        $this->saveLocationUid = $volume->uid;
+
+        return $this->saveLocationUid;
+    }
+
+    /**
      * Gets upload folder ID
      * @param $val
      * @return int

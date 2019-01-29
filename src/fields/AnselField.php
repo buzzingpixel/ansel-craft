@@ -145,6 +145,17 @@ class AnselField extends Field
                 if (! $val) {
                     continue;
                 }
+
+                if ($key === 'uploadLocation') {
+                    $this->fieldSettingsModel->setUploadLocationFromUid($val);
+                    continue;
+                }
+
+                if ($key === 'saveLocation') {
+                    $this->fieldSettingsModel->setSaveLocationFromUid($val);
+                    continue;
+                }
+
                 $this->fieldSettingsModel->setProperty($key, $val);
             }
 
@@ -176,7 +187,7 @@ class AnselField extends Field
             $volumeSelectOptions[$volume->name] = [
                 'label' => $volume->name,
                 'name' => $volume->id,
-                'value' => $volume->id,
+                'value' => $volume->uid,
             ];
         }
 
