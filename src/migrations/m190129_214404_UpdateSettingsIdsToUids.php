@@ -15,7 +15,7 @@ class m190129_214404_UpdateSettingsIdsToUids extends Migration
     /**
      * @inheritdoc
      */
-    public function safeUp()
+    public function safeUp() : bool
     {
         $class = explode('\\', AnselField::class);
 
@@ -44,6 +44,8 @@ class m190129_214404_UpdateSettingsIdsToUids extends Migration
 
             $this->reSaveFieldSettings(json_decode($field['settings'], true), $field['id']);
         }
+
+        return true;
     }
 
     /**
@@ -81,7 +83,7 @@ class m190129_214404_UpdateSettingsIdsToUids extends Migration
     /**
      * @inheritdoc
      */
-    public function safeDown(): bool
+    public function safeDown() : bool
     {
         return true;
     }
