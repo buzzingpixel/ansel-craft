@@ -116,10 +116,17 @@ class FieldSaveService
         $pos = 1;
 
         foreach ($postArray as &$imageArray) {
+            $delete = $imageArray['delete'] ?? '0';
+            $delete = $delete === '1' || $delete === 1;
+
             $id = (int) ($imageArray['id'] ?? null);
 
             if ($id) {
                 $imageIds[] = $id;
+            }
+
+            if ($delete) {
+                continue;
             }
 
             $imageArray['position'] = $pos;
