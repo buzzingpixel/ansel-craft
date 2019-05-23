@@ -575,6 +575,11 @@ function runImage(F) {
                 'imageControllerUuids',
                 imageUuids
             );
+
+            self.commonStorage.eventTriggers.set(
+                'orderChange',
+                self.commonStorage.eventTriggers.get('orderChange') + 1
+            );
         },
 
         processImageTimer: 0,
