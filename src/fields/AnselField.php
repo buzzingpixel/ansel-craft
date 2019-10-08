@@ -230,8 +230,7 @@ class AnselField extends Field
                     $images[] = new AnselImageModel($item);
                 }
             } elseif ($value instanceof AnselImageService) {
-                $images = $value->showDisabled()
-                    ->all();
+                $images = $value->showDisabled()->all();
             }
         }
 
@@ -343,7 +342,7 @@ class AnselField extends Field
 
         $values = $element->getFieldValue($this->handle);
 
-        if ($values instanceof  AnselImageService) {
+        if ($values instanceof AnselImageService) {
             return;
         }
 
@@ -453,6 +452,12 @@ class AnselField extends Field
      */
     public function afterElementSave(ElementInterface $element, bool $isNew)
     {
+        if (method_exists($element, 'getIsRevision') &&
+            $element->getIsRevision()
+        ) {
+            return;
+        }
+
         /** @var Element $element */
 
         $values = $element->getFieldValue($this->handle);
