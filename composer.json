@@ -1,6 +1,6 @@
 {
     "name": "buzzingpixel/ansel-craft",
-    "version": "2.1.3",
+    "version": "2.1.4",
     "type": "craft-plugin",
     "description": "A Craft CMS field type for defining image requirements and non-destructive editing of images per-field.",
     "license": "proprietary",
@@ -29,7 +29,7 @@
     },
     "require": {
         "ext-json": "*",
-        "craftcms/cms": "~3.1.0|~3.2.0",
+        "craftcms/cms": "~3.1.0|~3.2.0|~3.3.0",
         "felicity-php/felicity-datamodel": "^1.0",
         "ramsey/uuid": "^3.7",
         "samayo/bulletproof": "^3.2",
