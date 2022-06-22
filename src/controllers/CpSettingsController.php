@@ -34,6 +34,8 @@ class CpSettingsController extends Controller
      */
     public function init()
     {
+        parent::init();
+
         $this->settingsService = Ansel::$plugin->getAnselSettingsService();
         $this->settings = $this->settingsService->getSettings();
     }
