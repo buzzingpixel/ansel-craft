@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## 2.1.6 - 2022-06-22
+### Fixed
+- Fixed an error that would occur in more recent versions of Craft when trying to access Ansel's settings
+
 ## 2.1.5 - 2020-02-17
 ### Changed
 - Loosened up craft version requirements
