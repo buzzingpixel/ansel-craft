@@ -1,0 +1,9 @@
+baseUrl: 'http://anselcraftphp81.localtest.me'
+enabled: true
+handle: default
+hasUrls: true
+language: en
+name: 'Ansel Craft Testing'
+primary: true
+siteGroup: 94221204-a3c0-422b-8895-001ba4ea5b2c # Ansel Craft Testing
+sortOrder: 1

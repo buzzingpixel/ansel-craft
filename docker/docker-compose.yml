@@ -1,0 +1,61 @@
+version: '3.7'
+
+services:
+  web:
+    env_file: .env
+    build:
+      dockerfile: web/Dockerfile
+    container_name: anselcraft-web
+    ports:
+      - "35161:35161"
+    environment:
+      HOSTNAME: anselcraft-web
+    volumes:
+      - ./web/conf.d:/etc/nginx/conf.d
+      - ./.profile:/root/.profile
+      - ./.profile:/root/.bashrc
+      - ./environments/craft3:/var/www/craft3
+      - ../:/var/www/anselcraft
+    networks:
+      default:
+        aliases:
+          - anselcraftphp74.test
+          - anselcraftphp74.localtest.me
+
+  php74:
+    env_file: .env
+    build:
+      dockerfile: php74/Dockerfile
+    container_name: anselcraft-php74
+    environment:
+      HOSTNAME: anselcraft-php74
+    volumes:
+      - ./.profile:/root/.profile
+      - ./.profile:/root/.bashrc
+      - ./environments/craft3:/var/www/craft3
+      - ../:/var/www/anselcraft
+    networks:
+      default:
+        aliases:
+          - anselcraft-php74
+
+  db:
+    env_file: .env
+    build:
+      dockerfile: db/Dockerfile
+    container_name: anselcraft-db
+    ports:
+      - "35162:3306"
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "no"
+      HOSTNAME: anselcraft-db
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - db-volume:/var/lib/mysql
+    networks:
+      default:
+        aliases:
+          - anselcraft-db
+
+volumes:
+  db-volume:

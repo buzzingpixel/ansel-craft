@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+
+function_exists() {
+    declare -f -F $1 > /dev/null
+    return $?
+}
+
+if [[ ${secondArg} == "help" ]]; then
+    if ! function_exists ${cmd}; then
+        printf "${Red}That command does not exist.${Reset}\n";
+
+        exit 1;
+    fi
+
+    printf "  ${Cyan}./dev ${cmd} ${Yellow}";
+
+    if function_exists "${cmd}-help"; then
+        ${cmd}-help
+    fi
+
+    printf "${Reset}\n";
+
+    exit 0;
+fi
+
+printf "${Green}The following commands are available:\n${Reset}";
+
+IFS=$'\n';
+for f in $(declare -F); do
+    func=${f:11};
+
+    if [[ ${func} == "function_exists" ]]; then
+        continue;
+    fi
+
+    if [[ ${func} == *-help ]]; then
+        continue;
+    fi
+
+    if [[ ${func} == _* ]]; then
+        continue;
+    fi
+
+    printf "  ${Cyan}./dev ${func} ${Yellow}";
+
+    if function_exists "${func}-help"; then
+        ${func}-help
+    fi
+
+    printf "${Reset}\n";
+done
+
+printf "${Reset}";

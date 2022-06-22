@@ -1,0 +1,39 @@
+{
+    "name": "buzzingpixel/ansel-craft-dev-env",
+    "version": "3.0.0",
+    "homepage": "https://www.buzzingpixel.com",
+    "authors": [
+        {
+            "name": "TJ Draper",
+            "email": "tj@buzzingpixel.com",
+            "homepage": "https://buzzingpixel.com"
+        }
+    ],
+    "config": {
+        "bin-compat": "full",
+        "sort-packages": true,
+        "allow-plugins": {
+            "yiisoft/yii2-composer": true,
+            "craftcms/plugin-installer": true
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable" : true,
+    "repositories": {
+        "ansel-craft-plugin": {
+            "type": "path",
+            "url": "/var/www/anselcraft",
+            "options": {
+                "symlink": true
+            }
+        }
+    },
+    "require": {
+        "php": "^7.0",
+        "buzzingpixel/ansel-craft": "^2.1.5",
+        "craftcms/cms": "^3.7",
+        "lucidtaz/yii2-whoops": "dev-master",
+        "symfony/console": "^5.4",
+        "symfony/var-dumper": "^5.4"
+    }
+}

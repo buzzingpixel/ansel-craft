@@ -1,0 +1,8 @@
+baseUrl: anselcraftphp74.test
+handle: default
+hasUrls: true
+language: en
+name: 'Ansel Craft Testing'
+primary: true
+siteGroup: 93915e87-5372-4860-a5ec-d8a6a81065ea # Ansel Craft Testing
+sortOrder: 1
