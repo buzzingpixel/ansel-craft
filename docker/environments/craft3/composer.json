@@ -30,7 +30,7 @@
     },
     "require": {
         "php": "^7.0",
-        "buzzingpixel/ansel-craft": "^2.1.5",
+        "buzzingpixel/ansel-craft": "^2.1",
         "craftcms/cms": "^3.7",
         "lucidtaz/yii2-whoops": "dev-master",
         "symfony/console": "^5.4",

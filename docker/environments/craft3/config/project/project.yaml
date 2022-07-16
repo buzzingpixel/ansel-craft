@@ -1,15 +1,17 @@
-dateModified: 1655933429
+dateModified: 1657993476
 email:
   fromEmail: tj@buzzingpixel.com
   fromName: 'Ansel Craft Testing'
   transportType: craft\mail\transportadapters\Sendmail
 meta:
   __names__:
+    027f3054-3aeb-4ba7-921e-54e1be8e11dc: General # General
     102e2f10-330c-4f1e-8f04-5509d59e43c3: 'Ansel Craft Testing' # Ansel Craft Testing
     93915e87-5372-4860-a5ec-d8a6a81065ea: 'Ansel Craft Testing' # Ansel Craft Testing
     549350aa-371a-480f-9bce-d0459df182a7: Common # Common
     94221204-a3c0-422b-8895-001ba4ea5b2c: 'Ansel Craft Testing' # Ansel Craft Testing
     d43f7743-c7cd-49e1-b82b-a9fe6512cffa: 'Ansel Craft Testing' # Ansel Craft Testing
+    f8798dfe-ef45-4820-9af3-be72dcd40187: 'Ansel Save' # Ansel Save
 plugins:
   ansel:
     edition: standard
