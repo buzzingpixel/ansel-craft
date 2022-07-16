@@ -20,10 +20,8 @@ return [
     'resourceBaseUrl' => $baseUrl . '/cpresources',
     'baseCpUrl' => $baseUrl,
     'allowUpdates' => false,
-    'appId' => 'ansel',
+    'appId' => 'ansel-craft',
     'backupOnUpdate' => false,
-    'cacheDuration' => 0,
-    'cacheMethod' => 'apc',
     'basePath' => $craftBasePath,
     'cpTrigger' => 'admin',
     'devMode' => true,
@@ -33,17 +31,19 @@ return [
     'omitScriptNameInUrls' => true,
     'postCpLoginRedirect' => 'entries',
     'projectPath' => $craftBasePath,
-    'rememberedUserSessionDuration' => 'P100Y', // 100 years
     'runQueueAutomatically' => true,
     'securityKey' => 'jZUaYGnKB7zSmS2BvVtfjCFKE4JthrsK',
     'sendPoweredByHeader' => false,
     'timezone' => 'America/Chicago',
     'useEmailAsUsername' => true,
     'useProjectConfigFile' => true,
-    'userSessionDuration' => false, // As long as browser stays open
-    'staticAssetCacheTime' => '',
     'enableTemplateCaching' => false,
     'addTrailingSlashesToUrls' => false,
+
+    'requireMatchingUserAgentForSession' => false,
+    'rememberedUserSessionDuration' => 'P1Y',
+    'userSessionDuration' => 'P1Y',
+    'phpSessionName' => 'PHPSESSID',
 
     'aliases' => [
         '@webroot' => $craftBasePath . '/public',

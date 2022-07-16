@@ -1,4 +1,4 @@
-FROM php:7.4.2-fpm
+FROM php:7.4.30-fpm
 
 COPY ./.profile /root/.profile
 COPY ./.profile /root/.bashrc
