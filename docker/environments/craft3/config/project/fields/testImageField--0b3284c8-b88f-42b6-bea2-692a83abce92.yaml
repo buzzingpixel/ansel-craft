@@ -1,0 +1,33 @@
+columnSuffix: myewgpbl
+contentColumnType: text
+fieldGroup: 549350aa-371a-480f-9bce-d0459df182a7 # Common
+handle: testImageField
+instructions: ''
+name: 'Test Image Field'
+searchable: false
+settings:
+  captionLabel: ''
+  coverLabel: ''
+  forceJpg: ''
+  maxHeight: ''
+  maxQty: ''
+  maxWidth: ''
+  minHeight: ''
+  minQty: ''
+  minWidth: ''
+  preventUploadOverMax: ''
+  quality: '90'
+  ratio: ''
+  requireCaption: ''
+  requireCover: ''
+  requireTitle: ''
+  retinaMode: ''
+  saveLocation: f8798dfe-ef45-4820-9af3-be72dcd40187 # Ansel Save
+  showCaption: ''
+  showCover: ''
+  showTitle: ''
+  titleLabel: ''
+  uploadLocation: 027f3054-3aeb-4ba7-921e-54e1be8e11dc # General
+translationKeyFormat: null
+translationMethod: none
+type: buzzingpixel\ansel\fields\AnselField
