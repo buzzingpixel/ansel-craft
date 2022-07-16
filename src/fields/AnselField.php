@@ -462,7 +462,7 @@ class AnselField extends Field
 
         $values = $element->getFieldValue($this->handle);
 
-        if ($values instanceof  AnselImageService) {
+        if ($values instanceof AnselImageService) {
             return;
         }
 

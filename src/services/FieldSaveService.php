@@ -9,6 +9,7 @@ use craft\helpers\Assets as AssetsHelper;
 use craft\services\Elements as ElementsService;
 use buzzingpixel\ansel\models\AnselFieldSettingsModel;
 use buzzingpixel\ansel\models\ProcessedFieldImageModel;
+use League\Flysystem\Filesystem;
 
 /**
  * Class SaveFieldFromPostArray
@@ -254,24 +255,22 @@ class FieldSaveService
 
         $hasChanged = empty($existingRow);
 
-        if ($existingRow['originalAssetId'] !== $originalAssetId) {
-            $hasChanged = true;
-        }
-
-        if ($existingRow['height'] !== $height) {
-            $hasChanged = true;
-        }
-
-        if ($existingRow['width'] !== $width) {
-            $hasChanged = true;
-        }
-
-        if ($existingRow['x'] !== $x) {
-            $hasChanged = true;
-        }
-
-        if ($existingRow['y'] !== $y) {
-            $hasChanged = true;
+        if (! empty($existingRow)) {
+            if ($existingRow['originalAssetId'] !== $originalAssetId) {
+                $hasChanged = true;
+            }
+            if ($existingRow['height'] !== $height) {
+                $hasChanged = true;
+            }
+            if ($existingRow['width'] !== $width) {
+                $hasChanged = true;
+            }
+            if ($existingRow['x'] !== $x) {
+                $hasChanged = true;
+            }
+            if ($existingRow['y'] !== $y) {
+                $hasChanged = true;
+            }
         }
 
         $standardAsset = null;
@@ -283,9 +282,15 @@ class FieldSaveService
             'y' => (float) ($postArray['focalY'] ?? 0.5),
         ];
 
-        $existingAssetId = (int) $existingRow['assetId'];
-        $highQualAssetId = (int) $existingRow['highQualAssetId'];
-        $thumbAssetId = (int) $existingRow['thumbAssetId'];
+        $existingAssetId = null;
+        $highQualAssetId = null;
+        $thumbAssetId = null;
+
+        if (! empty($existingRow)) {
+            $existingAssetId = (int) $existingRow['assetId'];
+            $highQualAssetId = (int) $existingRow['highQualAssetId'];
+            $thumbAssetId = (int) $existingRow['thumbAssetId'];
+        }
 
         if ($existingId &&
             (! $existingAssetId || ! $highQualAssetId || ! $thumbAssetId)
@@ -382,15 +387,21 @@ class FieldSaveService
 
             if (! $originalAsset) {
                 $originalAssetCacheLoc = "{$cachePath}/{$postArray['cacheFile']}";
+                if (file_exists($originalAssetCacheLoc . '-tmp')) {
+                    unlink($originalAssetCacheLoc . '-tmp');
+                }
+                copy($originalAssetCacheLoc, $originalAssetCacheLoc . '-tmp');
                 $originalAsset = clone $this->newAssetElement;
                 $originalAsset->tempFilePath = $originalAssetCacheLoc;
                 $originalAsset->filename = $originalAssetFileName;
                 $originalAsset->newFolderId = $fieldSettings->getProperty('uploadFolderId');
                 $originalAsset->volumeId = $fieldSettings->getProperty('uploadLocation');
                 $originalAsset->avoidFilenameConflicts = true;
-                $originalAsset->setScenario($originalAsset::SCENARIO_CREATE);
+                $originalAsset->setScenario(Asset::SCENARIO_CREATE);
 
                 $this->elementsService->saveElement($originalAsset);
+
+                rename($originalAssetCacheLoc . '-tmp', $originalAssetCacheLoc);
             }
 
             $highQualAsset = clone $this->newAssetElement;
@@ -400,7 +411,7 @@ class FieldSaveService
             $highQualAsset->volumeId = $fieldSettings->getProperty('saveLocation');
             $highQualAsset->avoidFilenameConflicts = true;
             $highQualAsset->setFocalPoint($focalArr);
-            $highQualAsset->setScenario($originalAsset::SCENARIO_CREATE);
+            $highQualAsset->setScenario(Asset::SCENARIO_CREATE);
 
             $this->elementsService->saveElement($highQualAsset);
 
@@ -411,7 +422,7 @@ class FieldSaveService
             $standardAsset->volumeId = $fieldSettings->getProperty('saveLocation');
             $standardAsset->avoidFilenameConflicts = true;
             $standardAsset->setFocalPoint($focalArr);
-            $standardAsset->setScenario($originalAsset::SCENARIO_CREATE);
+            $standardAsset->setScenario(Asset::SCENARIO_CREATE);
 
             $this->elementsService->saveElement($standardAsset);
 
@@ -422,7 +433,7 @@ class FieldSaveService
             $thumbAsset->volumeId = $fieldSettings->getProperty('saveLocation');
             $thumbAsset->avoidFilenameConflicts = true;
             $thumbAsset->setFocalPoint($focalArr);
-            $thumbAsset->setScenario($originalAsset::SCENARIO_CREATE);
+            $thumbAsset->setScenario(Asset::SCENARIO_CREATE);
 
             $this->elementsService->saveElement($thumbAsset);
         }
