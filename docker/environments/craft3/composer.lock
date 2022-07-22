@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b15cac0828e2ee3ac7973347d01c4245",
+    "content-hash": "8f193a84b57bebded6efa140ddcb0297",
     "packages": [
         {
             "name": "buzzingpixel/ansel-craft",
@@ -12,7 +12,7 @@
             "dist": {
                 "type": "path",
                 "url": "/var/www/anselcraft",
-                "reference": "08bb5edd815f2ace8f417001f095f93d6958d940"
+                "reference": "6a1845f8c8d3ea890a40e6f21d5ebe7bc05fae39"
             },
             "require": {
                 "craftcms/cms": "^3.1.0",
@@ -28,7 +28,8 @@
                 "phpmd/phpmd": "^2.6",
                 "phpunit/phpunit": "^6.1",
                 "roave/security-advisories": "dev-master",
-                "squizlabs/php_codesniffer": "^3.4"
+                "squizlabs/php_codesniffer": "^3.4",
+                "symfony/var-dumper": "^5.4"
             },
             "type": "craft-plugin",
             "extra": {
@@ -2566,6 +2567,49 @@
                 }
             ],
             "time": "2022-06-09T08:59:12+00:00"
+        },
+        {
+            "name": "morrislaptop/var-dumper-with-context",
+            "version": "v0.3.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/morrislaptop/var-dumper-with-context.git",
+                "reference": "5572e239a83c327ca38df66dc8e87d74592fbf81"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/morrislaptop/var-dumper-with-context/zipball/5572e239a83c327ca38df66dc8e87d74592fbf81",
+                "reference": "5572e239a83c327ca38df66dc8e87d74592fbf81",
+                "shasum": ""
+            },
+            "require-dev": {
+                "symfony/var-dumper": "^3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/dump.php"
+                ],
+                "psr-4": {
+                    "Morrislaptop\\VarDumperWithContext\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Craig Morris",
+                    "email": "craig.michael.morris@gmail.com"
+                }
+            ],
+            "description": "Show the line number where the dump method was called",
+            "support": {
+                "issues": "https://github.com/morrislaptop/var-dumper-with-context/issues",
+                "source": "https://github.com/morrislaptop/var-dumper-with-context/tree/v0.3.2"
+            },
+            "time": "2019-10-16T15:27:59+00:00"
         },
         {
             "name": "mrclay/jsmin-php",

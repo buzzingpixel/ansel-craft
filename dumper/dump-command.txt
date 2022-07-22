@@ -1,0 +1,9 @@
+./dev container-anselcraft-php74
+cd anselcraft
+./vendor/bin/var-dump-server --format=html > dumper/dump.html
+
+
+
+# Outside container
+cd dumper
+yarn dump-browser

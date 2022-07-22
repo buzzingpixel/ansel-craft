@@ -33,6 +33,7 @@
         "buzzingpixel/ansel-craft": "^2.1",
         "craftcms/cms": "^3.7",
         "lucidtaz/yii2-whoops": "dev-master",
+        "morrislaptop/var-dumper-with-context": "^0.3.2",
         "symfony/console": "^5.4",
         "symfony/var-dumper": "^5.4"
     }
