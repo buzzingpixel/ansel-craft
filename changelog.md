@@ -5,11 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## 2.1.7 - 2022-07-21
+### Fixed
+- Fixed an issue where some post items could be undefined and throw PHP errors on element save
+- Fixed an issue where Craft calls a field's `afterElementSave` method more than once, causing newly added images to a field to be created multiple times
+- Fixed a crop container positioning issue
+
 ## 2.1.6 - 2022-06-22
 ### Fixed
 - Fixed an error that would occur in more recent versions of Craft when trying to access Ansel's settings
 
-## 2.1.5 - 2020-02-17
+## 2.1.5 - 2022-02-17
 ### Changed
 - Loosened up craft version requirements
 
