@@ -44,6 +44,7 @@ return [
     'rememberedUserSessionDuration' => 'P1Y',
     'userSessionDuration' => 'P1Y',
     'phpSessionName' => 'PHPSESSID',
+    'autosaveDrafts' => false,
 
     'aliases' => [
         '@webroot' => $craftBasePath . '/public',
