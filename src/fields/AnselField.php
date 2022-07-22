@@ -443,6 +443,8 @@ class AnselField extends Field
         }
     }
 
+    private $afterSaveRunners = [];
+
     /**
      * Manipulates Ansel field data after the containing element is saved
      * @param ElementInterface $element
@@ -452,11 +454,22 @@ class AnselField extends Field
      */
     public function afterElementSave(ElementInterface $element, bool $isNew)
     {
+        $checkHandle = $element->uid . '-' . $this->handle;
+
+        if (in_array(
+            $checkHandle,
+            $this->afterSaveRunners
+        )) {
+            return;
+        }
+
         if (method_exists($element, 'getIsRevision') &&
             $element->getIsRevision()
         ) {
             return;
         }
+
+        $this->afterSaveRunners = [$checkHandle => $checkHandle];
 
         /** @var Element $element */
 
